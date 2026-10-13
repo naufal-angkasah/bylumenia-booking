@@ -74,11 +74,22 @@ export default function RootLayout({
   return (
     <html lang="id" className="scroll-smooth dark">
       <head>
+        <title>Bylumenia • Butik Visual Pernikahan &amp; Prewedding</title>
+        <meta name="description" content="Merekam kedalaman emosi, gestur mikro, dan keabadian rasa di atas sekadar kuantitas. Sistem reservasi sinematik dan galeri visual Semarang, Solo, Jogja, &amp; Luar Kota." />
+        <meta property="og:title" content="Bylumenia • Butik Visual Pernikahan &amp; Prewedding" />
+        <meta property="og:description" content="Bukan dimana kita menemukan, tapi bagaimana kita menenun rasa. Sistem reservasi sinematik &amp; arsip portofolio Semarang, Solo, Yogyakarta, &amp; Luar Kota." />
+        <meta property="og:url" content="https://bylumenia-booking.vercel.app/" />
+        <meta property="og:site_name" content="Bylumenia Studio" />
+        <meta property="og:type" content="website" />
         <meta property="og:image" content="https://bylumenia-booking.vercel.app/images/og-image.jpg" />
         <meta property="og:image:secure_url" content="https://bylumenia-booking.vercel.app/images/og-image.jpg" />
         <meta property="og:image:type" content="image/jpeg" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="Bylumenia • Butik Visual Pernikahan &amp; Prewedding" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Bylumenia • Butik Visual Pernikahan &amp; Prewedding" />
+        <meta name="twitter:description" content="Merekam kedalaman emosi, gestur mikro, dan keabadian rasa di atas sekadar kuantitas. Sistem reservasi sinematik Semarang &amp; Luar Kota." />
         <meta name="twitter:image" content="https://bylumenia-booking.vercel.app/images/og-image.jpg" />
       </head>
       <body
