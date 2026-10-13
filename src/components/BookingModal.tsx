@@ -387,14 +387,14 @@ export default function BookingModal({
         <div className="relative w-full lg:w-5/12 h-48 sm:h-64 lg:h-auto overflow-hidden shrink-0 flex flex-col justify-end p-6 lg:p-8 bg-obsidian-950">
           <video
             ref={videoRef}
+            src={stepVideos[step].src}
             autoPlay
             loop
             muted={videoMuted}
             playsInline
+            preload="auto"
             className="absolute inset-0 w-full h-full object-cover filter brightness-70 contrast-105 transition-opacity duration-700"
-          >
-            <source src={stepVideos[step].src} type="video/mp4" />
-          </video>
+          />
 
           {/* Vignette & Gradients */}
           <div className="absolute inset-0 bg-gradient-to-t from-obsidian-950 via-obsidian-950/40 to-transparent" />
