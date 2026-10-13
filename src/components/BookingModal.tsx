@@ -387,7 +387,7 @@ export default function BookingModal({
             ref={videoRef}
             autoPlay
             loop
-            muted
+            muted={videoMuted}
             playsInline
             className="absolute inset-0 w-full h-full object-cover filter brightness-70 contrast-105 transition-opacity duration-700"
           >
@@ -399,22 +399,26 @@ export default function BookingModal({
           <div className="absolute inset-0 bg-gradient-to-t from-obsidian-950 via-obsidian-950/40 to-transparent" />
           <div className="absolute inset-0 bg-black/30" />
 
-          {/* Sound Toggle for Modal Video */}
+          {/* Sound Toggle for Modal Video — Larger & More Visible */}
           <button
             onClick={toggleModalAudio}
             type="button"
-            className="absolute top-4 left-4 z-20 p-2 rounded-full bg-black/60 border border-white/15 text-neutral-300 hover:text-gold-300 transition-colors flex items-center gap-1.5 text-[10px]"
+            className={`absolute top-4 left-4 z-20 p-2.5 rounded-full border backdrop-blur-sm transition-all flex items-center gap-2 text-[11px] font-medium tracking-wide ${
+              videoMuted
+                ? "bg-black/60 border-white/20 text-neutral-300 hover:border-gold-400/50 hover:text-gold-300"
+                : "bg-gold-400/20 border-gold-400/50 text-gold-400 shadow-[0_0_12px_rgba(212,175,55,0.3)]"
+            }`}
             title={videoMuted ? "Putar Audio" : "Senyapkan Audio"}
           >
             {videoMuted ? (
               <>
-                <VolumeX className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Audio Hening</span>
+                <VolumeX className="w-4 h-4" />
+                <span className="hidden sm:inline">Ketuk untuk Audio</span>
               </>
             ) : (
               <>
-                <Volume2 className="w-3.5 h-3.5 text-gold-400 animate-pulse" />
-                <span className="hidden sm:inline text-gold-300">Audio Aktif</span>
+                <Volume2 className="w-4 h-4 animate-pulse" />
+                <span className="hidden sm:inline">Audio Aktif ♪</span>
               </>
             )}
           </button>

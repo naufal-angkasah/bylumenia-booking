@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Sparkles, Volume2, VolumeX, ArrowDown } from "lucide-react";
 
 interface HeroSectionProps {
@@ -10,11 +10,23 @@ interface HeroSectionProps {
 export default function HeroSection({ onOpenBooking }: HeroSectionProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isMuted, setIsMuted] = useState(true);
+  const [showAudioHint, setShowAudioHint] = useState(true);
+
+  // Auto-dismiss audio hint after 6 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => setShowAudioHint(false), 6000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const toggleMute = () => {
     if (videoRef.current) {
-      videoRef.current.muted = !isMuted;
-      setIsMuted(!isMuted);
+      const next = !isMuted;
+      videoRef.current.muted = next;
+      if (!next) {
+        videoRef.current.volume = 0.6;
+      }
+      setIsMuted(next);
+      setShowAudioHint(false);
     }
   };
 
@@ -29,7 +41,8 @@ export default function HeroSection({ onOpenBooking }: HeroSectionProps) {
           muted={isMuted}
           playsInline
           preload="auto"
-          className="w-full h-full object-cover scale-105 filter brightness-75 contrast-105 transition-transform duration-1000 ease-out"
+          poster="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1920&q=80"
+          className="w-full h-full object-cover scale-105 filter brightness-[0.85] contrast-110 saturate-110 transition-transform duration-1000 ease-out"
         >
           <source src="/videos/hero-teaser.webm" type="video/webm" />
           <source src="/videos/hero-teaser.mp4" type="video/mp4" />
@@ -41,9 +54,9 @@ export default function HeroSection({ onOpenBooking }: HeroSectionProps) {
           />
         </video>
 
-        {/* Cinematic Overlays (Vignette & Obsidian Gradient) */}
-        <div className="absolute inset-0 bg-gradient-to-t from-obsidian-950 via-obsidian-900/60 to-obsidian-950/70" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(10,10,10,0.85)_100%)]" />
+        {/* Cinematic Overlays — Lighter so hero banner is more visible */}
+        <div className="absolute inset-0 bg-gradient-to-t from-obsidian-950 via-obsidian-900/40 to-obsidian-950/30" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_30%,rgba(10,10,10,0.65)_100%)]" />
       </div>
 
       {/* Hero Content */}
@@ -54,16 +67,16 @@ export default function HeroSection({ onOpenBooking }: HeroSectionProps) {
           <span>Butik Visual Pernikahan &bull; Semarang & Luar Kota</span>
         </div>
 
-        {/* Main Headline */}
-        <h1 className="font-serif text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-light text-white tracking-tight leading-[1.12] sm:leading-[1.08] mb-5 max-w-4xl">
+        {/* Main Headline — Brighter & Stronger Text Shadow */}
+        <h1 className="font-serif text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-light text-white tracking-tight leading-[1.12] sm:leading-[1.08] mb-5 max-w-4xl drop-shadow-[0_4px_24px_rgba(0,0,0,0.8)]">
           Bukan Dimana Kita Menemukan, Tapi{" "}
-          <span className="italic font-normal gold-gradient-text block sm:inline mt-1 sm:mt-0">
+          <span className="italic font-normal gold-gradient-text block sm:inline mt-1 sm:mt-0 drop-shadow-[0_2px_16px_rgba(212,175,55,0.35)]">
             Bagaimana Kita Menenun Rasa.
           </span>
         </h1>
 
         {/* Poetic Subheadline */}
-        <p className="max-w-2xl text-xs sm:text-base md:text-lg text-neutral-300/90 font-light leading-relaxed mb-8 sm:mb-10 tracking-wide px-2 sm:px-0">
+        <p className="max-w-2xl text-xs sm:text-base md:text-lg text-neutral-200/90 font-light leading-relaxed mb-8 sm:mb-10 tracking-wide px-2 sm:px-0 drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)]">
           Bylumenia merekam kedalaman emosi, gestur mikro, dan keabadian cinta di atas sekadar kuantitas.
           Kami hanya menerima <span className="text-gold-300 font-normal">satu pasangan dalam satu hari</span> agar fokus semesta kami utuh untuk kalian.
         </p>
@@ -103,14 +116,28 @@ export default function HeroSection({ onOpenBooking }: HeroSectionProps) {
         </div>
       </div>
 
-      {/* Floating Sound Toggle on Bottom-Left (so it does not collide with scroll-to-top) */}
+      {/* Prominent Audio Toggle — Bottom-Left with animated hint tooltip */}
       <button
         onClick={toggleMute}
-        className="fixed sm:absolute bottom-6 left-6 z-30 p-3 rounded-full glass-panel border border-white/15 text-neutral-300 hover:text-gold-300 active:scale-90 transition-all shadow-lg bg-obsidian-900/80 backdrop-blur-md"
+        className="fixed sm:absolute bottom-6 left-6 z-30 flex items-center gap-2.5 rounded-full transition-all shadow-lg active:scale-90"
         title={isMuted ? "Putar Audio Teaser" : "Senyapkan Audio"}
         aria-label="Audio Toggle"
       >
-        {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4 text-gold-400" />}
+        {/* Circular icon button */}
+        <span className={`p-3.5 rounded-full border backdrop-blur-md transition-all duration-300 ${
+          isMuted
+            ? "bg-obsidian-900/80 border-white/20 text-neutral-300 hover:border-gold-400/50 hover:text-gold-300"
+            : "bg-gold-400/20 border-gold-400/50 text-gold-400 shadow-[0_0_16px_rgba(212,175,55,0.3)]"
+        }`}>
+          {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5 animate-pulse" />}
+        </span>
+
+        {/* Animated hint text — appears on load then fades */}
+        {showAudioHint && isMuted && (
+          <span className="hidden sm:inline-block px-3 py-1.5 rounded-full bg-obsidian-900/90 border border-white/15 text-[11px] text-neutral-300 tracking-wide backdrop-blur-md animate-pulse whitespace-nowrap">
+            🔊 Ketuk untuk dengar audio
+          </span>
+        )}
       </button>
 
       {/* Scroll Down Indicator */}
