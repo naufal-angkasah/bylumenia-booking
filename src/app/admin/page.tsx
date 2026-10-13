@@ -16,7 +16,10 @@ import {
   Search,
   Eye,
   RefreshCw,
+  Download,
+  Printer,
 } from "lucide-react";
+import { getGoogleCalendarUrl, downloadIcsFile } from "@/lib/calendar";
 
 interface BookingItem {
   id: string;
@@ -134,6 +137,59 @@ export default function AdminPage() {
     }
   };
 
+  const handleExportCsv = () => {
+    if (bookings.length === 0) {
+      alert("Belum ada data reservasi untuk diekspor.");
+      return;
+    }
+
+    const headers = [
+      "Kode Reservasi",
+      "Nama Pasangan",
+      "Nomor WhatsApp",
+      "Tanggal Pernikahan",
+      "Lokasi Acara",
+      "Paket Dokumentasi",
+      "Suasana Visual (Mood)",
+      "Total Biaya (IDR)",
+      "Uang Muka DP (IDR)",
+      "Status Jadwal",
+      "Waktu Reservasi",
+    ];
+
+    const rows = bookings.map((b) => [
+      `"${b.bookingCode}"`,
+      `"${b.coupleName.replace(/"/g, '""')}"`,
+      `"${b.whatsapp}"`,
+      `"${b.eventDate}"`,
+      `"${b.eventLocation.replace(/"/g, '""')}"`,
+      `"${b.packageName}"`,
+      `"${b.aestheticMood}"`,
+      b.totalPrice,
+      b.downPayment,
+      b.status,
+      `"${new Date(b.createdAt).toLocaleString("id-ID")}"`,
+    ]);
+
+    // UTF-8 BOM for Microsoft Excel compatibility
+    const csvContent = "\uFEFF" + [headers.join(","), ...rows.map((r) => r.join(","))].join("\r\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute(
+      "download",
+      `Laporan_Reservasi_Bylumenia_${new Date().toISOString().split("T")[0]}.csv`
+    );
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handlePrintReport = () => {
+    window.print();
+  };
+
   const handleLogout = () => {
     localStorage.removeItem("bylumenia_admin_pin");
     setIsAuthenticated(false);
@@ -232,7 +288,23 @@ export default function AdminPage() {
             </span>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <button
+              onClick={handleExportCsv}
+              className="px-3 py-1.5 rounded-lg bg-emerald-950/40 hover:bg-emerald-900/60 border border-emerald-500/30 text-xs text-emerald-300 transition-colors flex items-center gap-1.5"
+              title="Ekspor seluruh data reservasi ke CSV / Microsoft Excel"
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Ekspor Excel</span>
+            </button>
+            <button
+              onClick={handlePrintReport}
+              className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-neutral-300 hover:text-white transition-colors flex items-center gap-1.5"
+              title="Cetak Laporan / Simpan sebagai PDF"
+            >
+              <Printer className="w-3.5 h-3.5 text-gold-400" />
+              <span className="hidden sm:inline">Cetak PDF</span>
+            </button>
             <button
               onClick={() => fetchDashboardData(pin)}
               className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-neutral-300 hover:text-white transition-colors"
@@ -242,7 +314,7 @@ export default function AdminPage() {
             </button>
             <Link
               href="/"
-              className="text-xs text-neutral-400 hover:text-gold-300 flex items-center gap-1 transition-colors hidden sm:flex"
+              className="text-xs text-neutral-400 hover:text-gold-300 flex items-center gap-1 transition-colors hidden md:flex"
             >
               <ExternalLink className="w-3.5 h-3.5" />
               <span>Lihat Web</span>
@@ -474,6 +546,38 @@ export default function AdminPage() {
                               >
                                 <MessageSquare className="w-3.5 h-3.5" />
                               </a>
+
+                              {/* Google Calendar Link */}
+                              <a
+                                href={getGoogleCalendarUrl({
+                                  title: `Pernikahan ${b.coupleName} • Bylumenia`,
+                                  description: `Paket: ${b.packageName}\nMood: ${b.aestheticMood}\nKode: ${b.bookingCode}\nWA: ${b.whatsapp}`,
+                                  location: b.eventLocation,
+                                  dateStr: b.eventDate,
+                                })}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="p-1.5 rounded-lg bg-blue-950/40 hover:bg-blue-900/60 text-blue-400 border border-blue-500/30 transition-colors"
+                                title="Tambah ke Google Calendar"
+                              >
+                                <Calendar className="w-3.5 h-3.5" />
+                              </a>
+
+                              {/* Download .ICS File */}
+                              <button
+                                onClick={() =>
+                                  downloadIcsFile({
+                                    title: `Pernikahan ${b.coupleName} • Bylumenia`,
+                                    description: `Paket: ${b.packageName}\nMood: ${b.aestheticMood}\nKode: ${b.bookingCode}\nWA: ${b.whatsapp}`,
+                                    location: b.eventLocation,
+                                    dateStr: b.eventDate,
+                                  })
+                                }
+                                className="p-1.5 rounded-lg bg-purple-950/40 hover:bg-purple-900/60 text-purple-400 border border-purple-500/30 transition-colors"
+                                title="Unduh File Kalender (.ics)"
+                              >
+                                <Download className="w-3.5 h-3.5" />
+                              </button>
 
                               {/* Confirm Button */}
                               {b.status !== "CONFIRMED" && (

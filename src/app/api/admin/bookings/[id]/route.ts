@@ -59,6 +59,23 @@ export async function PATCH(
       },
     });
 
+    // Auto notify client if confirmed
+    if (action === "CONFIRM") {
+      const { sendWhatsAppMessage } = await import("@/lib/whatsapp");
+      await sendWhatsAppMessage({
+        target: booking.whatsapp,
+        message:
+          `*KABAR BAHAGIA DARI BYLUMENIA STUDIO* ✨\n\n` +
+          `Halo Kak *${booking.coupleName}*,\n` +
+          `Tanda jadi kalian telah berhasil diverifikasi secara sah oleh kurator kami. ` +
+          `Jadwal hari pernikahan kalian pada tanggal *${booking.eventDate}* (${booking.packageName}) ` +
+          `kini telah RESMI TERKUNCI di kalender semesta Bylumenia!\n\n` +
+          `Kode SPK: *${booking.bookingCode}*\n` +
+          `Lokasi: ${booking.eventLocation}\n\n` +
+          `Sampai jumpa di hari kita menenun rasa dan mengabadikan momen abadi berdua. Terima kasih atas kepercayaan yang tulus ini.`,
+      });
+    }
+
     return NextResponse.json({
       success: true,
       booking: updated,

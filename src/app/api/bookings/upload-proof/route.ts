@@ -71,17 +71,48 @@ export async function POST(request: Request) {
       },
     });
 
-    // Prepare WhatsApp curator notify text
-    const curatorNumber = process.env.NEXT_PUBLIC_ADMIN_WHATSAPP || "6281234567890";
+    // Automated WhatsApp Notifications via Fonnte
+    const { sendWhatsAppMessage } = await import("@/lib/whatsapp");
+    const curatorNumber = process.env.NEXT_PUBLIC_ADMIN_WHATSAPP || "087777357373";
+
+    // 1. Send WA to Curator
+    await sendWhatsAppMessage({
+      target: curatorNumber,
+      message:
+        `*NOTIFIKASI RESERVASI MASUK — BYLUMENIA*\n\n` +
+        `Ada tanda jadi baru dari pasangan *${booking.coupleName}*!\n\n` +
+        `• Kode: *${booking.bookingCode}*\n` +
+        `• Tanggal: *${booking.eventDate}*\n` +
+        `• Paket: ${booking.packageName}\n` +
+        `• Lokasi: ${booking.eventLocation}\n` +
+        `• DP Masuk: Rp ${booking.downPayment.toLocaleString("id-ID")}\n` +
+        `• WhatsApp Klien: https://wa.me/${booking.whatsapp.replace(/[^0-9]/g, "")}\n\n` +
+        `Silakan verifikasi tanda jadi di Ruang Kurator Dasbor Internal.`,
+    });
+
+    // 2. Send WA to Client (Calon Pengantin)
+    await sendWhatsAppMessage({
+      target: booking.whatsapp,
+      message:
+        `Halo Kak *${booking.coupleName}*, salam hangat dari Bylumenia ✨\n\n` +
+        `Terima kasih sudah mempercayakan hari paling berharga kalian kepada kami. ` +
+        `Lembaran cerita dan bukti tanda jadi kalian untuk tanggal *${booking.eventDate}* (${booking.packageName}) ` +
+        `sudah tersimpan aman di buku catatan kami.\n\n` +
+        `Tim kurator kami sedang meninjau tanda jadi ini dan akan segera menyapa kalian ` +
+        `untuk mulai mengobrol santai soal konsep visual nanti.\n\n` +
+        `Kode Reservasi: *${booking.bookingCode}*\n` +
+        `Salam cinta,\nTim Bylumenia Studio`,
+    });
+
+    // Prepare fallback manual WhatsApp curator link
     const waText = encodeURIComponent(
-      `Halo Kurator Bylumenia,\n\nAda komitmen tanda jadi baru yang masuk dari pasangan *${booking.coupleName}*!\n\n` +
+      `Halo Kurator Bylumenia,\n\nAda komitmen tanda jadi baru dari pasangan *${booking.coupleName}*!\n\n` +
       `• Kode: ${booking.bookingCode}\n` +
       `• Tanggal: ${booking.eventDate}\n` +
       `• Paket: ${booking.packageName}\n` +
       `• Lokasi: ${booking.eventLocation}\n` +
       `• DP Masuk: Rp ${booking.downPayment.toLocaleString("id-ID")}\n` +
-      `• WhatsApp Klien: https://wa.me/${booking.whatsapp.replace(/[^0-9]/g, "")}\n\n` +
-      `Mohon verifikasi di Dasbor Internal Bylumenia.`
+      `• WhatsApp Klien: https://wa.me/${booking.whatsapp.replace(/[^0-9]/g, "")}`
     );
     const curatorWaUrl = `https://wa.me/${curatorNumber}?text=${waText}`;
 

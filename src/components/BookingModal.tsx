@@ -18,6 +18,7 @@ import {
   MapPin,
   Phone,
   User,
+  Download,
 } from "lucide-react";
 import confetti from "canvas-confetti";
 import {
@@ -26,6 +27,7 @@ import {
   MOOD_OPTIONS,
   PAYMENT_METHODS,
 } from "@/lib/constants";
+import { getGoogleCalendarUrl, downloadIcsFile } from "@/lib/calendar";
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -86,27 +88,31 @@ export default function BookingModal({
   }, [preSelectedPackage]);
 
   // Handle Video Transition per Step
-  const stepVideos: Record<number, { src: string; quote: string; title: string }> = {
+  const stepVideos: Record<number, { src: string; webmSrc: string; quote: string; title: string }> = {
     1: {
       src: "/videos/story-01-heritage.mp4",
+      webmSrc: "/videos/story-01-heritage.webm",
       title: "Babak I • Titik Temu & Skenario Semesta",
       quote:
         "“Segala skenario semesta menuntun kita pada satu titik temu. Dari dua dunia yang berbeda, dua hati yang saling mencari, hingga akhirnya kita berlabuh dalam dekap restu yang sama.”",
     },
     2: {
       src: "/videos/story-02-mazi.mp4",
+      webmSrc: "/videos/story-02-mazi.webm",
       title: "Babak II • Menenun Rasa & Keteduhan Baru",
       quote:
         "“Witing tresna jalaran soko kulino, witing mulyo jalaran wani rekoso. Di hadapan dua keluarga, bagaimana kalian ingin keteduhan ini diabadikan?”",
     },
     3: {
       src: "/videos/hero-teaser.mp4",
+      webmSrc: "/videos/hero-teaser.webm",
       title: "Babak III • Mengunci Komitmen & Tanda Jadi",
       quote:
         "“Kami hanya menerima satu pasangan dalam satu hari agar fokus semesta kami utuh. Hari bahagia ini kami tahan untuk kalian selama 30 menit.”",
     },
     4: {
       src: "/videos/story-01-heritage.mp4",
+      webmSrc: "/videos/story-01-heritage.webm",
       title: "Ikrar Tersemat • Babak Abadi Dimulai",
       quote:
         "“Bismillah, kita mulai merangkai semesta kita sendiri, selamanya.”",
@@ -355,6 +361,7 @@ export default function BookingModal({
             playsInline
             className="absolute inset-0 w-full h-full object-cover filter brightness-70 contrast-105 transition-opacity duration-700"
           >
+            <source src={stepVideos[step].webmSrc} type="video/webm" />
             <source src={stepVideos[step].src} type="video/mp4" />
           </video>
 
@@ -798,8 +805,41 @@ export default function BookingModal({
                 </p>
               </div>
 
+              {/* Calendar Sync Buttons */}
+              <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
+                <a
+                  href={getGoogleCalendarUrl({
+                    title: `Hari Bahagia ${coupleName} • Bylumenia`,
+                    description: `Paket: ${selectedPackage.name}\nKode Reservasi: ${bookingCode}\nBylumenia Studio`,
+                    location: eventLocation,
+                    dateStr: eventDate,
+                  })}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-5 py-2.5 rounded-full bg-blue-950/40 hover:bg-blue-900/60 border border-blue-500/30 text-blue-300 text-xs flex items-center gap-2 transition-colors"
+                >
+                  <Calendar className="w-3.5 h-3.5" />
+                  <span>Simpan ke Google Calendar</span>
+                </a>
+
+                <button
+                  onClick={() =>
+                    downloadIcsFile({
+                      title: `Hari Bahagia ${coupleName} • Bylumenia`,
+                      description: `Paket: ${selectedPackage.name}\nKode Reservasi: ${bookingCode}\nBylumenia Studio`,
+                      location: eventLocation,
+                      dateStr: eventDate,
+                    })
+                  }
+                  className="px-5 py-2.5 rounded-full bg-purple-950/40 hover:bg-purple-900/60 border border-purple-500/30 text-purple-300 text-xs flex items-center gap-2 transition-colors"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Unduh File Kalender (.ics)</span>
+                </button>
+              </div>
+
               {/* Direct WhatsApp button to curator */}
-              <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+              <div className="pt-3 flex flex-col sm:flex-row items-center justify-center gap-3">
                 {curatorWaUrl && (
                   <a
                     href={curatorWaUrl}

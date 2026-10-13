@@ -31,6 +31,7 @@ export default function HeroSection({ onOpenBooking }: HeroSectionProps) {
           preload="auto"
           className="w-full h-full object-cover scale-105 filter brightness-75 contrast-105 transition-transform duration-1000 ease-out"
         >
+          <source src="/videos/hero-teaser.webm" type="video/webm" />
           <source src="/videos/hero-teaser.mp4" type="video/mp4" />
           {/* Fallback image if video fails */}
           <img
