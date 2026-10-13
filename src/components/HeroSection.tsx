@@ -48,41 +48,23 @@ export default function HeroSection({
     }
   }, [isPaused]);
 
-  // Reliable Autoplay + Sound Strategy
+  // Direct Autoplay visually rolling immediately without hesitation
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    // 1. Ensure video starts playing visually (muted is 100% permitted by all browsers)
+    // Guaranteed visual playback immediately on load
     video.muted = true;
-    video
-      .play()
-      .then(() => {
-        // 2. Video is rolling visually! Now attempt unmuting for domains with engagement
-        video.muted = false;
-        video.volume = 0.75;
-        const unmutePromise = video.play();
-        if (unmutePromise !== undefined) {
-          unmutePromise
-            .then(() => {
-              // Unmuted autoplay permitted!
-              setIsMuted(false);
-            })
-            .catch(() => {
-              // Browser requires user gesture to unmute: keep video rolling muted
-              video.muted = true;
-              setIsMuted(true);
-            });
-        }
-      })
-      .catch(() => {
-        // Fallback: force muted play
+    video.defaultMuted = true;
+    const playPromise = video.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(() => {
         video.muted = true;
-        setIsMuted(true);
         video.play().catch(() => {});
       });
+    }
 
-    // 3. Unlock audio on very first user gesture anywhere on screen
+    // Unlock audio seamlessly on very first user gesture anywhere on screen
     const unlockAudio = () => {
       if (videoRef.current && !videoRef.current.paused) {
         videoRef.current.muted = false;
@@ -204,36 +186,32 @@ export default function HeroSection({
             <p className="text-[10px] sm:text-[11px] text-neutral-400">Editorial &amp; Gestur</p>
           </div>
           <div className="col-span-2 sm:col-span-1">
-            <p className="text-white font-serif text-base sm:text-xl font-normal text-gold-300">Anti-Tabrakan</p>
-            <p className="text-[10px] sm:text-[11px] text-neutral-400">Kunci Jadwal 30 Menit</p>
+            <p className="text-white font-serif text-base sm:text-xl font-normal text-gold-300">Restu Waktu</p>
+            <p className="text-[10px] sm:text-[11px] text-neutral-400">Terkunci Hening Eksklusif</p>
           </div>
         </div>
       </div>
 
-      {/* Prominent Audio Toggle Button — Bottom-Left */}
+      {/* Audio Controller Indicator — Bottom-Left */}
       <button
         onClick={toggleMute}
-        className="fixed sm:absolute bottom-6 left-6 z-30 flex items-center gap-2.5 rounded-full transition-all shadow-lg active:scale-90"
+        className={`fixed sm:absolute bottom-6 left-6 z-30 flex items-center gap-2 rounded-full transition-all shadow-lg active:scale-95 px-3.5 py-2 border backdrop-blur-md ${
+          isMuted
+            ? "bg-obsidian-900/80 border-white/15 text-neutral-300 hover:text-white hover:border-gold-400/40"
+            : "bg-gold-400/20 border-gold-400/50 text-gold-400 shadow-[0_0_16px_rgba(212,175,55,0.3)]"
+        }`}
         title={isMuted ? "Putar Musik Latar" : "Senyapkan Musik"}
         aria-label="Audio Toggle"
       >
         {isMuted ? (
           <>
-            <span className="p-3.5 rounded-full border border-gold-400 bg-gold-400 text-obsidian-950 font-bold shadow-[0_0_20px_rgba(212,175,55,0.6)] animate-pulse">
-              <VolumeX className="w-5 h-5" />
-            </span>
-            <span className="px-3.5 py-2 rounded-full border border-gold-400/40 bg-obsidian-900/95 text-gold-300 text-xs font-medium tracking-wide shadow-xl backdrop-blur-md">
-              🔊 Ketuk untuk Musik
-            </span>
+            <VolumeX className="w-4 h-4 text-neutral-400" />
+            <span className="text-[11px] tracking-wide text-neutral-300 font-medium">Musik Hening (Ketuk Suara)</span>
           </>
         ) : (
           <>
-            <span className="p-3.5 rounded-full border backdrop-blur-md bg-gold-400/20 border-gold-400/50 text-gold-400 shadow-[0_0_16px_rgba(212,175,55,0.4)]">
-              <Volume2 className="w-5 h-5 animate-pulse" />
-            </span>
-            <span className="px-3 py-1.5 rounded-full border border-gold-400/40 bg-gold-400/15 text-gold-300 text-[11px] tracking-wide backdrop-blur-md">
-              Audio Sinematik Aktif ♪ (Ketuk untuk Hening)
-            </span>
+            <Volume2 className="w-4 h-4 text-gold-400 animate-pulse" />
+            <span className="text-[11px] tracking-wide text-gold-300 font-medium">Musik Mengalun ♪</span>
           </>
         )}
       </button>
