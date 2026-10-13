@@ -46,7 +46,16 @@ Model **Popup / Full-screen Drawer** yang sangat ramah pengguna *smartphone* (mo
 * **Gerbang Keamanan PIN**: Akses terproteksi kode rahasia kurator (Default: `1928`).
 * **Ringkasan Metrik**: Total reservasi, slot menunggu verifikasi, jadwal aktif, dan total DP masuk.
 * **Manajemen Jadwal**: Tabel interaktif dengan pratinjau bukti transfer *zoomable*, tombol konfirmasi/tolak jadwal, dan tautan kirim pesan WhatsApp otomatis dengan template sapaan santun.
+* **Ekspor Laporan (Excel / CSV & Print PDF)**: Kemudahan rekapitulasi data keuangan dan jadwal dengan 1-klik unduh spreadsheet atau cetak dokumen PDF resmi.
 * **Jejak Waktu (Audit Logs)**: Pencatatan waktu penahanan slot (*hold*), unggah bukti, konfirmasi kurator, dan pelepasan jadwal (*auto-release*).
+
+### 5. Otomasi & Fitur Lanjutan (Advanced Features)
+* **WhatsApp Automation (Fonnte Gateway)**: Pengiriman notifikasi otomatis *real-time* ke calon pengantin saat slot ditahan (*hold 30 menit*) serta saat pembayaran DP diverifikasi kurator.
+* **Sinkronisasi Kalender (Google Calendar & Apple/Outlook iCal)**: Tautan 1-klik untuk menambahkan jadwal pemotretan langsung ke Google Calendar atau mengunduh berkas `.ics`.
+* **Vercel Analytics & Speed Insights**: Monitoring performa web dan metrik pengguna secara *real-time* di produksi.
+* **Brand Assets & Favicon**: Favicon SVG mewah monogram 'B' dan Social Card Open Graph resolusi tinggi untuk pratinjau tautan media sosial.
+* **Floating Smooth Scroll-to-Top**: Tombol pintar melayang di kanan bawah untuk memudahkan navigasi ke atas.
+* **Sesi 3 Video Autoplay dengan Audio**: Video pada sesi komitmen berputar otomatis dengan audio sinematik serta tombol kontrol audio interaktif.
 
 ---
 
@@ -59,6 +68,8 @@ Model **Popup / Full-screen Drawer** yang sangat ramah pengguna *smartphone* (mo
 * **Database & ORM**: [Prisma ORM](https://www.prisma.io/)
   * *Lokal*: SQLite (`dev.db` zero-config)
   * *Produksi*: PostgreSQL (didukung penuh via Supabase / Neon / Vercel Postgres)
+* **Integrasi WhatsApp**: Fonnte API Gateway
+* **Analytics**: [@vercel/analytics](https://vercel.com/analytics) & [@vercel/speed-insights](https://vercel.com/speed-insights)
 
 ---
 

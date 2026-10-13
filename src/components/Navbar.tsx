@@ -21,17 +21,17 @@ export default function Navbar({ onOpenBooking }: NavbarProps) {
   }, []);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-40 px-4 pt-4 sm:pt-6 transition-all duration-300">
+    <header className="fixed top-0 left-0 right-0 z-40 px-3 sm:px-4 pt-3 sm:pt-6 transition-all duration-300">
       <nav
-        className={`max-w-6xl mx-auto rounded-full px-5 py-3 sm:px-7 sm:py-3.5 flex items-center justify-between transition-all duration-500 ${
+        className={`max-w-6xl mx-auto rounded-full px-4 py-2.5 sm:px-7 sm:py-3.5 flex items-center justify-between transition-all duration-500 ${
           scrolled
             ? "glass-nav shadow-glow border border-gold-400/20"
             : "bg-obsidian-900/60 backdrop-blur-md border border-white/10"
         }`}
       >
         {/* Brand Logo */}
-        <Link href="/" className="group flex items-center gap-2">
-          <span className="font-serif text-2xl sm:text-3xl tracking-widest text-white group-hover:text-gold-300 transition-colors uppercase font-light">
+        <Link href="/" className="group flex items-center gap-1.5 sm:gap-2 shrink-0">
+          <span className="font-serif text-xl sm:text-3xl tracking-widest text-white group-hover:text-gold-300 transition-colors uppercase font-light">
             Bylumenia
           </span>
           <span className="inline-block w-1.5 h-1.5 rounded-full bg-gold-400 shadow-[0_0_8px_#D4AF37] animate-pulse"></span>
@@ -68,19 +68,19 @@ export default function Navbar({ onOpenBooking }: NavbarProps) {
         </div>
 
         {/* Action Button */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <button
             onClick={onOpenBooking}
-            className="gold-gradient-btn px-4 py-2 sm:px-6 sm:py-2.5 rounded-full text-xs font-semibold tracking-wider uppercase flex items-center gap-2 shadow-lg hover:scale-105 active:scale-95 transition-all"
+            className="gold-gradient-btn px-3.5 py-1.5 sm:px-6 sm:py-2.5 rounded-full text-[11px] sm:text-xs font-semibold tracking-wider uppercase flex items-center gap-1.5 sm:gap-2 shadow-lg hover:scale-105 active:scale-95 transition-all"
           >
-            <Calendar className="w-3.5 h-3.5" />
+            <Calendar className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
             <span>Reservasi</span>
           </button>
 
           {/* Mobile menu toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 text-neutral-300 hover:text-white"
+            className="md:hidden p-1.5 text-neutral-300 hover:text-white active:scale-90 transition-transform"
             aria-label="Toggle Menu"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}

@@ -55,24 +55,24 @@ export default function HeroSection({ onOpenBooking }: HeroSectionProps) {
         </div>
 
         {/* Main Headline */}
-        <h1 className="font-serif text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-light text-white tracking-tight leading-[1.08] mb-6 max-w-4xl">
+        <h1 className="font-serif text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-light text-white tracking-tight leading-[1.12] sm:leading-[1.08] mb-5 max-w-4xl">
           Bukan Dimana Kita Menemukan, Tapi{" "}
-          <span className="italic font-normal gold-gradient-text">
+          <span className="italic font-normal gold-gradient-text block sm:inline mt-1 sm:mt-0">
             Bagaimana Kita Menenun Rasa.
           </span>
         </h1>
 
         {/* Poetic Subheadline */}
-        <p className="max-w-2xl text-sm sm:text-base md:text-lg text-neutral-300/90 font-light leading-relaxed mb-10 tracking-wide">
+        <p className="max-w-2xl text-xs sm:text-base md:text-lg text-neutral-300/90 font-light leading-relaxed mb-8 sm:mb-10 tracking-wide px-2 sm:px-0">
           Bylumenia merekam kedalaman emosi, gestur mikro, dan keabadian cinta di atas sekadar kuantitas.
           Kami hanya menerima <span className="text-gold-300 font-normal">satu pasangan dalam satu hari</span> agar fokus semesta kami utuh untuk kalian.
         </p>
 
         {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
+        <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 w-full sm:w-auto max-w-xs sm:max-w-none">
           <button
             onClick={onOpenBooking}
-            className="gold-gradient-btn w-full sm:w-auto px-8 py-4 rounded-full text-xs sm:text-sm font-semibold tracking-widest uppercase flex items-center justify-center gap-3 shadow-2xl hover:scale-105 active:scale-95 transition-all group"
+            className="gold-gradient-btn w-full sm:w-auto px-7 py-3.5 sm:px-8 sm:py-4 rounded-full text-xs sm:text-sm font-semibold tracking-widest uppercase flex items-center justify-center gap-3 shadow-2xl hover:scale-105 active:scale-95 transition-all group"
           >
             <span>Ikrarkan Jadwal Kami</span>
             <span className="inline-block transition-transform group-hover:translate-x-1">&rarr;</span>
@@ -80,33 +80,33 @@ export default function HeroSection({ onOpenBooking }: HeroSectionProps) {
 
           <a
             href="#galeri"
-            className="glass-panel glass-panel-hover w-full sm:w-auto px-8 py-4 rounded-full text-xs sm:text-sm text-neutral-200 tracking-widest uppercase font-medium flex items-center justify-center gap-2"
+            className="glass-panel glass-panel-hover w-full sm:w-auto px-7 py-3.5 sm:px-8 sm:py-4 rounded-full text-xs sm:text-sm text-neutral-200 tracking-widest uppercase font-medium flex items-center justify-center gap-2 active:scale-95 transition-all"
           >
             <span>Kisah Kamu</span>
           </a>
         </div>
 
         {/* Trust Badges */}
-        <div className="mt-14 grid grid-cols-2 sm:grid-cols-3 gap-6 sm:gap-12 pt-8 border-t border-white/10 text-neutral-400 text-xs sm:text-sm tracking-wider uppercase">
+        <div className="mt-10 sm:mt-14 grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-12 pt-6 sm:pt-8 border-t border-white/10 text-neutral-400 text-xs sm:text-sm tracking-wider uppercase w-full">
           <div>
-            <p className="text-white font-serif text-lg sm:text-xl font-normal text-gold-300">1 Pasangan</p>
-            <p className="text-[11px] text-neutral-400">Komitmen Fokus Per Hari</p>
+            <p className="text-white font-serif text-base sm:text-xl font-normal text-gold-300">1 Pasangan</p>
+            <p className="text-[10px] sm:text-[11px] text-neutral-400">Fokus Penuh Per Hari</p>
           </div>
           <div>
-            <p className="text-white font-serif text-lg sm:text-xl font-normal text-gold-300">Sinematik</p>
-            <p className="text-[11px] text-neutral-400">Editorial & Gestur Mikro</p>
+            <p className="text-white font-serif text-base sm:text-xl font-normal text-gold-300">Sinematik</p>
+            <p className="text-[10px] sm:text-[11px] text-neutral-400">Editorial &amp; Gestur</p>
           </div>
           <div className="col-span-2 sm:col-span-1">
-            <p className="text-white font-serif text-lg sm:text-xl font-normal text-gold-300">Anti-Tabrakan</p>
-            <p className="text-[11px] text-neutral-400">Kunci Jadwal 30 Menit</p>
+            <p className="text-white font-serif text-base sm:text-xl font-normal text-gold-300">Anti-Tabrakan</p>
+            <p className="text-[10px] sm:text-[11px] text-neutral-400">Kunci Jadwal 30 Menit</p>
           </div>
         </div>
       </div>
 
-      {/* Floating Sound Toggle */}
+      {/* Floating Sound Toggle on Bottom-Left (so it does not collide with scroll-to-top) */}
       <button
         onClick={toggleMute}
-        className="absolute bottom-6 right-6 z-20 p-3 rounded-full glass-panel border border-white/10 text-neutral-300 hover:text-gold-300 transition-colors shadow-lg"
+        className="fixed sm:absolute bottom-6 left-6 z-30 p-3 rounded-full glass-panel border border-white/15 text-neutral-300 hover:text-gold-300 active:scale-90 transition-all shadow-lg bg-obsidian-900/80 backdrop-blur-md"
         title={isMuted ? "Putar Audio Teaser" : "Senyapkan Audio"}
         aria-label="Audio Toggle"
       >

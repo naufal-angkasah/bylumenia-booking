@@ -8,6 +8,7 @@ import PackagesSection from "@/components/PackagesSection";
 import PhilosophySection from "@/components/PhilosophySection";
 import Footer from "@/components/Footer";
 import BookingModal from "@/components/BookingModal";
+import ScrollToTop from "@/components/ScrollToTop";
 import { PackageItem } from "@/lib/constants";
 
 export default function Home() {
@@ -50,6 +51,9 @@ export default function Home() {
         onClose={() => setBookingModalOpen(false)}
         preSelectedPackage={selectedPackage}
       />
+
+      {/* Floating Auto Scroll-to-Top Button */}
+      <ScrollToTop />
     </main>
   );
 }

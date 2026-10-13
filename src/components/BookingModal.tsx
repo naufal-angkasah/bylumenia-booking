@@ -19,6 +19,8 @@ import {
   Phone,
   User,
   Download,
+  Volume2,
+  VolumeX,
 } from "lucide-react";
 import confetti from "canvas-confetti";
 import {
@@ -119,13 +121,41 @@ export default function BookingModal({
     },
   };
 
-  // Switch video source smoothly
+  const [videoMuted, setVideoMuted] = useState(true);
+
+  // Switch video source smoothly & autoplay with audio on Step 3
   useEffect(() => {
     if (videoRef.current) {
+      if (step === 3) {
+        // Step 3: Auto play with sound!
+        videoRef.current.muted = false;
+        videoRef.current.volume = 0.75;
+        setVideoMuted(false);
+      } else {
+        videoRef.current.muted = true;
+        setVideoMuted(true);
+      }
+
       videoRef.current.load();
-      videoRef.current.play().catch(() => {});
+      videoRef.current.play().catch(() => {
+        // Fallback if browser blocks unmuted autoplay
+        if (step === 3 && videoRef.current) {
+          videoRef.current.muted = true;
+          setVideoMuted(true);
+          videoRef.current.play().catch(() => {});
+        }
+      });
     }
   }, [step]);
+
+  const toggleModalAudio = () => {
+    if (videoRef.current) {
+      const nextMuted = !videoMuted;
+      videoRef.current.muted = nextMuted;
+      if (!nextMuted) videoRef.current.volume = 0.75;
+      setVideoMuted(nextMuted);
+    }
+  };
 
   // Check date when eventDate changes
   useEffect(() => {
@@ -368,6 +398,26 @@ export default function BookingModal({
           {/* Vignette & Gradients */}
           <div className="absolute inset-0 bg-gradient-to-t from-obsidian-950 via-obsidian-950/40 to-transparent" />
           <div className="absolute inset-0 bg-black/30" />
+
+          {/* Sound Toggle for Modal Video */}
+          <button
+            onClick={toggleModalAudio}
+            type="button"
+            className="absolute top-4 left-4 z-20 p-2 rounded-full bg-black/60 border border-white/15 text-neutral-300 hover:text-gold-300 transition-colors flex items-center gap-1.5 text-[10px]"
+            title={videoMuted ? "Putar Audio" : "Senyapkan Audio"}
+          >
+            {videoMuted ? (
+              <>
+                <VolumeX className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Audio Hening</span>
+              </>
+            ) : (
+              <>
+                <Volume2 className="w-3.5 h-3.5 text-gold-400 animate-pulse" />
+                <span className="hidden sm:inline text-gold-300">Audio Aktif</span>
+              </>
+            )}
+          </button>
 
           {/* Story Quote & Section Chapter */}
           <div className="relative z-10 text-white">

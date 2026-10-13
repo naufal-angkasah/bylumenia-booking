@@ -57,6 +57,12 @@ export default function GallerySection() {
                   src={item.imageUrl}
                   alt={item.title}
                   loading="lazy"
+                  onError={(e) => {
+                    const target = e.currentTarget;
+                    if (!target.src.includes("photo-1519741497674")) {
+                      target.src = "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1000&q=80";
+                    }
+                  }}
                   className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-108 filter brightness-90 group-hover:brightness-100"
                 />
               </div>

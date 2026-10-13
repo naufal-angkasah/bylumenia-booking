@@ -38,7 +38,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     subtitle: "Tetes air siraman, senyum syahdu pembersih jiwa",
     category: "Adat & Budaya",
     aspect: "tall",
-    imageUrl: "https://images.unsplash.com/photo-1609151162377-794fad304870?auto=format&fit=crop&w=1000&q=80",
+    imageUrl: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=1000&q=80",
   },
   {
     id: "gal-5",
