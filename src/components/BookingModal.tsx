@@ -90,31 +90,27 @@ export default function BookingModal({
   }, [preSelectedPackage]);
 
   // Handle Video Transition per Step
-  const stepVideos: Record<number, { src: string; webmSrc: string; quote: string; title: string }> = {
+  const stepVideos: Record<number, { src: string; quote: string; title: string }> = {
     1: {
       src: "/videos/story-01-heritage.mp4",
-      webmSrc: "/videos/story-01-heritage.webm",
       title: "Babak I • Titik Temu & Skenario Semesta",
       quote:
         "“Segala skenario semesta menuntun kita pada satu titik temu. Dari dua dunia yang berbeda, dua hati yang saling mencari, hingga akhirnya kita berlabuh dalam dekap restu yang sama.”",
     },
     2: {
       src: "/videos/story-02-mazi.mp4",
-      webmSrc: "/videos/story-02-mazi.webm",
       title: "Babak II • Menenun Rasa & Keteduhan Baru",
       quote:
         "“Witing tresna jalaran soko kulino, witing mulyo jalaran wani rekoso. Di hadapan dua keluarga, bagaimana kalian ingin keteduhan ini diabadikan?”",
     },
     3: {
       src: "/videos/hero-teaser.mp4",
-      webmSrc: "/videos/hero-teaser.webm",
       title: "Babak III • Mengunci Komitmen & Tanda Jadi",
       quote:
         "“Kami hanya menerima satu pasangan dalam satu hari agar fokus semesta kami utuh. Hari bahagia ini kami tahan untuk kalian selama 30 menit.”",
     },
     4: {
       src: "/videos/story-01-heritage.mp4",
-      webmSrc: "/videos/story-01-heritage.webm",
       title: "Ikrar Tersemat • Babak Abadi Dimulai",
       quote:
         "“Bismillah, kita mulai merangkai semesta kita sendiri, selamanya.”",
@@ -391,7 +387,6 @@ export default function BookingModal({
             playsInline
             className="absolute inset-0 w-full h-full object-cover filter brightness-70 contrast-105 transition-opacity duration-700"
           >
-            <source src={stepVideos[step].webmSrc} type="video/webm" />
             <source src={stepVideos[step].src} type="video/mp4" />
           </video>
 
