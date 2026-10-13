@@ -19,9 +19,9 @@ export default function PhilosophySection() {
     },
     {
       icon: ShieldCheck,
-      title: "Anti-Tabrakan Jadwal 30 Menit",
+      title: "Restu Waktu yang Terjaga",
       description:
-        "Sistem kami menahan tanggal pilihan kalian selama 30 menit saat pengisian komitmen berlangsung, memastikan tidak ada tumpang tindih waktu dengan calon lain.",
+        "Setiap tanggal yang kalian pilih kami kunci secara hening dan eksklusif khusus untuk cerita kalian, memastikan ketenangan penuh tanpa tumpang tindih waktu.",
     },
     {
       icon: Compass,

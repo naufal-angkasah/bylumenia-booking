@@ -2,31 +2,33 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Calendar, Menu, X, ShieldCheck } from "lucide-react";
+import { Calendar, Menu, X, ShieldCheck, Volume2, VolumeX } from "lucide-react";
 
 interface NavbarProps {
   onOpenBooking: () => void;
+  isMuted?: boolean;
+  onToggleAudio?: () => void;
 }
 
-export default function Navbar({ onOpenBooking }: NavbarProps) {
+export default function Navbar({ onOpenBooking, isMuted = true, onToggleAudio }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 40);
+      setScrolled(window.scrollY > 20);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-40 px-3 sm:px-4 pt-3 sm:pt-6 transition-all duration-300">
+    <header className="fixed top-4 left-0 right-0 z-40 px-3 sm:px-6 transition-all duration-300 pointer-events-none">
       <nav
-        className={`max-w-6xl mx-auto rounded-full px-4 py-2.5 sm:px-7 sm:py-3.5 flex items-center justify-between transition-all duration-500 ${
+        className={`max-w-6xl mx-auto rounded-full px-4 py-2 sm:px-6 sm:py-2.5 flex items-center justify-between transition-all duration-500 pointer-events-auto ${
           scrolled
-            ? "glass-nav shadow-glow border border-gold-400/20"
-            : "bg-obsidian-900/60 backdrop-blur-md border border-white/10"
+            ? "glass-nav shadow-glow border border-gold-400/25 bg-obsidian-950/85 backdrop-blur-xl"
+            : "bg-obsidian-900/75 backdrop-blur-md border border-white/10 shadow-lg"
         }`}
       >
         {/* Brand Logo */}
@@ -67,8 +69,32 @@ export default function Navbar({ onOpenBooking }: NavbarProps) {
           </Link>
         </div>
 
-        {/* Action Button */}
+        {/* Action Button & Audio Toggle */}
         <div className="flex items-center gap-2 sm:gap-3">
+          {/* Integrated Audio Control Pill */}
+          {onToggleAudio && (
+            <button
+              onClick={onToggleAudio}
+              type="button"
+              className={`p-2 sm:px-3 sm:py-1.5 rounded-full border transition-all duration-300 flex items-center gap-1.5 text-xs ${
+                isMuted
+                  ? "bg-white/5 border-white/15 text-neutral-400 hover:text-white hover:border-white/30"
+                  : "bg-gold-400/20 border-gold-400/50 text-gold-400 shadow-[0_0_12px_rgba(212,175,55,0.4)]"
+              }`}
+              title={isMuted ? "Putar Musik Latar" : "Senyapkan Musik"}
+              aria-label="Audio Toggle"
+            >
+              {isMuted ? (
+                <VolumeX className="w-3.5 h-3.5" />
+              ) : (
+                <Volume2 className="w-3.5 h-3.5 animate-pulse" />
+              )}
+              <span className="hidden lg:inline text-[10px] tracking-wider uppercase font-medium">
+                {isMuted ? "Musik" : "Musik ♪"}
+              </span>
+            </button>
+          )}
+
           <button
             onClick={onOpenBooking}
             className="gold-gradient-btn px-3.5 py-1.5 sm:px-6 sm:py-2.5 rounded-full text-[11px] sm:text-xs font-semibold tracking-wider uppercase flex items-center gap-1.5 sm:gap-2 shadow-lg hover:scale-105 active:scale-95 transition-all"

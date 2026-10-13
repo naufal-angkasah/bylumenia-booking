@@ -14,6 +14,7 @@ import { PackageItem } from "@/lib/constants";
 export default function Home() {
   const [bookingModalOpen, setBookingModalOpen] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState<PackageItem | null>(null);
+  const [isMuted, setIsMuted] = useState(true);
 
   const handleOpenBooking = () => {
     setSelectedPackage(null);
@@ -25,27 +26,41 @@ export default function Home() {
     setBookingModalOpen(true);
   };
 
+  const handleToggleAudio = () => {
+    setIsMuted((prev) => !prev);
+  };
+
   return (
     <main className="min-h-screen bg-obsidian-950 text-white selection:bg-gold-400 selection:text-black">
-      {/* Floating Capsule Navbar */}
-      <Navbar onOpenBooking={handleOpenBooking} />
+      {/* Floating Capsule Navbar with Integrated Audio Controller */}
+      <Navbar
+        onOpenBooking={handleOpenBooking}
+        isMuted={isMuted}
+        onToggleAudio={handleToggleAudio}
+      />
 
       {/* Hero Section with Looped Teaser Video */}
-      <HeroSection onOpenBooking={handleOpenBooking} isPaused={bookingModalOpen} />
+      <HeroSection
+        onOpenBooking={handleOpenBooking}
+        isPaused={bookingModalOpen}
+        isMuted={isMuted}
+        onToggleMute={handleToggleAudio}
+        onAudioChange={setIsMuted}
+      />
 
-      {/* Galeri "Kisah Kamu" (Adaptive to Instagram Feed) */}
+      {/* Modul "Kisah Kami" — Slider Otomatis Portofolio Asli 4 Detik & Galeri */}
       <GallerySection />
 
-      {/* Curated Packages */}
+      {/* Katalog Lembaran Cerita & Ruang Lingkup */}
       <PackagesSection onSelectPackage={handleSelectPackage} />
 
-      {/* Boutique Philosophy & Anti-Collision Engine */}
+      {/* Filosofi Butik & Restu Waktu yang Terjaga */}
       <PhilosophySection />
 
       {/* Footer */}
       <Footer />
 
-      {/* Interactive 3-Stage Cinematic Booking Popup */}
+      {/* Alur Reservasi Sinematik 5 Babak */}
       <BookingModal
         isOpen={bookingModalOpen}
         onClose={() => setBookingModalOpen(false)}

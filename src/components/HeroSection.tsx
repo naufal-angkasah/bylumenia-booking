@@ -6,11 +6,36 @@ import { Sparkles, Volume2, VolumeX, ArrowDown } from "lucide-react";
 interface HeroSectionProps {
   onOpenBooking: () => void;
   isPaused?: boolean;
+  isMuted?: boolean;
+  onToggleMute?: () => void;
+  onAudioChange?: (muted: boolean) => void;
 }
 
-export default function HeroSection({ onOpenBooking, isPaused }: HeroSectionProps) {
+export default function HeroSection({
+  onOpenBooking,
+  isPaused,
+  isMuted: propIsMuted,
+  onToggleMute,
+  onAudioChange,
+}: HeroSectionProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [isMuted, setIsMuted] = useState(true);
+  const [internalMuted, setInternalMuted] = useState(true);
+
+  const isMuted = propIsMuted !== undefined ? propIsMuted : internalMuted;
+  const setIsMuted = (val: boolean) => {
+    setInternalMuted(val);
+    onAudioChange?.(val);
+  };
+
+  // Sync external isMuted changes to video element
+  useEffect(() => {
+    if (!videoRef.current) return;
+    videoRef.current.muted = isMuted;
+    if (!isMuted && !isPaused) {
+      videoRef.current.volume = 0.75;
+      videoRef.current.play().catch(() => {});
+    }
+  }, [isMuted, isPaused]);
 
   // Pause hero background video when booking modal is open to avoid audio clashing
   useEffect(() => {
@@ -82,9 +107,14 @@ export default function HeroSection({ onOpenBooking, isPaused }: HeroSectionProp
       window.removeEventListener("scroll", unlockAudio);
       window.removeEventListener("keydown", unlockAudio);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const toggleMute = () => {
+    if (onToggleMute) {
+      onToggleMute();
+      return;
+    }
     if (videoRef.current) {
       const next = !isMuted;
       videoRef.current.muted = next;
