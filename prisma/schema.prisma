@@ -1,0 +1,47 @@
+// Prisma schema for Bylumenia Booking System
+// Easily switch between SQLite (local development) and PostgreSQL (Supabase / Neon production)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Booking {
+  id            String      @id @default(uuid())
+  bookingCode   String      @unique
+  coupleName    String
+  whatsapp      String
+  eventDate     String      // YYYY-MM-DD format for timezone-safe calendar matching
+  eventLocation String
+  aestheticMood String      // "Teduh dan Khidmat" | "Anggun Berbalut Cerita" | "Riuh Penuh Tawa"
+  packageName   String      // "Babak Awal" | "Hari Penyatuan Janji" | "Perjalanan Utuh"
+  totalPrice    Float
+  downPayment   Float       // 30% DP + 3-digit unique code
+  proofFileUrl  String?
+  status        String      @default("HOLD") // HOLD, PENDING_VERIFY, CONFIRMED, REJECTED, EXPIRED
+  holdExpiresAt DateTime
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  logs          SystemLog[]
+}
+
+model FormConfig {
+  sectionKey String   @id
+  videoUrl   String
+  storyQuote String
+  updatedAt  DateTime @updatedAt
+}
+
+model SystemLog {
+  id         Int      @id @default(autoincrement())
+  bookingId  String?
+  booking    Booking? @relation(fields: [bookingId], references: [id], onDelete: SetNull)
+  actionType String   // HOLD_CREATED, PROOF_UPLOADED, CONFIRMED, EXPIRED, CANCELLED
+  executedBy String   // "SYSTEM", "CLIENT", "CURATOR_ADMIN"
+  notes      String?
+  loggedAt   DateTime @default(now())
+}
