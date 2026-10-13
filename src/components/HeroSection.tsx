@@ -5,11 +5,22 @@ import { Sparkles, Volume2, VolumeX, ArrowDown } from "lucide-react";
 
 interface HeroSectionProps {
   onOpenBooking: () => void;
+  isPaused?: boolean;
 }
 
-export default function HeroSection({ onOpenBooking }: HeroSectionProps) {
+export default function HeroSection({ onOpenBooking, isPaused }: HeroSectionProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isMuted, setIsMuted] = useState(false);
+
+  // Pause/mute hero background video when modal is open to avoid audio clashing
+  useEffect(() => {
+    if (!videoRef.current) return;
+    if (isPaused) {
+      videoRef.current.pause();
+    } else {
+      videoRef.current.play().catch(() => {});
+    }
+  }, [isPaused]);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -35,7 +46,7 @@ export default function HeroSection({ onOpenBooking }: HeroSectionProps) {
           video.play().catch(() => {});
 
           const unlockAudio = () => {
-            if (videoRef.current) {
+            if (videoRef.current && !isPaused) {
               videoRef.current.muted = false;
               videoRef.current.volume = 0.75;
               setIsMuted(false);
@@ -50,7 +61,7 @@ export default function HeroSection({ onOpenBooking }: HeroSectionProps) {
           window.addEventListener("scroll", unlockAudio, { once: true });
         });
     }
-  }, []);
+  }, [isPaused]);
 
   const toggleMute = () => {
     if (videoRef.current) {

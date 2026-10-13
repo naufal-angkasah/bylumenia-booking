@@ -31,7 +31,7 @@ export default function Home() {
       <Navbar onOpenBooking={handleOpenBooking} />
 
       {/* Hero Section with Looped Teaser Video */}
-      <HeroSection onOpenBooking={handleOpenBooking} />
+      <HeroSection onOpenBooking={handleOpenBooking} isPaused={bookingModalOpen} />
 
       {/* Galeri "Kisah Kamu" (Adaptive to Instagram Feed) */}
       <GallerySection />

@@ -117,38 +117,44 @@ export default function BookingModal({
     },
   };
 
-  const [videoMuted, setVideoMuted] = useState(true);
+  const [videoMuted, setVideoMuted] = useState(false);
 
-  // Switch video source smoothly & autoplay with audio on Step 3
+  // Play video with audio immediately when modal opens and on all steps
   useEffect(() => {
-    if (videoRef.current) {
-      if (step === 3) {
-        // Step 3: Auto play with sound!
-        videoRef.current.muted = false;
-        videoRef.current.volume = 0.75;
-        setVideoMuted(false);
-      } else {
-        videoRef.current.muted = true;
-        setVideoMuted(true);
+    if (!isOpen) {
+      if (videoRef.current) {
+        videoRef.current.pause();
       }
-
-      videoRef.current.load();
-      videoRef.current.play().catch(() => {
-        // Fallback if browser blocks unmuted autoplay
-        if (step === 3 && videoRef.current) {
-          videoRef.current.muted = true;
-          setVideoMuted(true);
-          videoRef.current.play().catch(() => {});
-        }
-      });
+      return;
     }
-  }, [step]);
+
+    if (videoRef.current) {
+      const video = videoRef.current;
+      video.muted = videoMuted;
+      video.volume = 0.75;
+      video.load();
+
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.catch((err) => {
+          console.warn("Modal unmuted autoplay blocked by browser:", err);
+          if (videoRef.current) {
+            videoRef.current.muted = true;
+            setVideoMuted(true);
+            videoRef.current.play().catch(() => {});
+          }
+        });
+      }
+    }
+  }, [step, isOpen]);
 
   const toggleModalAudio = () => {
     if (videoRef.current) {
       const nextMuted = !videoMuted;
       videoRef.current.muted = nextMuted;
-      if (!nextMuted) videoRef.current.volume = 0.75;
+      if (!nextMuted) {
+        videoRef.current.volume = 0.75;
+      }
       setVideoMuted(nextMuted);
     }
   };
