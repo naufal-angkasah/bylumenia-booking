@@ -1,0 +1,212 @@
+Total pages: 4
+
+=== PAGE 1 ===
+PRODUCT ENGINEERING SPECIFICATION • V1.0
+Sistem Pemesanan Sinematik & Dasbor Manajemen
+Bylumenia
+Panduan Implementasi Pengembang Fullstack • Estetika Minimalis Glassmorphism & Mesin Storytelling Interaktif
+Objektif: Filter Klien Berkualitas, Kunci Jadwal Anti Tabrakan, &
+Otomasi Validasi DP
+Area: Semarang & Luar Kota Stack: Next.js +
+PostgreSQL
+1. VISI PRODUK & LANDASAN BRAND BYLUMENIA
+Bylumenia merupakan butik visual pernikahan dan prewedding yang memprioritaskan kedalaman emosi, gestur
+mikro, serta keabadian rasa di atas sekadar kuantitas sesi foto massal. Sistem ini dibangun untuk menggantikan
+formulir pemesanan konvensional yang kaku menjadi ruang temu yang hangat. Calon klien tidak sekadar mengisi
+data administratif, melainkan dihantar melalui narasi puitis yang menyaring kesungguhan visi mereka sebelum
+membuka akses investasi dan komitmen jadwal secara resmi.
+2. DESAIN ANTARMUKA GLASSMORPHISM & FLOATING NAVBAR
+Spesiﬁkasi Glassmorphic (Dark Luxury) UI Spec
+• Latar Dasar: Obsidian Black (#0A0A0A) berpadu tekstur
+vignette halus.
+• Kartu Kaca: Background rgba(255, 255, 255, 0.04) + blur
+16px.
+• Batas Halus: 1px solid rgba(255, 255, 255, 0.09) dengan
+lengkung 12px.
+• Aksen Warna: Warm Champagne Gold (#D4AF37 /
+#C29B68) pada tombol aktif.
+• Tipograﬁ: Serif elegan pada judul babak, Sans-serif bersih
+pada input.
+Floating Navbar & Prinsip Bahasa
+Manusia
+Aturan
+Keras
+• Kapsul Melayang: Fixed top (20px), rounded-full,
+backdrop blur puitis.
+• Pantangan Bahasa Sistem: Dilarang keras memakai
+istilah teknis kaku (misal: "Error", "Validasi Gagal", "Submit
+Form", "Data Berhasil Disimpan").
+• Bahasa Manusiawi: Seluruh peringatan dan status wajib
+bersuara santun, hangat, dan puitis layaknya kurator yang
+menyapa langsung.
+Referensi Kolase Visual Terkurasi (Arsip Portofolio Instagram
+Bylumenia)
+Mood: Dramatis, Siraman Adat, Gaun Megah, & Cinta yang
+Santai
+Petunjuk Pengembang untuk Halaman Pembuka:
+Tepat di atas formulir, susun galeri grid dinamis 5 bingkai yang mengadaptasi foto feed bylumenia:
+siluet gaun putih dengan veil panjang melayang, cincin di atas batuan tekstur alam, pasangan
+bersanding anggun dalam kebaya beludru merah marun berlatar gebyok kayu, senyum syahdu siraman
+melati, serta kehangatan tawa kasual di padang terbuka.
+Visual ini berfungsi mengunci standar ekspektasi estetika sebelum pengguna menyentuh tahap
+pemilihan paket.
+Bylumenia Engineering Document • Sistem Reservasi & Backoﬃce Halaman 1 dari 4
+=== PAGE 2 ===
+3. SPESIFIKASI ALUR FORMULIR SINEMATIK KLIEN (5 BABAK)
+Formulir dirancang satu babak per layar penuh. Pergantian babak ditandai oleh transisi video latar belakang yang berbeda dan
+pemuatan narasi yang menggugah emosi calon pengantin.
+Babak 1: Titik Temu & Skenario Semesta Video Google Drive: Klip 01 • Gerak Lambat Sepasang Kekasih
+"Segala skenario semesta menuntun kita pada satu titik temu. Dari dua dunia yang berbeda, dua hati yang saling
+mencari, dua kebiasaan yang perlahan melebur jadi satu, hingga akhirnya kita berlabuh dalam dekap restu yang sama."
+Komponen Input: Nama Lengkap Pasangan, Nomor WhatsApp Aktif, Kalender Interaktif Tanggal Pernikahan.
+Logika Sistem: Saat tanggal dipilih, panggil API ketersediaan jadwal. Jika tanggal kosong, tampilkan konﬁrmasi hangat:
+"Semesta merestui hari itu, pintu jadwal kami masih terbuka." Jika penuh, tawarkan opsi antrean tunggu.
+Babak 2: Menenun Rasa & Keteduhan Baru Video Google Drive: Klip 02 • Momen Sungkeman & Air Mata Haru
+"Witing tresna jalaran soko kulino, witing mulyo jalaran wani rekoso. Cinta bersemi dari kebersamaan yang terjalin, dan
+kemuliaan hidup lahir dari keberanian menapaki proses berdua. Di hadapan dua keluarga, bagaimana kalian ingin
+keteduhan ini diabadikan?"
+Pilihan Kartu Visual (Radio Selector):
+1. Teduh dan Khidmat: Menangkap getaran doa orang tua, restu keluarga, dan heningnya janji suci tanpa kilau bising.
+2. Anggun Berbalut Cerita: Keindahan kain tradisional, siluet megah kebaya adat, dan visual editorial yang tak lekang zaman.
+3. Riuh Penuh Tawa: Pelukan hangat sahabat, tawa lepas tanpa rekayasa, dan selebrasi bahagia yang mengalir alami.
+Babak 3: Ruang Lingkup & Tempat Merajut Kasih Video Google Drive: Klip 03 • Transisi Fajar Menuju Resepsi Malam
+"Dua cerita dan dua akar pohon menyatu, menjelma menjadi rindang keteduhan yang baru. Dari tatap mata berdua
+hingga perayaan besar di hadapan keluarga, izinkan kami menemani setiap lembar perjalanannya."
+Katalog Pilihan Paket (Rentang Pasar Semarang):
+• Babak Awal (Prewedding Session): Dokumentasi tatap mata berdua sebelum hari besar (Rp2.500.000 – Rp4.500.000).
+• Hari Penyatuan Janji (Wedding Day): Rekam jejak fajar akad hingga pesta usai (Rp5.000.000 – Rp8.500.000).
+• Perjalanan Utuh (Complete Journey): Rangkaian utuh prewedding hingga hari resepsi (Rp9.000.000 – Rp15.000.000).
+Kolom Lokasi: Pilihan Kota dan Nama Tempat/Gedung Acara (Semarang atau Luar Kota).
+Babak 4: Mengunci Komitmen
+Klip 04 • Lembaran Album Linen Terbuka
+"Kami hanya menerima satu pasangan dalam satu hari
+agar fokus kami utuh. Hari bahagia ini kami tahan untuk
+kalian selama 30 menit."
+• Nilai Uang Muka (DP 30% dari paket terpilih).
+• Pilihan Pembayaran QRIS & Transfer Rekening Bank.
+• Hitungan mundur lembut tanpa nada mendesak yang
+bising.
+Babak 5: Menitipkan Bukti Janji
+Klip 05 • Pasangan Berjalan Menuju Pintu
+"Bismillah, kita mulai merangkai semesta kita sendiri,
+selamanya. Sematkan bukti tanda komitmen kalian di sini."
+• Tombol Kirim: Ikrarkan Jadwal & Kirim Cerita Kami.
+• Teks Penutup di Layar (Wajib Persis):
+"Terima kasih sudah mempercayakan hari paling berharga
+kalian kepada kami. Lembaran cerita kalian sudah tersimpan
+aman di buku catatan kami. Tim kami sedang meninjau tanda
+jadi ini dan akan segera menyapa kalian lewat WhatsApp
+dalam hitungan jam untuk mulai mengobrol santai soal konsep
+visual nanti."
+Bylumenia Engineering Document • Sistem Reservasi & Backoﬃce Halaman 2 dari 4
+=== PAGE 3 ===
+4. MESIN PENCEGAHAN TABRAKAN JADWAL (ANTI DOUBLE-BOOKING ENGINE)
+Untuk memastikan dua calon pengantin tidak membayar untuk tanggal yang sama di menit yang bersamaan, sistem
+menerapkan mesin status penahanan sementara berbasis Redis Cache dengan waktu kedaluwarsa 30 menit.
+AVAILABLE
+Slot Terbuka
+Pilih Tgl HOLD (30 Menit)
+Kunci Sementara
+Unggah Slip PENDING VERIFY
+Tinjau Bukti Bayar
+CONFIRMED (LOCKED)
+SPK & Kalender Terkunci
+REJECTED / EXPIRED
+Kembali ke PublikBatas Waktu Habis (Auto Release)
+5. PENANGANAN VIDEO LATAR BELAKANG (INTEGRASI LINK GOOGLE DRIVE)
+Arsitektur Streaming Video Google Drive: Pengembang tidak diperbolehkan memakai elemen iframe pratinjau Drive
+karena memunculkan bilah kontrol Google. Gunakan Google Drive File ID yang dikonversi melalui fungsi backend atau API
+stream langsung menjadi source URL murni.
+Endpoint Pemutar: /api/v1/stream-video?driveId={GOOGLE_DRIVE_FILE_ID}&section={1..5}
+Format Output: HTML5 <video autoPlay loop muted playsInline preload="auto">
+• Optimasi Bobot: Terapkan teknik lazy-loading sehingga video babak 2 tidak dimuat sebelum babak 1 diselesaikan.
+• Fallback Otomatis: Sediakan gambar diam beresolusi tinggi bila kecepatan jaringan pengguna lambat.
+• Transisi Mulus: Berikan efek cross-fade opacity selama 800ms ketika pengguna berpindah babak formulir.
+6. MODUL PEMBAYARAN & VALIDASI BUKTI TRANSFER
+Kanal QRIS & Transfer Bank
+• QRIS Interaktif: Kode QR ditampilkan di layar dengan
+tombol cepat "Unduh Gambar QR" untuk pembayaran lewat
+galeri ponsel.
+• Transfer Manual: Menampilkan Rekening BCA dan Mandiri
+resmi Lumenia dilengkapi tombol salin satu sentuhan.
+• Kode Unik Otomatis: Tambahkan 3 digit acak di belakang
+nominal DP (contoh: Rp1.500.412) guna mempermudah
+rekonsiliasi manual.
+Validasi Berkas & Sapaan Ramah Pengguna
+• Filter Upload: Batasi ekstensi ke .jpg, .jpeg, .png, dan .pdf
+dengan ukuran maksimal 5 MB.
+• Sapaan Validasi: Jika berkas buram atau kosong, ganti
+peringatan sistem menjadi kalimat santun: "Foto tanda bukti
+belum terbaca jelas, mari coba sematkan sekali lagi."
+• Pemicu Webhook: Begitu bukti tersemat, sistem otomatis
+mengirimkan data ke kurator tanpa jeda.
+Bylumenia Engineering Document • Sistem Reservasi & Backoﬃce Halaman 3 dari 4
+=== PAGE 4 ===
+7. ARSITEKTUR DASBOR ADMIN (INTERNAL BACKOFFICE)
+Dasbor manajemen internal dirancang dengan navigasi sidebar minimalis modern berlatar gelap, memudahkan
+kurator memantau jadwal, memveriﬁkasi pembayaran, serta mengubah konten form tanpa menyentuh kode.
+Menu Sidebar Fungsi & Tampilan Antarmuka Aksi & Output Operasional
+1. Overview Ringkasan metrik (Total Reservasi, Pending
+Veriﬁcation, Active Holds, Conﬁrmed) dan kalender
+bulanan dengan kode warna.
+Klik tanggal pada kalender untuk melihat
+daftar nama pasangan yang sedang
+menahan atau mengunci hari tersebut.
+2. Client Tabel data calon pengantin (ID Booking, Nama,
+WhatsApp, Tanggal, Paket, Lokasi, Bukti Bayar,
+Status).
+Modal pratinjau bukti bayar dengan
+tombol zoom, tombol Konﬁrmasi DP, dan
+tautan kirim pesan WhatsApp otomatis.
+3. Analytic Graﬁk konversi per babak formulir (mendeteksi titik
+drop-off) dan persentase preferensi rasa visual
+(Teduh vs Anggun vs Riuh).
+Evaluasi daya tarik copywriting serta
+efektivitas video tiap babak untuk
+meningkatkan penyelesaian reservasi.
+4. Log Jejak audit sistem: waktu penahanan slot (Hold),
+waktu unggah bukti bayar, waktu rilis otomatis
+(Expired), dan aksi admin.
+Pencatatan transparan untuk mencegah
+sengketa jadwal atau kesalahan manusia
+saat validasi transfer bank.
+5. Form Edit CMS Pengaturan Formulir: Input tautan ﬁle Google
+Drive untuk video tiap babak, editor teks narasi puitis,
+dan ubah harga paket.
+Tim kurator dapat mengganti karya video
+atau memperbarui kutipan narasi berkala
+tanpa bantuan programmer.
+6. Report Laporan keuangan berkala: Rekapitulasi uang muka
+masuk, proyeksi pelunasan sebelum hari H, dan
+statistik lokasi pernikahan.
+Ekspor laporan pembukuan ke format ﬁle
+spreadsheet Excel/CSV dan ringkasan
+siap cetak.
+8. SKEMA BASIS DATA (DATABASE MODELS)
+TABLE bookings (
+  id UUID PRIMARY KEY, booking_code VARCHAR(20) UNIQUE, couple_name VARCHAR(150),
+  whatsapp VARCHAR(25), event_date DATE NOT NULL, event_location VARCHAR(255),
+  aesthetic_mood VARCHAR(50), package_name VARCHAR(100), total_price NUMERIC(12,2),
+  down_payment NUMERIC(12,2), proof_file_url TEXT, status VARCHAR(30) DEFAULT 'HOLD',
+  hold_expires_at TIMESTAMP, created_at TIMESTAMP DEFAULT NOW()
+);
+TABLE form_configs (section_key VARCHAR(30) PRIMARY KEY, gdrive_video_id TEXT, story_quote TEXT);
+TABLE system_logs (id BIGSERIAL PRIMARY KEY, booking_id UUID, action_type VARCHAR(50), executed_by
+VARCHAR(50), logged_at TIMESTAMP);
+9. TUMPUKAN TEKNOLOGI & RENCANA PELUNCURAN
+Frontend & Interaksi
+Next.js (App Router), Tailwind CSS
+untuk glassmorphism, Framer Motion
+untuk transisi layar penuh dan video
+cross-fade.
+Backend & Penyimpanan
+Node.js / Route Handlers, PostgreSQL
+untuk data relasional, Redis untuk
+sistem kunci penahanan slot 30 menit
+otomatis.
+Otomasi Pesan
+Integrasi WhatsApp Business API atau
+Telegram Webhook untuk notiﬁkasi
+seketika kepada admin begitu bukti
+terunggah.
+Bylumenia Engineering Document • Sistem Reservasi & Backoﬃce Halaman 4 dari 4
