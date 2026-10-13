@@ -139,7 +139,7 @@ export default function HeroSection({
           playsInline
           preload="auto"
           poster="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1920&q=80"
-          className="w-full h-full object-cover scale-105 filter brightness-[0.88] contrast-110 saturate-110 transition-transform duration-1000 ease-out"
+          className="w-full h-full object-cover scale-105 filter brightness-[0.96] contrast-105 saturate-105 transition-transform duration-1000 ease-out"
         >
           {/* Fallback image if video fails */}
           <img
@@ -149,9 +149,8 @@ export default function HeroSection({
           />
         </video>
 
-        {/* Cinematic Overlays — Lighter so hero video is clearly visible */}
-        <div className="absolute inset-0 bg-gradient-to-t from-obsidian-950 via-obsidian-900/35 to-obsidian-950/25 pointer-events-none" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_35%,rgba(10,10,10,0.6)_100%)] pointer-events-none" />
+        {/* Minimal Soft Vignette so video is 100% crisp and clearly visible */}
+        <div className="absolute inset-0 bg-gradient-to-t from-obsidian-950/80 via-transparent to-black/20 pointer-events-none" />
       </div>
 
       {/* Hero Content */}

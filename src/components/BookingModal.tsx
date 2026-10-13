@@ -385,8 +385,8 @@ export default function BookingModal({
           <X className="w-5 h-5" />
         </button>
 
-        {/* LEFT COLUMN: Clean Video Stream (45% split on mobile, full side on desktop) */}
-        <div className="relative w-full lg:w-5/12 h-[38vh] sm:h-[44vh] lg:h-auto overflow-hidden shrink-0 flex flex-col justify-end p-6 lg:p-8 bg-obsidian-950">
+        {/* LEFT COLUMN: Clean Video Showcase (100% UTUH TANPA TERTUTUP TEKS) */}
+        <div className="relative w-full lg:w-5/12 h-[45vh] lg:h-auto overflow-hidden shrink-0 bg-obsidian-950 flex items-center justify-center">
           <video
             ref={videoRef}
             src={stepVideos[step].src}
@@ -395,14 +395,10 @@ export default function BookingModal({
             muted={videoMuted}
             playsInline
             preload="auto"
-            className="absolute inset-0 w-full h-full object-cover filter brightness-[0.78] contrast-105 transition-opacity duration-700"
+            className="w-full h-full object-cover filter brightness-100 contrast-100 transition-opacity duration-700"
           />
 
-          {/* Vignette & Gradients (Clean video showcase) */}
-          <div className="absolute inset-0 bg-gradient-to-t from-obsidian-950 via-obsidian-950/30 to-transparent pointer-events-none" />
-          <div className="absolute inset-0 bg-black/20 pointer-events-none" />
-
-          {/* Audio Toggle Button Inside Video Top-Left */}
+          {/* Minimal Audio Toggle at Top-Left */}
           <button
             onClick={toggleModalAudio}
             type="button"
@@ -415,40 +411,24 @@ export default function BookingModal({
           >
             {videoMuted ? (
               <>
-                <VolumeX className="w-4 h-4" />
+                <VolumeX className="w-3.5 h-3.5" />
                 <span className="hidden sm:inline">Ketuk Suara</span>
               </>
             ) : (
               <>
-                <Volume2 className="w-4 h-4 animate-pulse" />
+                <Volume2 className="w-3.5 h-3.5 animate-pulse" />
                 <span className="hidden sm:inline">Audio Aktif ♪</span>
               </>
             )}
           </button>
-
-          {/* Narrative Chapter & Quote Card at Bottom of Video Area */}
-          <div className="relative z-20 text-white">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-[10px] tracking-widest uppercase text-gold-400 font-semibold px-2.5 py-0.5 rounded-full bg-black/60 backdrop-blur-md border border-gold-400/30">
-                {stepVideos[step].chapter}
-              </span>
-              <span className="text-[11px] text-neutral-300 font-medium tracking-wide">
-                {stepVideos[step].title}
-              </span>
-            </div>
-
-            <p className="font-serif italic text-xs sm:text-sm text-neutral-200/95 leading-relaxed drop-shadow-md">
-              {stepVideos[step].quote}
-            </p>
-          </div>
         </div>
 
-        {/* RIGHT COLUMN: Interactive Step Form Content */}
+        {/* RIGHT COLUMN: Interactive Step Form Content & Narrative Card */}
         <div className="w-full lg:w-7/12 flex-1 overflow-y-auto p-6 sm:p-8 lg:p-10 flex flex-col justify-between bg-obsidian-900/95">
           <div>
             {/* Step Progress Indicators */}
             {!isCompleted && (
-              <div className="mb-6">
+              <div className="mb-5">
                 <div className="flex items-center justify-between mb-2 text-xs">
                   <span className="text-gold-400 tracking-wider font-semibold uppercase">
                     Langkah {step} dari 5
@@ -471,6 +451,23 @@ export default function BookingModal({
                     />
                   ))}
                 </div>
+              </div>
+            )}
+
+            {/* Poetic Narrative Card (Di kartu bawah/kanan agar video di atas tidak tertutup) */}
+            {!isCompleted && (
+              <div className="mb-6 p-4 sm:p-5 rounded-2xl bg-white/[0.03] border border-gold-400/25 shadow-sm">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-[10px] tracking-widest uppercase text-gold-400 font-semibold px-2.5 py-0.5 rounded-full bg-gold-400/10 border border-gold-400/25">
+                    {stepVideos[step].chapter}
+                  </span>
+                  <span className="text-xs text-neutral-300 font-medium tracking-wide">
+                    {stepVideos[step].title}
+                  </span>
+                </div>
+                <p className="font-serif italic text-xs sm:text-sm text-neutral-200/95 leading-relaxed">
+                  {stepVideos[step].quote}
+                </p>
               </div>
             )}
 
