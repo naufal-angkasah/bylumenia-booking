@@ -7,6 +7,7 @@ interface HeroSectionProps {
   onOpenBooking: () => void;
   isPaused?: boolean;
   isMuted?: boolean;
+  hasEntered?: boolean;
   onToggleMute?: () => void;
   onAudioChange?: (muted: boolean) => void;
 }
@@ -15,6 +16,7 @@ export default function HeroSection({
   onOpenBooking,
   isPaused,
   isMuted: propIsMuted,
+  hasEntered,
   onToggleMute,
   onAudioChange,
 }: HeroSectionProps) {
@@ -32,10 +34,19 @@ export default function HeroSection({
     if (!videoRef.current) return;
     videoRef.current.muted = isMuted;
     if (!isMuted && !isPaused) {
-      videoRef.current.volume = 0.75;
+      videoRef.current.volume = 0.85;
       videoRef.current.play().catch(() => {});
     }
   }, [isMuted, isPaused]);
+
+  // When welcome screen is clicked to enter: immediately unlock audio and play!
+  useEffect(() => {
+    if (hasEntered && videoRef.current && !isPaused) {
+      videoRef.current.muted = false;
+      videoRef.current.volume = 0.85;
+      videoRef.current.play().catch(() => {});
+    }
+  }, [hasEntered, isPaused]);
 
   // Pause hero background video when booking modal is open to avoid audio clashing
   useEffect(() => {
