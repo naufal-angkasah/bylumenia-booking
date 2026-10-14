@@ -36,38 +36,38 @@ interface PortfolioSlide {
 const PORTFOLIO_SLIDES: PortfolioSlide[] = [
   {
     id: 1,
-    coupleTitle: "Pernikahan Tradisi Klasik",
-    category: "Pernikahan Tradisi Klasik",
-    theme: "Kebaya Renda & Ronce Melati",
+    coupleTitle: "Pernikahan Adat Jawa",
+    category: "Pernikahan Adat Jawa",
+    theme: "Kebaya renda & ronce melati",
     storyQuote:
-      "“Dari dua dunia yang berbeda, dua hati yang saling mencari, hingga berlabuh dalam dekap restu yang sama.”",
+      "“Dua keluarga, satu hari, dan semua yang berarti di dalamnya.”",
     imageUrl: "/images/Wedding/IMG_9064.webp",
   },
   {
     id: 2,
-    coupleTitle: "Tangis Haru & Doa Restu",
-    category: "Ritual Sakral Adat",
-    theme: "Sungkeman & Tetes Air Mata Bahagia",
+    coupleTitle: "Sungkeman",
+    category: "Prosesi Adat",
+    theme: "Doa dan restu orang tua",
     storyQuote:
-      "“Tetes air mata haru di hadapan orang tua, mengawali langkah baru seumur hidup.”",
+      "“Momen haru bersama orang tua sebelum memulai hidup baru.”",
     imageUrl: "/images/Wedding/IMG_9060.webp",
   },
   {
     id: 3,
     coupleTitle: "Dhiyaa & Nadiya",
-    category: "Prewedding Sinematik",
-    theme: "Padang Terbuka & Tawa Lepas Alami",
+    category: "Prewedding",
+    theme: "Outdoor & Candid",
     storyQuote:
-      "“Langkah santai berdua di bawah semesta, tawa lepas tanpa rekayasa.”",
+      "“Sesi santai berdua di alam terbuka, tanpa pose yang kaku.”",
     imageUrl: "/images/Prewedding/IMG_9033.webp",
   },
   {
     id: 4,
     coupleTitle: "Purnalita & Nico",
     category: "Editorial Studio",
-    theme: "Sorot Beludru Merah & Nuansa Hangat",
+    theme: "Studio dengan nuansa hangat",
     storyQuote:
-      "“Keanggunan sinematik dalam balutan pencahayaan temaram yang abadi.”",
+      "“Potret studio dengan pencahayaan temaram yang hangat.”",
     imageUrl: "/images/Prewedding/IMG_9052.webp",
   },
 ];
@@ -131,14 +131,14 @@ export default function GallerySection() {
         {/* Section Heading */}
         <div className="text-center max-w-2xl mx-auto mb-16">
           <span className="text-gold-400 text-xs tracking-widest uppercase font-medium inline-block">
-            PORTOFOLIO BYLUMENIA
+            PORTOFOLIO
           </span>
           <h2 className="font-serif text-3xl sm:text-5xl text-white font-light mt-3 mb-4">
             Kisah Kamu
           </h2>
           <p className="text-neutral-400 text-sm sm:text-base font-light leading-relaxed">
-            Setiap bingkai bukan sekadar gambar, melainkan dekap rasa yang tak lekang zaman.
-            Jelajahi untaian cerita sepasang kekasih yang telah mengikrarkan janji sucinya bersama kami.
+            Dokumentasi pernikahan dan prewedding yang kami kerjakan.
+            Lihat beberapa hasil kerja kami untuk pasangan sebelumnya.
           </p>
         </div>
 

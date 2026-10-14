@@ -21,7 +21,7 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           success: false,
-          message: "Foto tanda bukti belum terbaca jelas, mari coba sematkan sekali lagi.",
+          message: "Bukti pembayaran belum terbaca. Silakan unggah ulang.",
         },
         { status: 400 }
       );
@@ -83,7 +83,7 @@ export async function POST(request: Request) {
             bookingId: booking.id,
             actionType: "PROOF_UPLOADED",
             executedBy: "CLIENT",
-            notes: `Klien menyematkan bukti bayar DP. Status bergeser ke PENDING_VERIFY.`,
+            notes: `Klien mengunggah bukti bayar DP. Status berubah ke PENDING_VERIFY.`,
           },
         });
       }
@@ -128,7 +128,7 @@ export async function POST(request: Request) {
           `• Paket: ${booking.packageName}\n` +
           `• DP Masuk: Rp ${booking.downPayment ? Number(booking.downPayment).toLocaleString("id-ID") : "30%"}\n` +
           `• WhatsApp Klien: https://wa.me/${String(booking.whatsapp).replace(/[^0-9]/g, "")}\n\n` +
-          `Silakan verifikasi tanda jadi di Ruang Kurator Dasbor Internal Bylumenia.`,
+          `Silakan verifikasi tanda jadi di dasbor admin.`,
       });
 
       // 2. Send WA to Client
@@ -140,7 +140,7 @@ export async function POST(request: Request) {
           `Tanda bukti transfer kalian telah kami terima dengan hangat di sistem kami.\n` +
           `• Kode Reservasi: *${booking.bookingCode}*\n` +
           `• Tanggal Acara: *${booking.eventDate}*\n\n` +
-          `Kurator kami sedang meninjau tanda jadi ini. Kami akan segera memperbarui status jadwal kalian dalam waktu singkat.`,
+          `Tim kami sedang memeriksa tanda jadi ini. Status jadwal kalian akan segera diperbarui.`,
       });
     } catch (waErr) {
       console.warn("WhatsApp notification error (non-fatal):", waErr);
@@ -150,14 +150,14 @@ export async function POST(request: Request) {
       success: true,
       booking,
       message:
-        "Tanda jadi kalian telah tersemat rapi. Hati kami menyambut hangat babak awal kisah kalian.",
+        "Tanda jadi kalian sudah kami terima. Terima kasih.",
     });
   } catch (error) {
     console.error("Error uploading proof:", error);
     return NextResponse.json(
       {
         success: false,
-        message: "Terjadi hambatan saat merekam tanda jadi kalian. Mari coba sekali lagi.",
+        message: "Gagal menyimpan tanda jadi. Silakan coba lagi.",
       },
       { status: 500 }
     );

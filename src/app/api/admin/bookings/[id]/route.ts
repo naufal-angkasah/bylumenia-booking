@@ -14,7 +14,7 @@ export async function PATCH(
 
     if (String(pin || "").trim() !== expectedPin) {
       return NextResponse.json(
-        { success: false, message: "Kunci akses kurator tidak sah." },
+        { success: false, message: "PIN admin tidak sah." },
         { status: 401 }
       );
     }
@@ -64,7 +64,7 @@ export async function PATCH(
             bookingId: id,
             actionType: actionLogType,
             executedBy: "CURATOR_ADMIN",
-            notes: notes || `Kurator memperbarui status menjadi ${newStatus}`,
+            notes: notes || `Admin memperbarui status menjadi ${newStatus}`,
           },
         });
       }
@@ -91,14 +91,14 @@ export async function PATCH(
         await sendWhatsAppMessage({
           target: booking.whatsapp,
           message:
-            `*KABAR BAHAGIA DARI BYLUMENIA STUDIO* ✨\n\n` +
+            `*KONFIRMASI RESERVASI - STUDIO LUMENIA*\n\n` +
             `Halo Kak *${booking.coupleName}*,\n` +
-            `Tanda jadi kalian telah berhasil diverifikasi secara sah oleh kurator kami. ` +
+            `Tanda jadi kalian sudah diverifikasi oleh tim kami. ` +
             `Jadwal hari pernikahan kalian pada tanggal *${booking.eventDate}* (${booking.packageName}) ` +
-            `kini telah RESMI TERKUNCI di kalender semesta Bylumenia!\n\n` +
+            `sudah terkonfirmasi dan kami kunci di kalender kami.\n\n` +
             `Kode SPK: *${booking.bookingCode}*\n` +
             `Lokasi: ${booking.eventLocation}\n\n` +
-            `Sampai jumpa di hari kita menenun rasa dan mengabadikan momen abadi berdua. Terima kasih atas kepercayaan yang tulus ini.`,
+            `Tim kami akan segera menghubungi kalian untuk membahas konsep. Terima kasih sudah mempercayakan hari penting kalian kepada kami.`,
         });
       } catch (waErr) {
         console.warn("WhatsApp notify error (non-fatal):", waErr);

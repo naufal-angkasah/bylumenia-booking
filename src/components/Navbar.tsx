@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Calendar, Menu, X, ShieldCheck, Volume2, VolumeX } from "lucide-react";
+import { Calendar, Menu, X, Volume2, VolumeX } from "lucide-react";
 
 interface NavbarProps {
   onOpenBooking: () => void;
@@ -51,16 +51,8 @@ export default function Navbar({ onOpenBooking, isMuted = true, onToggleAudio }:
             href="#filosofi"
             className="hover:text-gold-300 transition-colors py-1"
           >
-            Filosofi
+            Tentang Kami
           </a>
-          <Link
-            href="/admin"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 hover:bg-gold-400/15 text-neutral-300 hover:text-gold-300 border border-white/10 hover:border-gold-400/40 transition-all text-xs touch-manipulation shrink-0"
-            title="Ruang Kurator Internal"
-          >
-            <ShieldCheck className="w-3.5 h-3.5 text-gold-400" />
-            <span>Kurator</span>
-          </Link>
         </div>
 
         {/* Action Button & Audio Toggle */}
@@ -124,16 +116,8 @@ export default function Navbar({ onOpenBooking, isMuted = true, onToggleAudio }:
               onClick={() => setMobileMenuOpen(false)}
               className="px-3 py-2 rounded-lg hover:bg-white/5 hover:text-gold-300 transition-colors touch-manipulation"
             >
-              Filosofi Kami
+              Tentang Kami
             </a>
-            <Link
-              href="/admin"
-              onClick={() => setMobileMenuOpen(false)}
-              className="px-3.5 py-2.5 rounded-xl bg-gold-400/10 hover:bg-gold-400/20 text-gold-300 border border-gold-400/25 transition-colors flex items-center gap-2 text-xs font-medium touch-manipulation"
-            >
-              <ShieldCheck className="w-4 h-4 text-gold-400" />
-              <span>Ruang Kurator Admin</span>
-            </Link>
           </div>
         </div>
       )}

@@ -7,27 +7,27 @@ export default function PhilosophySection() {
   const pillars = [
     {
       icon: Film,
-      title: "Gestur Mikro & Emosi Nyata",
+      title: "Momen Apa Adanya",
       description:
-        "Bukan sekadar senyum yang diarahkan, melainkan detak jemari yang menggenggam erat, heningnya doa orang tua, dan getaran haru yang tulus.",
+        "Kami lebih memilih momen spontan daripada pose yang kaku: genggaman tangan, doa orang tua, dan ekspresi haru yang sebenarnya.",
     },
     {
       icon: HeartHandshake,
       title: "Satu Pasangan, Satu Hari",
       description:
-        "Kami menolak sistem produksi massal. Dalam satu tanggal kalender, seluruh fokus, kurator, dan energi kami hanya dipersembahkan untuk satu ikatan.",
+        "Kami hanya menerima satu acara dalam sehari, sehingga seluruh tim dan perhatian kami tertuju pada acara kalian.",
     },
     {
       icon: ShieldCheck,
-      title: "Restu Waktu yang Terjaga",
+      title: "Tanggal Terjamin",
       description:
-        "Setiap tanggal yang kalian pilih kami kunci secara hening dan eksklusif khusus untuk cerita kalian, memastikan ketenangan penuh tanpa tumpang tindih waktu.",
+        "Tanggal yang sudah kalian pilih kami kunci setelah tanda jadi diterima, jadi tidak akan bentrok dengan jadwal lain.",
     },
     {
       icon: Compass,
-      title: "Semarang & Seluruh Semesta",
+      title: "Semarang & Luar Kota",
       description:
-        "Berakar dari keelokan tradisi Jawa di Semarang dan siap melangkah menemani perjalanan kalian ke berbagai sudut destinasi luar kota.",
+        "Berbasis di Semarang dan siap meliput di Solo, Yogyakarta, maupun kota lainnya.",
     },
   ];
 
@@ -36,14 +36,14 @@ export default function PhilosophySection() {
       <div className="max-w-6xl mx-auto">
         <div className="max-w-3xl mb-16">
           <span className="text-gold-400 text-xs tracking-widest uppercase font-medium">
-            Landasan & Jiwa Bylumenia
+            Tentang Kami
           </span>
           <h2 className="font-serif text-3xl sm:text-5xl text-white font-light mt-3 mb-6 leading-tight">
-            Menghargai Keabadian Rasa di Atas Sekadar Kuantitas.
+            Kualitas di Atas Kuantitas.
           </h2>
           <p className="text-neutral-400 text-sm sm:text-base font-light leading-relaxed">
-            Pernikahan adalah simpul sakral dari dua pohon keluarga yang menyatu. Kami hadir bukan sekadar menekan tombol rana kamera,
-            melainkan menjadi saksi yang merajut kembali setiap detik bahagia ke dalam lembaran kenangan yang dapat diwariskan selamanya.
+            Pernikahan adalah salah satu hari terpenting dalam hidup. Kami tidak hanya mengambil foto,
+            tetapi merekam setiap momen penting agar bisa kalian kenang dan wariskan kepada keluarga.
           </p>
         </div>
 

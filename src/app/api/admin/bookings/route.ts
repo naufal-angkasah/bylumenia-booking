@@ -12,7 +12,7 @@ export async function GET(request: Request) {
 
     if ((pin || "").trim() !== expectedPin) {
       return NextResponse.json(
-        { success: false, message: "Kunci akses kurator tidak sesuai." },
+        { success: false, message: "PIN admin tidak sesuai." },
         {
           status: 401,
           headers: {
@@ -133,7 +133,7 @@ export async function GET(request: Request) {
   } catch (error) {
     console.error("Error fetching admin bookings:", error);
     return NextResponse.json(
-      { success: false, message: "Gagal memuat catatan kurasi." },
+      { success: false, message: "Gagal memuat data reservasi." },
       { status: 500 }
     );
   }

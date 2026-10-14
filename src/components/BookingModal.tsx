@@ -34,7 +34,7 @@ export default function BookingModal({
   // Babak 1 to 5 per v3 Product Engineering Specification
   const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1);
 
-  // Babak I: Titik Temu & Skenario Semesta
+  // Babak I: Data Pasangan
   const [coupleName, setCoupleName] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
   const [eventDate, setEventDate] = useState("");
@@ -44,12 +44,12 @@ export default function BookingModal({
     message: string;
   } | null>(null);
 
-  // Babak II: Menenun Rasa & Keteduhan Baru (Mood)
+  // Babak II: Suasana yang Diinginkan (Mood)
   const [selectedMood, setSelectedMood] = useState<string>("teduh");
 
-  // Babak III: Ruang Lingkup & Tempat Merajut Kasih (Paket & Lokasi)
+  // Babak III: Paket & Lokasi (Paket & Lokasi)
   const [selectedPackage, setSelectedPackage] = useState<PackageItem>(
-    preSelectedPackage || PACKAGES[1] // Default: Hari Penyatuan Janji
+    preSelectedPackage || PACKAGES[1] // Default: Wedding Day
   );
   const [eventCity, setEventCity] = useState("Kota Semarang");
   const [venueName, setVenueName] = useState("");
@@ -63,7 +63,7 @@ export default function BookingModal({
   const [holdExpiresAt, setHoldExpiresAt] = useState<Date | null>(null);
   const [copiedAccount, setCopiedAccount] = useState<string | null>(null);
 
-  // Babak V: Penutup Resmi & Unggah Bukti
+  // Babak V: Unggah Bukti
   const [proofFile, setProofFile] = useState<File | null>(null);
   const [proofPreview, setProofPreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -85,38 +85,38 @@ export default function BookingModal({
   const stepVideos: Record<number, { src: string; chapter: string; title: string; quote: string }> = {
     1: {
       src: "/videos/story-01-heritage.mp4",
-      chapter: "Babak I",
-      title: "Titik Temu & Skenario Semesta",
+      chapter: "Langkah 1",
+      title: "Data Pasangan",
       quote:
-        "“Segala skenario semesta menuntun kita pada satu titik temu. Dari dua dunia yang berbeda, dua hati yang saling mencari, hingga akhirnya kita berlabuh dalam dekap restu yang sama.”",
+        "“Isi data singkat kalian agar kami bisa menyiapkan dokumentasi yang sesuai.”",
     },
     2: {
       src: "/videos/story-02-mazi.mp4",
-      chapter: "Babak II",
-      title: "Menenun Rasa & Keteduhan Baru",
+      chapter: "Langkah 2",
+      title: "Suasana yang Diinginkan",
       quote:
-        "“Witing tresna jalaran soko kulino, witing mulyo jalaran wani rekoso. Di hadapan dua keluarga yang merajut kasih, bagaimana kalian ingin keteduhan baru ini kami abadikan?”",
+        "“Pilih suasana yang paling menggambarkan hari kalian.”",
     },
     3: {
       src: "/videos/hero-teaser.mp4",
-      chapter: "Babak III",
-      title: "Ruang Lingkup & Tempat Merajut Kasih",
+      chapter: "Langkah 3",
+      title: "Paket & Lokasi",
       quote:
-        "“Dua cerita dan dua akar pohon kini menyatu, menjelma menjadi rindang keteduhan yang baru. Izinkan kami menemani setiap lembaran perjalanannya.”",
+        "“Pilih paket dokumentasi dan lokasi acara.”",
     },
     4: {
       src: "/videos/story-01-heritage.mp4",
-      chapter: "Babak IV",
-      title: "Komitmen & Warisan Rasa",
+      chapter: "Langkah 4",
+      title: "Pembayaran Tanda Jadi",
       quote:
-        "“Karya ini kelak menjadi warisan rasa. Kami menahan hari bahagia ini khusus untuk kalian.”",
+        "“Tanggal kalian kami tahan selama 30 menit. Selesaikan pembayaran tanda jadi sebelum waktu habis.”",
     },
     5: {
       src: "/videos/story-02-mazi.mp4",
-      chapter: "Babak V",
-      title: "Penutup Resmi & Unggah Bukti",
+      chapter: "Langkah 5",
+      title: "Unggah Bukti",
       quote:
-        "“Bismillah, mari kita mulai merangkai semesta kalian sendiri, selamanya.”",
+        "“Satu langkah lagi untuk mengamankan tanggal kalian.”",
     },
   };
 
@@ -206,11 +206,11 @@ export default function BookingModal({
   // Step 1 Validation -> Proceed to Step 2
   const handleProceedToStep2 = () => {
     if (!coupleName.trim()) {
-      setErrorMessage("Mari tuliskan nama sepasang pengantin yang akan berbahagia.");
+      setErrorMessage("Mohon isi nama pasangan.");
       return;
     }
     if (!whatsapp.trim() || whatsapp.length < 9) {
-      setErrorMessage("Mohon sematkan nomor WhatsApp aktif agar kurator kami dapat menyapa.");
+      setErrorMessage("Mohon isi nomor WhatsApp aktif agar tim kami dapat menghubungi kalian.");
       return;
     }
     if (!eventDate) {
@@ -218,7 +218,7 @@ export default function BookingModal({
       return;
     }
     if (dateStatus && !dateStatus.available) {
-      setErrorMessage("Mohon pilih tanggal alternatif karena hari tersebut telah terpatri.");
+      setErrorMessage("Tanggal tersebut sudah dipesan. Mohon pilih tanggal lain.");
       return;
     }
 
@@ -252,7 +252,7 @@ export default function BookingModal({
           whatsapp,
           eventDate,
           eventLocation: fullLocation,
-          aestheticMood: chosenMoodObj?.title || "Teduh dan Khidmat",
+          aestheticMood: chosenMoodObj?.title || "Khidmat",
           packageName: selectedPackage.name,
           totalPrice: selectedPackage.price,
         }),
@@ -261,7 +261,7 @@ export default function BookingModal({
       const data = await res.json();
 
       if (!res.ok || !data.success) {
-        setErrorMessage(data.message || "Mari coba ketuk kembali untuk mengamankan jadwal.");
+        setErrorMessage(data.message || "Gagal mengamankan jadwal. Silakan coba lagi.");
         setIsSubmitting(false);
         return;
       }
@@ -273,7 +273,7 @@ export default function BookingModal({
       setIsSubmitting(false);
       setStep(4);
     } catch {
-      setErrorMessage("Terjadi kendala jaringan saat mengunci komitmen. Mari coba lagi.");
+      setErrorMessage("Terjadi kendala jaringan. Silakan coba lagi.");
       setIsSubmitting(false);
     }
   };
@@ -290,7 +290,7 @@ export default function BookingModal({
     if (!file) return;
 
     if (file.size > 5 * 1024 * 1024) {
-      setErrorMessage("Ukuran berkas melebihi 5 MB. Mari sematkan foto yang lebih ringkas.");
+      setErrorMessage("Ukuran berkas melebihi 5 MB. Mohon unggah file yang lebih kecil.");
       return;
     }
 
@@ -309,11 +309,11 @@ export default function BookingModal({
   // Final Step 5 Submit (Upload Proof & Complete)
   const handleSubmitReservation = async () => {
     if (!proofFile) {
-      setErrorMessage("Mohon sematkan foto atau dokumen tanda jadi pembayaran.");
+      setErrorMessage("Mohon unggah bukti pembayaran tanda jadi.");
       return;
     }
     if (!bookingId) {
-      setErrorMessage("Tanda komitmen belum terhubung. Mari muat ulang sesi.");
+      setErrorMessage("Sesi belum terhubung. Silakan muat ulang halaman.");
       return;
     }
 
@@ -333,7 +333,7 @@ export default function BookingModal({
       const data = await res.json();
 
       if (!res.ok || !data.success) {
-        setErrorMessage(data.message || "Tanda bukti belum terbaca jelas, mari coba sematkan kembali.");
+        setErrorMessage(data.message || "Bukti pembayaran belum terbaca. Silakan unggah ulang.");
         setIsSubmitting(false);
         return;
       }
@@ -350,7 +350,7 @@ export default function BookingModal({
         colors: ["#D4AF37", "#FFFFFF", "#C29B68"],
       });
     } catch {
-      setErrorMessage("Tanda bukti belum terbaca jelas, mari coba sematkan kembali.");
+      setErrorMessage("Bukti pembayaran belum terbaca. Silakan unggah ulang.");
       setIsSubmitting(false);
     }
   };
@@ -486,7 +486,7 @@ export default function BookingModal({
                 </div>
 
                 <span className="text-xs uppercase tracking-widest text-gold-400 font-semibold mb-2 block">
-                  Ikrar Tersemat • Babak Abadi Dimulai
+                  Reservasi Diterima
                 </span>
 
                 <h3 className="font-serif text-2xl sm:text-3xl text-white font-light mb-4">
@@ -496,7 +496,7 @@ export default function BookingModal({
                 {/* EXACT V3 SPECIFICATION CONFIRMATION TEXT */}
                 <div className="p-5 sm:p-6 rounded-2xl bg-white/[0.03] border border-gold-400/25 mb-6 text-left">
                   <p className="font-serif text-sm sm:text-base text-neutral-200 leading-relaxed italic">
-                    “Terima kasih sudah mempercayakan hari paling berharga kalian kepada kami. Lembaran cerita kalian sudah tersimpan aman di buku catatan kami. Tim kami sedang meninjau tanda jadi ini dan akan segera menyapa kalian lewat WhatsApp dalam hitungan jam untuk mulai mengobrol santai soal konsep visual nanti.”
+                    “Terima kasih sudah mempercayakan hari penting kalian kepada kami. Data reservasi sudah kami terima. Tim kami akan memeriksa bukti pembayaran dan menghubungi kalian lewat WhatsApp dalam beberapa jam untuk membahas konsep.”
                   </p>
                 </div>
 
@@ -508,7 +508,7 @@ export default function BookingModal({
                       rel="noopener noreferrer"
                       className="w-full sm:w-auto gold-gradient-btn px-7 py-3 rounded-full text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 shadow-xl hover:scale-105 transition-all"
                     >
-                      <span>Sapa Kurator via WhatsApp</span>
+                      <span>Hubungi Kami via WhatsApp</span>
                       <ExternalLink className="w-4 h-4" />
                     </a>
                   ) : (
@@ -535,7 +535,7 @@ export default function BookingModal({
                   <div className="space-y-4 animate-fade-in">
                     <div>
                       <h3 className="font-serif text-2xl text-white font-light mb-1">
-                        Mari Berkenalan
+                        Data Pasangan
                       </h3>
                       <p className="text-neutral-400 text-xs sm:text-sm font-light">
                         Tuliskan nama sepasang pengantin dan tanggal rencana pernikahan kalian.
@@ -568,7 +568,7 @@ export default function BookingModal({
                           className="w-full px-4 py-3 rounded-xl bg-obsidian-950 border border-white/15 text-white placeholder-neutral-500 text-sm focus:outline-none focus:border-gold-400/60 focus:ring-1 focus:ring-gold-400/50"
                         />
                         <span className="text-[11px] text-neutral-400 mt-1 block">
-                          Kurator kami akan menyapa kalian secara personal lewat nomor ini.
+                          Tim kami akan menghubungi kalian lewat nomor ini.
                         </span>
                       </div>
 
@@ -590,7 +590,7 @@ export default function BookingModal({
                         {checkingDate && (
                           <div className="mt-2 text-xs text-neutral-400 flex items-center gap-1.5">
                             <span className="w-2 h-2 rounded-full bg-gold-400 animate-ping" />
-                            <span>Mengecek ketersediaan kalender eksklusif...</span>
+                            <span>Mengecek ketersediaan tanggal...</span>
                           </div>
                         )}
 
@@ -606,14 +606,14 @@ export default function BookingModal({
                               <div className="flex items-start gap-2">
                                 <Check className="w-4 h-4 text-gold-400 shrink-0 mt-0.5" />
                                 <span>
-                                  <strong>Semesta merestui hari itu.</strong> Pintu jadwal kami masih terbuka lebar untuk menyambut cerita kalian berdua.
+                                  <strong>Tanggal tersedia.</strong> Jadwal kami masih terbuka untuk hari kalian.
                                 </span>
                               </div>
                             ) : (
                               <div className="flex items-start gap-2">
                                 <span className="w-2 h-2 rounded-full bg-neutral-400 mt-1.5 shrink-0" />
                                 <span>
-                                  Hari tersebut telah terpatri oleh pasangan lain. Kalian dapat bergabung ke daftar tunggu atau memilih tanggal alternatif.
+                                  Tanggal tersebut sudah dipesan pasangan lain. Silakan pilih tanggal alternatif.
                                 </span>
                               </div>
                             )}
@@ -684,17 +684,17 @@ export default function BookingModal({
                   <div className="space-y-4 animate-fade-in">
                     <div>
                       <h3 className="font-serif text-2xl text-white font-light mb-1">
-                        Ruang Lingkup & Tempat Merajut Kasih
+                        Paket & Lokasi
                       </h3>
                       <p className="text-neutral-400 text-xs sm:text-sm font-light">
-                        Pilih lembaran cerita dokumentasi dan lokasi di mana janji suci diikrarkan.
+                        Pilih paket dokumentasi dan lokasi acara.
                       </p>
                     </div>
 
                     {/* Curated Package Scope Options */}
                     <div className="space-y-3 pt-2">
                       <label className="block text-xs uppercase tracking-wider text-neutral-300 font-medium">
-                        Lembaran Cerita & Investasi (Pasar Semarang)
+                        Paket & Harga (Pasar Semarang)
                       </label>
                       <div className="grid grid-cols-1 gap-2.5">
                         {PACKAGES.map((pkg) => {
@@ -785,7 +785,7 @@ export default function BookingModal({
                         Komitmen & Tanda Jadi
                       </h3>
                       <p className="text-neutral-400 text-xs sm:text-sm font-light">
-                        Hari bahagia ini kami kunci hening khusus untuk kalian berdua.
+                        Tanggal ini kami khususkan untuk kalian.
                       </p>
                     </div>
 
@@ -818,7 +818,7 @@ export default function BookingModal({
                         Rp {downPaymentAmount.toLocaleString("id-ID")}
                       </div>
                       <p className="text-[11px] text-neutral-400 leading-normal">
-                        Termasuk nominal 3 digit unik untuk mempercepat rekonsiliasi otomatis kurator kami.
+                        Termasuk 3 digit unik untuk mempercepat verifikasi pembayaran.
                       </p>
                     </div>
 
@@ -947,10 +947,10 @@ export default function BookingModal({
                   <div className="space-y-4 animate-fade-in">
                     <div>
                       <h3 className="font-serif text-2xl text-white font-light mb-1">
-                        Sematkan Tanda Komitmen
+                        Unggah Bukti Pembayaran
                       </h3>
                       <p className="text-neutral-400 text-xs sm:text-sm font-light">
-                        Unggah tangkapan layar atau dokumen slip pembayaran untuk verifikasi kurator.
+                        Unggah tangkapan layar atau slip pembayaran untuk diverifikasi tim kami.
                       </p>
                     </div>
 
@@ -1001,7 +1001,7 @@ export default function BookingModal({
                     <div className="p-3.5 rounded-xl bg-gold-400/10 border border-gold-400/30 text-gold-300 text-xs leading-relaxed flex items-start gap-2.5">
                       <ShieldCheck className="w-4 h-4 text-gold-400 shrink-0 mt-0.5" />
                       <span>
-                        Tanda jadi kalian akan segera diverifikasi oleh kurator kami, dan kami akan menyapa kalian langsung lewat WhatsApp untuk mulai merajut konsep visual.
+                        Tanda jadi kalian akan segera diverifikasi oleh tim kami, lalu kami menghubungi kalian lewat WhatsApp untuk membahas konsep.
                       </span>
                     </div>
                   </div>
@@ -1080,7 +1080,7 @@ export default function BookingModal({
                   disabled={isSubmitting}
                   className="gold-gradient-btn px-6 sm:px-8 py-3.5 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-2 shadow-xl hover:scale-105 active:scale-95 transition-all ml-auto disabled:opacity-50"
                 >
-                  <span>{isSubmitting ? "Memproses..." : "RESERVE DAN KIRIM CERITA KAMI"}</span>
+                  <span>{isSubmitting ? "Memproses..." : "KIRIM RESERVASI"}</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               )}

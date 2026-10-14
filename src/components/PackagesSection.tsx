@@ -15,14 +15,14 @@ export default function PackagesSection({ onSelectPackage }: PackagesSectionProp
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-20">
           <span className="text-gold-400 text-xs tracking-widest uppercase font-medium">
-            Investasi Rasa & Kisah
+            Paket & Harga
           </span>
           <h2 className="font-serif text-3xl sm:text-5xl text-white font-light mt-3 mb-4">
-            Katalog Paket Cerita
+            Pilihan Paket
           </h2>
           <p className="text-neutral-400 text-sm sm:text-base font-light leading-relaxed">
-            Dari tatap mata berdua hingga perayaan besar di hadapan keluarga.
-            Setiap paket dirancang agar kalian dapat menapaki proses ini dengan tenang.
+            Dari sesi prewedding hingga dokumentasi full day acara pernikahan.
+            Pilih paket yang paling sesuai dengan kebutuhan kalian.
           </p>
         </div>
 

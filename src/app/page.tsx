@@ -56,7 +56,7 @@ export default function Home() {
       {/* Modul "Kisah Kamu" — Slider Otomatis Portofolio 4 Detik & Galeri */}
       <GallerySection />
 
-      {/* Filosofi Butik & Restu Waktu yang Terjaga */}
+      {/* Filosofi Butik & Tanggal Terjamin */}
       <PhilosophySection />
 
       {/* Footer */}

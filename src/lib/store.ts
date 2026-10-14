@@ -41,8 +41,8 @@ const initialBookings: StoreBooking[] = [
     whatsapp: "087777357373",
     eventDate: "2026-11-20",
     eventLocation: "Plataran Heritage Borobudur, Magelang",
-    aestheticMood: "Anggun Berbalut Cerita",
-    packageName: "Perjalanan Utuh (Complete Journey)",
+    aestheticMood: "Elegan & Tradisional",
+    packageName: "Complete Package",
     totalPrice: 22000000,
     downPayment: 6600582,
     proofFileUrl: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=600&q=80",
@@ -59,7 +59,7 @@ const initialBookings: StoreBooking[] = [
     eventDate: "2026-12-15",
     eventLocation: "Gedung De Tjolomadoe, Solo",
     aestheticMood: "Teduh & Khidmat",
-    packageName: "Hari Penyatuan Janji (Wedding Day)",
+    packageName: "Wedding Day (Wedding Day)",
     totalPrice: 15000000,
     downPayment: 4500318,
     proofFileUrl: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=600&q=80",
@@ -76,7 +76,7 @@ const initialLogs: StoreLog[] = [
     bookingId: "demo-booking-1",
     actionType: "CONFIRMED_BY_CURATOR",
     executedBy: "CURATOR_ADMIN",
-    notes: "Tanda jadi diverifikasi sah oleh kurator. Kalender terpatri.",
+    notes: "Tanda jadi diverifikasi oleh admin. Tanggal terkunci.",
     loggedAt: new Date(Date.now() - 86400000),
     booking: {
       bookingCode: "LMN-2611-101",
@@ -88,7 +88,7 @@ const initialLogs: StoreLog[] = [
     bookingId: "demo-booking-2",
     actionType: "PROOF_UPLOADED",
     executedBy: "CLIENT",
-    notes: "Klien menyematkan slip transfer DP. Menunggu verifikasi kurator.",
+    notes: "Klien mengunggah slip transfer DP. Menunggu verifikasi admin.",
     loggedAt: new Date(Date.now() - 3600000 * 3),
     booking: {
       bookingCode: "LMN-2612-402",
@@ -134,7 +134,7 @@ export const memoryStore = {
       return {
         available: true,
         status: "AVAILABLE",
-        message: "Semesta merestui hari itu, pintu jadwal kami masih terbuka luas untuk kalian.",
+        message: "Tanggal tersedia.",
       };
     }
 
@@ -144,7 +144,7 @@ export const memoryStore = {
         return {
           available: true,
           status: "AVAILABLE",
-          message: "Semesta merestui hari itu, pintu jadwal kami masih terbuka luas untuk kalian.",
+          message: "Tanggal tersedia.",
         };
       }
       return {
@@ -157,7 +157,7 @@ export const memoryStore = {
     return {
       available: false,
       status: existing.status,
-      message: "Tanggal tersebut telah terpatri untuk perayaan pasangan lain. Mari diskusikan tanggal alternatif bersama kami.",
+      message: "Tanggal tersebut sudah dipesan pasangan lain. Silakan pilih tanggal alternatif.",
     };
   },
 
@@ -208,7 +208,7 @@ export const memoryStore = {
       bookingId: booking.id,
       actionType: "PROOF_UPLOADED",
       executedBy: "CLIENT",
-      notes: `Klien menyematkan tanda bukti bayar DP. Status bergeser ke PENDING_VERIFY.`,
+      notes: `Klien mengunggah bukti bayar DP. Status berubah ke PENDING_VERIFY.`,
       booking: {
         bookingCode: booking.bookingCode,
         coupleName: booking.coupleName,
@@ -244,7 +244,7 @@ export const memoryStore = {
       bookingId: booking.id,
       actionType: actionLogType,
       executedBy: "CURATOR_ADMIN",
-      notes: notes || `Kurator memperbarui status menjadi ${newStatus}`,
+      notes: notes || `Admin memperbarui status menjadi ${newStatus}`,
       booking: {
         bookingCode: booking.bookingCode,
         coupleName: booking.coupleName,

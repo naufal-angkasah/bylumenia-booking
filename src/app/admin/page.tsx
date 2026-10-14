@@ -132,9 +132,9 @@ export default function AdminPage() {
       case "confirmed":
         return `Halo Kak ${booking.coupleName}! 🎉\n\nPembayaran tanda jadi (DP) sebesar *${dpFormatted}* untuk paket *${booking.packageName}* tanggal *${booking.eventDate}* sudah kami terima dan terverifikasi.\n\nTanggal Kakak sekarang sudah resmi kami pegang, dan kami hanya mengambil 1 pasangan per hari supaya bisa fokus penuh.\n\nSelanjutnya tim kami akan menghubungi Kakak untuk ngobrol soal konsep dan moodboard. Terima kasih sudah percaya sama Studio Lumenia! 🤍`;
       case "proof_issue":
-        return `Halo Kak ${booking.coupleName}, salam hangat dari Bylumenia Studio 🙏\n\nTerima kasih telah melakukan pemesanan dan mengirimkan bukti transfer untuk tanggal *${booking.eventDate}*.\n\nMohon maaf, file slip transfer yang kami terima terlihat kurang jelas / terpotong sehingga belum dapat kami verifikasi dengan sistem perbankan. Mohon bantuan Kakak untuk mengirimkan foto atau screenshot bukti transfer yang lebih jelas melalui chat ini ya Kak, agar jadwal kalian dapat segera kami kunci.\n\nTerima kasih banyak atas pengertiannya!`;
+        return `Halo Kak ${booking.coupleName}, salam dari Studio Lumenia 🙏\n\nTerima kasih telah melakukan pemesanan dan mengirimkan bukti transfer untuk tanggal *${booking.eventDate}*.\n\nMohon maaf, slip transfer yang kami terima kurang jelas atau terpotong sehingga belum bisa kami verifikasi. Mohon bantuan Kakak untuk mengirimkan foto atau screenshot bukti transfer yang lebih jelas melalui chat ini ya Kak, agar jadwal kalian dapat segera kami kunci.\n\nTerima kasih banyak atas pengertiannya!`;
       case "consult":
-        return `Halo Kak ${booking.coupleName}, salam hangat dari tim visual Bylumenia Studio ✨\n\nSenang sekali bisa menyambut rencana hari bahagia Kakak pada tanggal *${booking.eventDate}* di ${booking.eventLocation || "Semarang"}.\n\nApakah ada referensi gaya, busana, atau nuansa visual tertentu yang ingin Kakak diskusikan bersama tim kami? Kami siap membantu merancang konsep yang paling sesuai dengan kisah cinta kalian berdua. Salam hangat! 🌿`;
+        return `Halo Kak ${booking.coupleName}, salam dari Studio Lumenia ✨\n\nKami senang bisa menjadi bagian dari acara Kakak pada tanggal *${booking.eventDate}* di ${booking.eventLocation || "Semarang"}.\n\nApakah ada referensi gaya atau suasana yang Kakak inginkan? Kita bisa diskusikan konsepnya lewat chat ini. Terima kasih! 🌿`;
     }
   };
 
@@ -198,11 +198,11 @@ export default function AdminPage() {
     driveVideoStep3: "1-sample-drive-step-3",
     driveVideoStep4: "1-sample-drive-step-4",
     driveVideoStep5: "1-sample-drive-step-5",
-    narrative1: "Segala skenario semesta menuntun kita pada satu titik temu...",
+    narrative1: "Isi data singkat kalian agar kami bisa menyiapkan dokumentasi yang sesuai.",
     narrative2: "Witing tresna jalaran soko kulino, witing mulyo jalaran wani rekoso...",
     narrative3: "Dua cerita dan dua akar pohon kini menyatu, menjelma menjadi rindang keteduhan yang baru...",
     narrative4: "Karya ini kelak menjadi warisan rasa. Kami menahan hari bahagia ini khusus untuk kalian...",
-    narrative5: "Bismillah, mari kita mulai merangkai semesta kalian sendiri, selamanya...",
+    narrative5: "Satu langkah lagi untuk mengamankan tanggal kalian...",
   });
 
   // Load PIN from storage if previously stored
@@ -384,14 +384,11 @@ export default function AdminPage() {
             <KeyRound className="w-7 h-7" />
           </div>
 
-          <span className="text-xs uppercase tracking-widest text-gold-400 font-medium">
-            Ruang Kurasi Internal
-          </span>
           <h1 className="font-serif text-3xl text-white font-normal mt-1 mb-2">
-            Dasbor Kurator Bylumenia
+            Dasbor Admin Bylumenia
           </h1>
           <p className="text-xs text-neutral-400 font-light mb-8">
-            Sematkan kunci akses (PIN) kurator untuk mengelola jadwal dan tanda jadi.
+            Masukkan PIN admin untuk mengelola jadwal dan pembayaran.
           </p>
 
           <form onSubmit={handleLogin} className="space-y-4">
@@ -401,7 +398,7 @@ export default function AdminPage() {
                 inputMode="numeric"
                 pattern="[0-9]*"
                 autoComplete="current-password"
-                placeholder="Masukkan PIN (Default: 1928)"
+                placeholder="Masukkan PIN"
                 value={pin}
                 onChange={(e) => setPin(e.target.value)}
                 className="w-full px-4 py-3.5 pr-12 rounded-xl bg-white/[0.04] border border-white/10 focus:border-gold-400 focus:outline-none text-center font-mono tracking-widest text-white text-lg placeholder-neutral-600 transition-colors"
@@ -423,7 +420,7 @@ export default function AdminPage() {
 
             {pinError && (
               <p className="text-xs text-rose-400 animate-fade-in">
-                Kunci akses kurator tidak sesuai. Mari periksa kembali.
+                PIN tidak sesuai. Silakan periksa kembali.
               </p>
             )}
 
@@ -437,7 +434,7 @@ export default function AdminPage() {
               ) : (
                 <>
                   <ShieldCheck className="w-4 h-4" />
-                  <span>Buka Ruang Kurator</span>
+                  <span>Masuk Ruang Admin</span>
                 </>
               )}
             </button>
@@ -504,7 +501,7 @@ export default function AdminPage() {
         <aside className="hidden lg:block w-full lg:w-64 shrink-0">
           <div className="glass-panel rounded-2xl p-3 border border-white/10 sticky top-20 space-y-1">
             <div className="px-3 py-2 text-[10px] uppercase tracking-widest text-neutral-400 font-semibold border-b border-white/10 mb-2">
-              Menu Kurasi Internal
+              Menu Admin
             </div>
 
             <button
@@ -545,7 +542,7 @@ export default function AdminPage() {
               }`}
             >
               <BarChart3 className="w-4 h-4 text-gold-400" />
-              <span>3. Analytic (Konversi Babak)</span>
+              <span>3. Analytic (Konversi Form)</span>
             </button>
 
             <button
@@ -937,16 +934,16 @@ export default function AdminPage() {
               <div className="glass-panel p-6 rounded-2xl border border-white/10">
                 <span className="text-xs uppercase tracking-widest text-gold-400 font-medium">Funnel Konversi</span>
                 <h3 className="font-serif text-2xl text-white font-light mt-1 mb-6">
-                  Tingkat Kelulusan Alur Formulir (5 Babak)
+                  Tingkat Penyelesaian Formulir (5 Langkah)
                 </h3>
 
                 <div className="space-y-4">
                   {[
-                    { babak: "Babak I • Titik Temu & Tanggal", rate: 100, drop: "Titik Masuk" },
-                    { babak: "Babak II • Menenun Rasa & Mood", rate: 94, drop: "Drop -6%" },
-                    { babak: "Babak III • Ruang Lingkup & Lokasi", rate: 86, drop: "Drop -8%" },
-                    { babak: "Babak IV • Tanda Komitmen (Hold 30m)", rate: 78, drop: "Drop -8%" },
-                    { babak: "Babak V • Unggah Bukti & Selesai", rate: 70, drop: "Konversi Akhir 70%" },
+                    { babak: "Langkah 1 • Data & Tanggal", rate: 100, drop: "Titik Masuk" },
+                    { babak: "Langkah 2 • Suasana", rate: 94, drop: "Drop -6%" },
+                    { babak: "Langkah 3 • Paket & Lokasi", rate: 86, drop: "Drop -8%" },
+                    { babak: "Langkah 4 • Tanda Jadi (Hold 30m)", rate: 78, drop: "Drop -8%" },
+                    { babak: "Langkah 5 • Unggah Bukti & Selesai", rate: 70, drop: "Konversi Akhir 70%" },
                   ].map((f, idx) => (
                     <div key={idx} className="space-y-1.5">
                       <div className="flex items-center justify-between text-xs">
@@ -974,7 +971,7 @@ export default function AdminPage() {
                   <h4 className="font-serif text-lg text-white font-light mt-1 mb-4">Preferensi Suasana Visual</h4>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between text-xs">
-                      <span className="text-neutral-300">Teduh dan Khidmat</span>
+                      <span className="text-neutral-300">Khidmat</span>
                       <span className="font-mono text-gold-300">48%</span>
                     </div>
                     <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
@@ -982,7 +979,7 @@ export default function AdminPage() {
                     </div>
 
                     <div className="flex items-center justify-between text-xs pt-2">
-                      <span className="text-neutral-300">Anggun Berbalut Cerita</span>
+                      <span className="text-neutral-300">Elegan & Tradisional</span>
                       <span className="font-mono text-gold-300">38%</span>
                     </div>
                     <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
@@ -990,7 +987,7 @@ export default function AdminPage() {
                     </div>
 
                     <div className="flex items-center justify-between text-xs pt-2">
-                      <span className="text-neutral-300">Riuh Penuh Tawa</span>
+                      <span className="text-neutral-300">Santai & Ceria</span>
                       <span className="font-mono text-gold-300">14%</span>
                     </div>
                     <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
@@ -1001,10 +998,10 @@ export default function AdminPage() {
 
                 <div className="glass-panel p-6 rounded-2xl border border-white/10">
                   <span className="text-xs uppercase tracking-widest text-gold-400 font-medium">Paket Terpilih</span>
-                  <h4 className="font-serif text-lg text-white font-light mt-1 mb-4">Distribusi Paket Cerita</h4>
+                  <h4 className="font-serif text-lg text-white font-light mt-1 mb-4">Distribusi Paket</h4>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between text-xs">
-                      <span className="text-neutral-300">Hari Penyatuan Janji (Wedding Day)</span>
+                      <span className="text-neutral-300">Wedding Day (Full Day)</span>
                       <span className="font-mono text-gold-300">62%</span>
                     </div>
                     <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
@@ -1012,7 +1009,7 @@ export default function AdminPage() {
                     </div>
 
                     <div className="flex items-center justify-between text-xs pt-2">
-                      <span className="text-neutral-300">Kisah Utuh Dua Jiwa (Complete Journey)</span>
+                      <span className="text-neutral-300">Complete Journey (Prewedding & Wedding)</span>
                       <span className="font-mono text-gold-300">26%</span>
                     </div>
                     <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
@@ -1020,7 +1017,7 @@ export default function AdminPage() {
                     </div>
 
                     <div className="flex items-center justify-between text-xs pt-2">
-                      <span className="text-neutral-300">Babak Awal (Prewedding)</span>
+                      <span className="text-neutral-300">Prewedding Session</span>
                       <span className="font-mono text-gold-300">12%</span>
                     </div>
                     <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
@@ -1039,7 +1036,7 @@ export default function AdminPage() {
                 <div className="p-4 border-b border-white/10 flex items-center justify-between">
                   <div>
                     <h3 className="font-serif text-lg text-white">Jejak Audit Sistem & Transaksi</h3>
-                    <p className="text-xs text-neutral-400">Pencatatan transparan waktu hold slot, upload slip, dan aksi kurator.</p>
+                    <p className="text-xs text-neutral-400">Pencatatan waktu hold, upload slip, dan aksi admin.</p>
                   </div>
                   <span className="text-xs font-mono text-gold-400">{logs.length} Total Rekaman</span>
                 </div>
@@ -1101,10 +1098,10 @@ export default function AdminPage() {
                   <div>
                     <span className="text-xs uppercase tracking-widest text-gold-400 font-medium">CMS Internal</span>
                     <h3 className="font-serif text-2xl text-white font-light mt-1">
-                      Konfigurasi Video Google Drive & Narasi Babak
+                      Konfigurasi Video Google Drive & Teks Langkah
                     </h3>
                     <p className="text-xs text-neutral-400 mt-1">
-                      Kalian dapat memperbarui ID video Google Drive dan kutipan puitis tanpa perlu koding ulang.
+                      Perbarui ID video Google Drive dan teks panduan langkah reservasi sesuai kebutuhan.
                     </p>
                   </div>
                   <button
@@ -1129,7 +1126,7 @@ export default function AdminPage() {
                 <div className="space-y-5">
                   <div className="p-4 rounded-xl bg-white/[0.02] border border-white/10 space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs uppercase tracking-wider text-gold-400 font-semibold">Babak I • Titik Temu</span>
+                      <span className="text-xs uppercase tracking-wider text-gold-400 font-semibold">Langkah 1 • Data Pasangan</span>
                       <span className="text-[11px] text-neutral-400">Stream Proxy: /api/stream?id=...</span>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -1143,7 +1140,7 @@ export default function AdminPage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-[11px] text-neutral-400 mb-1">Narasi Puitis Babak</label>
+                        <label className="block text-[11px] text-neutral-400 mb-1">Teks Langkah</label>
                         <input
                           type="text"
                           value={cmsConfig.narrative1}
@@ -1156,7 +1153,7 @@ export default function AdminPage() {
 
                   <div className="p-4 rounded-xl bg-white/[0.02] border border-white/10 space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs uppercase tracking-wider text-gold-400 font-semibold">Babak II • Menenun Rasa</span>
+                      <span className="text-xs uppercase tracking-wider text-gold-400 font-semibold">Langkah 2 • Suasana</span>
                       <span className="text-[11px] text-neutral-400">Stream Proxy: /api/stream?id=...</span>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -1170,7 +1167,7 @@ export default function AdminPage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-[11px] text-neutral-400 mb-1">Narasi Puitis Babak</label>
+                        <label className="block text-[11px] text-neutral-400 mb-1">Teks Langkah</label>
                         <input
                           type="text"
                           value={cmsConfig.narrative2}
@@ -1183,7 +1180,7 @@ export default function AdminPage() {
 
                   <div className="p-4 rounded-xl bg-white/[0.02] border border-white/10 space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs uppercase tracking-wider text-gold-400 font-semibold">Babak III • Ruang Lingkup</span>
+                      <span className="text-xs uppercase tracking-wider text-gold-400 font-semibold">Langkah 3 • Paket & Lokasi</span>
                       <span className="text-[11px] text-neutral-400">Stream Proxy: /api/stream?id=...</span>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -1197,7 +1194,7 @@ export default function AdminPage() {
                         />
                       </div>
                       <div>
-                        <label className="block text-[11px] text-neutral-400 mb-1">Narasi Puitis Babak</label>
+                        <label className="block text-[11px] text-neutral-400 mb-1">Teks Langkah</label>
                         <input
                           type="text"
                           value={cmsConfig.narrative3}

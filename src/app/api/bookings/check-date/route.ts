@@ -11,7 +11,7 @@ export async function GET(request: Request) {
 
     if (!date) {
       return NextResponse.json(
-        { available: false, message: "Mari tentukan tanggal hari bahagia kalian terlebih dahulu." },
+        { available: false, message: "Mohon pilih tanggal acara terlebih dahulu." },
         { status: 400 }
       );
     }
@@ -33,7 +33,7 @@ export async function GET(request: Request) {
         return NextResponse.json({
           available: true,
           status: "AVAILABLE",
-          message: "Semesta merestui hari itu, pintu jadwal kami masih terbuka luas untuk kalian.",
+          message: "Tanggal tersedia.",
         });
       }
 
@@ -58,7 +58,7 @@ export async function GET(request: Request) {
           return NextResponse.json({
             available: true,
             status: "AVAILABLE",
-            message: "Semesta merestui hari itu, pintu jadwal kami masih terbuka luas untuk kalian.",
+            message: "Tanggal tersedia.",
           });
         } else {
           const remainingMinutes = Math.max(
@@ -88,7 +88,7 @@ export async function GET(request: Request) {
   } catch (error) {
     console.error("Error checking date:", error);
     return NextResponse.json(
-      { available: false, message: "Terjadi jeda sejenak saat memeriksa buku jadwal. Mari coba ketuk kembali." },
+      { available: false, message: "Gagal memeriksa jadwal. Silakan coba lagi." },
       { status: 500 }
     );
   }

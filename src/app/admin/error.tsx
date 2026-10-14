@@ -29,7 +29,7 @@ export default function AdminError({
           Perangkat Membutuhkan Penyegaran
         </h1>
         <p className="text-xs text-neutral-400 leading-relaxed mb-8">
-          Sistem mendeteksi kendala pada memori peramban atau mode privasi tablet. Silakan segarkan halaman untuk melanjutkan sesi kurasi.
+          Sistem mendeteksi kendala pada memori peramban atau mode privasi tablet. Silakan segarkan halaman untuk melanjutkan.
         </p>
 
         <div className="space-y-3">

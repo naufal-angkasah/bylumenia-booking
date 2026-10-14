@@ -74,7 +74,7 @@ export default function Footer() {
             className="flex items-center gap-1.5 hover:text-gold-300 transition-colors text-gold-400/80"
           >
             <ShieldCheck className="w-4 h-4" />
-            <span>Dasbor Kurator</span>
+            <span>Admin</span>
           </Link>
         </div>
       </div>

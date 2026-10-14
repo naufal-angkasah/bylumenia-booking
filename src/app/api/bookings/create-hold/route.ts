@@ -77,7 +77,7 @@ export async function POST(request: Request) {
             {
               success: false,
               message:
-                "Tanggal tersebut baru saja diamankan oleh pasangan lain. Mari diskusikan tanggal alternatif bersama tim kami.",
+                "Tanggal tersebut baru saja dipesan pasangan lain. Silakan pilih tanggal alternatif atau hubungi tim kami.",
             },
             { status: 409 }
           );
@@ -91,7 +91,7 @@ export async function POST(request: Request) {
           whatsapp,
           eventDate,
           eventLocation: eventLocation || "Semarang",
-          aestheticMood: aestheticMood || "Teduh dan Khidmat",
+          aestheticMood: aestheticMood || "Khidmat",
           packageName,
           totalPrice: Number(totalPrice),
           downPayment,
@@ -116,7 +116,7 @@ export async function POST(request: Request) {
         whatsapp,
         eventDate,
         eventLocation: eventLocation || "Semarang",
-        aestheticMood: aestheticMood || "Teduh dan Khidmat",
+        aestheticMood: aestheticMood || "Khidmat",
         packageName,
         totalPrice: Number(totalPrice),
         downPayment,
@@ -151,7 +151,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("Error creating hold:", error);
     return NextResponse.json(
-      { success: false, message: "Terjadi hambatan saat merajut komitmen awal. Mari coba sekali lagi." },
+      { success: false, message: "Gagal membuat reservasi. Silakan coba lagi." },
       { status: 500 }
     );
   }
