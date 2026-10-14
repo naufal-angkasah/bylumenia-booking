@@ -32,7 +32,7 @@ export default function PhilosophySection() {
   ];
 
   return (
-    <section id="filosofi" className="relative py-28 px-5 bg-obsidian-950">
+    <section id="filosofi" className="relative py-28 px-5 bg-obsidian-950 scroll-mt-20 sm:scroll-mt-24">
       <div className="max-w-6xl mx-auto">
         <div className="max-w-3xl mb-16">
           <span className="text-gold-400 text-xs tracking-widest uppercase font-medium">

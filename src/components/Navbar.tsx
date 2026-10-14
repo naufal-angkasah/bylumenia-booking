@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Calendar, Menu, X, Volume2, VolumeX } from "lucide-react";
+import { smoothScrollTo } from "@/lib/scroll";
 
 interface NavbarProps {
   onOpenBooking: () => void;
@@ -43,12 +44,20 @@ export default function Navbar({ onOpenBooking, isMuted = true, onToggleAudio }:
         <div className="hidden md:flex items-center gap-4 lg:gap-8 text-xs uppercase tracking-widest text-neutral-300 font-medium shrink-0">
           <a
             href="#galeri"
+            onClick={(e) => {
+              e.preventDefault();
+              smoothScrollTo("#galeri", 80);
+            }}
             className="hover:text-gold-300 transition-colors py-1"
           >
             Kisah Kamu
           </a>
           <a
             href="#filosofi"
+            onClick={(e) => {
+              e.preventDefault();
+              smoothScrollTo("#filosofi", 80);
+            }}
             className="hover:text-gold-300 transition-colors py-1"
           >
             Tentang Kami
@@ -106,14 +115,22 @@ export default function Navbar({ onOpenBooking, isMuted = true, onToggleAudio }:
           <div className="flex flex-col gap-3 text-sm tracking-wide text-neutral-300">
             <a
               href="#galeri"
-              onClick={() => setMobileMenuOpen(false)}
+              onClick={(e) => {
+                e.preventDefault();
+                setMobileMenuOpen(false);
+                smoothScrollTo("#galeri", 80);
+              }}
               className="px-3 py-2 rounded-lg hover:bg-white/5 hover:text-gold-300 transition-colors touch-manipulation"
             >
               Kisah Kamu (Galeri)
             </a>
             <a
               href="#filosofi"
-              onClick={() => setMobileMenuOpen(false)}
+              onClick={(e) => {
+                e.preventDefault();
+                setMobileMenuOpen(false);
+                smoothScrollTo("#filosofi", 80);
+              }}
               className="px-3 py-2 rounded-lg hover:bg-white/5 hover:text-gold-300 transition-colors touch-manipulation"
             >
               Tentang Kami

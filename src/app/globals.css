@@ -10,6 +10,13 @@
 html {
   -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: transparent;
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 body {
@@ -17,6 +24,7 @@ body {
   background: var(--background);
   font-family: var(--font-sans), system-ui, sans-serif;
   overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
   -webkit-tap-highlight-color: transparent;
   selection-background-color: #D4AF37;
   selection-color: #0A0A0A;
@@ -66,11 +74,11 @@ body {
 .gold-gradient-btn {
   background: linear-gradient(135deg, #D4AF37 0%, #C29B68 100%);
   color: #0A0A0A;
-  transition: all 0.3s ease;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .gold-gradient-btn:hover {
   background: linear-gradient(135deg, #E9D9B3 0%, #D4AF37 100%);
-  box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+  box-shadow: 0 0 25px rgba(212, 175, 55, 0.45);
 }
 
 /* Custom subtle scrollbar */

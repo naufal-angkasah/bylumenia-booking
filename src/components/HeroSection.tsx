@@ -2,6 +2,7 @@
 
 import React, { useRef, useState, useEffect } from "react";
 import { Volume2, VolumeX, ArrowDown } from "lucide-react";
+import { smoothScrollTo } from "@/lib/scroll";
 
 interface HeroSectionProps {
   onOpenBooking: () => void;
@@ -168,6 +169,10 @@ export default function HeroSection({
 
           <a
             href="#galeri"
+            onClick={(e) => {
+              e.preventDefault();
+              smoothScrollTo("#galeri", 80);
+            }}
             className="glass-panel glass-panel-hover w-full sm:w-auto px-7 py-3.5 sm:px-8 sm:py-4 rounded-full text-xs sm:text-sm text-neutral-200 tracking-widest uppercase font-medium flex items-center justify-center gap-2 active:scale-95 transition-all"
           >
             <span>Kisah Kamu</span>

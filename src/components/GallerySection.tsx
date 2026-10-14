@@ -123,7 +123,7 @@ export default function GallerySection() {
   const currentSlide = PORTFOLIO_SLIDES[activeSlide];
 
   return (
-    <section id="galeri" className="relative py-28 px-4 sm:px-6 bg-obsidian-950 overflow-hidden">
+    <section id="galeri" className="relative py-28 px-4 sm:px-6 bg-obsidian-950 overflow-hidden scroll-mt-20 sm:scroll-mt-24">
       {/* Background Subtle Ambience */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-gold-400/[0.03] blur-[140px] pointer-events-none rounded-full" />
 
