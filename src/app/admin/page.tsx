@@ -128,9 +128,9 @@ export default function AdminPage() {
     const dpFormatted = `Rp ${(booking.downPayment || 1000000).toLocaleString("id-ID")}`;
     switch (key) {
       case "hold":
-        return `Halo Kak ${booking.coupleName}, salam hangat dari Bylumenia Studio ✨\n\nKami mengonfirmasi bahwa slot tanggal *${booking.eventDate}* untuk paket *${booking.packageName}* saat ini sedang kami hold khusus untuk Kakak.\n\nBatas waktu hold 30 menit akan segera berakhir. Mohon konfirmasi kelanjutan reservasi dan unggah bukti transfer tanda jadi agar tanggal bahagia kalian tetap terkunci aman secara eksklusif.\n\nJika ada pertanyaan atau kendala, silakan langsung balas pesan ini ya Kak. Terima kasih banyak! 🙏`;
+        return `Halo Kak ${booking.coupleName}, salam dari Studio Lumenia ✨\n\nTanggal *${booking.eventDate}* untuk paket *${booking.packageName}* sedang kami tahan untuk Kakak.\n\nWaktu hold 30 menit hampir habis. Kalau Kakak sudah mantap, mohon kirim bukti transfer tanda jadi ya, supaya tanggalnya aman.\n\nKalau ada pertanyaan, langsung balas pesan ini saja ya Kak. Terima kasih! 🙏`;
       case "confirmed":
-        return `Selamat Kak ${booking.coupleName}! 🎉✨\n\nPembayaran tanda jadi (DP) sebesar *${dpFormatted}* untuk paket *${booking.packageName}* pada tanggal *${booking.eventDate}* telah berhasil diverifikasi oleh tim kurator Bylumenia.\n\nRestu waktu untuk hari bahagia kalian kini resmi *TERKUNCI EKSKLUSIF* di kalender kami. Kami hanya menerima 1 pasangan dalam satu hari agar fokus karya kami utuh untuk kalian.\n\nTim kurator kami akan segera berkoordinasi lebih lanjut terkait pengarahan moodboard & konsep visual. Terima kasih atas kepercayaan Kakak berdua bersama Bylumenia Studio! 🤍`;
+        return `Halo Kak ${booking.coupleName}! 🎉\n\nPembayaran tanda jadi (DP) sebesar *${dpFormatted}* untuk paket *${booking.packageName}* tanggal *${booking.eventDate}* sudah kami terima dan terverifikasi.\n\nTanggal Kakak sekarang sudah resmi kami pegang, dan kami hanya mengambil 1 pasangan per hari supaya bisa fokus penuh.\n\nSelanjutnya tim kami akan menghubungi Kakak untuk ngobrol soal konsep dan moodboard. Terima kasih sudah percaya sama Studio Lumenia! 🤍`;
       case "proof_issue":
         return `Halo Kak ${booking.coupleName}, salam hangat dari Bylumenia Studio 🙏\n\nTerima kasih telah melakukan pemesanan dan mengirimkan bukti transfer untuk tanggal *${booking.eventDate}*.\n\nMohon maaf, file slip transfer yang kami terima terlihat kurang jelas / terpotong sehingga belum dapat kami verifikasi dengan sistem perbankan. Mohon bantuan Kakak untuk mengirimkan foto atau screenshot bukti transfer yang lebih jelas melalui chat ini ya Kak, agar jadwal kalian dapat segera kami kunci.\n\nTerima kasih banyak atas pengertiannya!`;
       case "consult":
@@ -469,9 +469,6 @@ export default function AdminPage() {
             >
               Bylumenia
             </Link>
-            <span className="text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-gold-400/20 text-gold-300 border border-gold-400/30">
-              Backoffice Kurator v3.0
-            </span>
           </div>
 
           <div className="flex items-center gap-2 sm:gap-3">

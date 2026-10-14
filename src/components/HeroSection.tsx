@@ -148,25 +148,13 @@ export default function HeroSection({
 
       {/* Hero Content */}
       <div className="relative z-10 max-w-5xl mx-auto px-5 pt-28 pb-16 text-center flex flex-col items-center">
-        {/* Boutique Tag */}
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-panel border border-gold-400/30 text-gold-300 text-xs tracking-widest uppercase mb-8 shadow-glow animate-fade-in">
-          <span className="w-1.5 h-1.5 rounded-full bg-gold-400 shadow-[0_0_8px_#D4AF37]" />
-          <span>Butik Visual Pernikahan &bull; Semarang & Luar Kota</span>
-        </div>
-
-        {/* Main Headline — Crisp with glow & shadow */}
-        <h1 className="font-serif text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-light text-white tracking-tight leading-[1.12] sm:leading-[1.08] mb-5 max-w-4xl drop-shadow-[0_4px_24px_rgba(0,0,0,0.85)]">
-          Bukan Dimana Kita Menemukan, Tapi{" "}
+        {/* Main Headline */}
+        <h1 className="font-serif text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-light text-white tracking-tight leading-[1.12] sm:leading-[1.08] mb-10 max-w-4xl drop-shadow-[0_4px_24px_rgba(0,0,0,0.85)]">
+          Where every detail of your moment shines with{" "}
           <span className="italic font-normal gold-gradient-text block sm:inline mt-1 sm:mt-0 drop-shadow-[0_2px_16px_rgba(212,175,55,0.4)]">
-            Bagaimana Kita Menenun Rasa.
+            timeless beauty &amp; joy.
           </span>
         </h1>
-
-        {/* Poetic Subheadline */}
-        <p className="max-w-2xl text-xs sm:text-base md:text-lg text-neutral-200/95 font-light leading-relaxed mb-8 sm:mb-10 tracking-wide px-2 sm:px-0 drop-shadow-[0_2px_10px_rgba(0,0,0,0.75)]">
-          Bylumenia merekam kedalaman emosi, gestur mikro, dan keabadian cinta di atas sekadar kuantitas.
-          Kami hanya menerima <span className="text-gold-300 font-normal">satu pasangan dalam satu hari</span> agar fokus semesta kami utuh untuk kalian.
-        </p>
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 w-full sm:w-auto max-w-xs sm:max-w-none">

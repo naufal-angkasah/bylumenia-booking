@@ -20,14 +20,14 @@ const jakarta = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://bylumenia-booking.vercel.app"),
-  title: "Bylumenia • Butik Visual Pernikahan & Prewedding",
+  title: "Bylumenia • Studio Lumenia & Wedding Visuals",
   description:
-    "Merekam kedalaman emosi, gestur mikro, dan keabadian rasa di atas sekadar kuantitas. Sistem reservasi sinematik dan galeri visual Semarang, Solo, Jogja, & Luar Kota.",
+    "Where every detail of your moment shines with timeless beauty & joy. Sistem reservasi sinematik dan galeri visual Semarang, Solo, Jogja, & Luar Kota.",
   keywords: [
     "bylumenia",
     "wedding photography",
     "prewedding semarang",
-    "butik visual",
+    "studio lumenia",
     "fotografer pernikahan solo",
     "cinematic wedding",
   ],
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
   creator: "Bylumenia",
   publisher: "Outlook Universe (OUNERS)",
   openGraph: {
-    title: "Bylumenia • Butik Visual Pernikahan & Prewedding",
+    title: "Bylumenia • Studio Lumenia & Wedding Visuals",
     description:
       "Bukan dimana kita menemukan, tapi bagaimana kita menenun rasa. Sistem reservasi sinematik dan arsip portofolio Semarang, Solo, Yogyakarta, & Luar Kota.",
     url: "https://bylumenia-booking.vercel.app",
@@ -49,13 +49,13 @@ export const metadata: Metadata = {
         width: 1200,
         height: 630,
         type: "image/jpeg",
-        alt: "Bylumenia • Butik Visual Pernikahan & Prewedding",
+        alt: "Bylumenia • Studio Lumenia & Wedding Visuals",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Bylumenia • Butik Visual Pernikahan & Prewedding",
+    title: "Bylumenia • Studio Lumenia & Wedding Visuals",
     description:
       "Bukan dimana kita menemukan, tapi bagaimana kita menenun rasa. Sistem reservasi sinematik dan arsip portofolio Semarang & Luar Kota.",
     images: ["https://bylumenia-booking.vercel.app/images/og-image.jpg"],
@@ -74,9 +74,9 @@ export default function RootLayout({
   return (
     <html lang="id" className="scroll-smooth dark">
       <head>
-        <title>Bylumenia • Butik Visual Pernikahan &amp; Prewedding</title>
-        <meta name="description" content="Merekam kedalaman emosi, gestur mikro, dan keabadian rasa di atas sekadar kuantitas. Sistem reservasi sinematik dan galeri visual Semarang, Solo, Jogja, &amp; Luar Kota." />
-        <meta property="og:title" content="Bylumenia • Butik Visual Pernikahan &amp; Prewedding" />
+        <title>Bylumenia • Studio Lumenia &amp; Wedding Visuals</title>
+        <meta name="description" content="Where every detail of your moment shines with timeless beauty & joy. Sistem reservasi sinematik dan galeri visual Semarang, Solo, Jogja, &amp; Luar Kota." />
+        <meta property="og:title" content="Bylumenia • Studio Lumenia &amp; Wedding Visuals" />
         <meta property="og:description" content="Bukan dimana kita menemukan, tapi bagaimana kita menenun rasa. Sistem reservasi sinematik &amp; arsip portofolio Semarang, Solo, Yogyakarta, &amp; Luar Kota." />
         <meta property="og:url" content="https://bylumenia-booking.vercel.app/" />
         <meta property="og:site_name" content="Bylumenia Studio" />
@@ -86,10 +86,10 @@ export default function RootLayout({
         <meta property="og:image:type" content="image/jpeg" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
-        <meta property="og:image:alt" content="Bylumenia • Butik Visual Pernikahan &amp; Prewedding" />
+        <meta property="og:image:alt" content="Bylumenia • Studio Lumenia &amp; Wedding Visuals" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Bylumenia • Butik Visual Pernikahan &amp; Prewedding" />
-        <meta name="twitter:description" content="Merekam kedalaman emosi, gestur mikro, dan keabadian rasa di atas sekadar kuantitas. Sistem reservasi sinematik Semarang &amp; Luar Kota." />
+        <meta name="twitter:title" content="Bylumenia • Studio Lumenia &amp; Wedding Visuals" />
+        <meta name="twitter:description" content="Where every detail of your moment shines with timeless beauty & joy. Sistem reservasi sinematik Semarang &amp; Luar Kota." />
         <meta name="twitter:image" content="https://bylumenia-booking.vercel.app/images/og-image.jpg" />
       </head>
       <body

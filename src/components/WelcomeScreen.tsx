@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Volume2, Heart, ShieldCheck } from "lucide-react";
+import { Volume2, ShieldCheck } from "lucide-react";
 
 interface WelcomeScreenProps {
   onEnter: () => void;
@@ -33,16 +33,6 @@ export default function WelcomeScreen({ onEnter }: WelcomeScreenProps) {
         }}
         className="relative max-w-lg w-full text-center p-8 sm:p-12 rounded-3xl glass-panel border border-gold-400/35 shadow-[0_0_80px_rgba(0,0,0,0.95)] animate-fade-in"
       >
-        {/* Monogram / Brand Icon */}
-        <div className="w-16 h-16 rounded-full bg-gold-400/15 border border-gold-400/40 text-gold-300 flex items-center justify-center mx-auto mb-6 shadow-[0_0_24px_rgba(212,175,55,0.3)] animate-pulse">
-          <Heart className="w-7 h-7 fill-gold-400/30 stroke-gold-300" />
-        </div>
-
-        {/* Brand Tagline */}
-        <span className="text-[10px] sm:text-xs font-semibold tracking-[0.3em] uppercase text-gold-400 block mb-2">
-          Butik Visual Pernikahan &bull; Semarang
-        </span>
-
         <h1 className="font-serif text-3xl sm:text-5xl text-white font-light tracking-wide mb-4">
           Bylumenia
         </h1>
@@ -60,10 +50,6 @@ export default function WelcomeScreen({ onEnter }: WelcomeScreenProps) {
           <Volume2 className="w-4 h-4 animate-pulse text-obsidian-950" />
           <span>Buka Lembaran Kisah</span>
         </button>
-
-        <p className="text-[11px] text-neutral-500 mt-4 tracking-wider">
-          Sentuh untuk memulai pengalaman sinematik dengan audio aktif ♪
-        </p>
 
         {/* Direct Curator Access Link for Admins */}
         <div className="mt-6 pt-5 border-t border-white/10 flex items-center justify-center">

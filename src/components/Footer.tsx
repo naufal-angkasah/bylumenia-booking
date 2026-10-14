@@ -33,7 +33,7 @@ export default function Footer() {
             Bylumenia
           </Link>
           <p className="font-light text-neutral-400 max-w-sm leading-relaxed">
-            Butik visual pernikahan & prewedding. Mengabadikan kedalaman emosi dan gestur mikro sepasang kekasih.
+            Where every detail of your moment shines with timeless beauty & joy.
           </p>
           <div className="mt-3 flex items-center justify-center md:justify-start gap-1.5 text-gold-400 text-[11px]">
             <MapPin className="w-3.5 h-3.5" />
