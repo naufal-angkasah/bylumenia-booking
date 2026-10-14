@@ -1080,7 +1080,7 @@ export default function BookingModal({
                   disabled={isSubmitting}
                   className="gold-gradient-btn px-6 sm:px-8 py-3.5 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-2 shadow-xl hover:scale-105 active:scale-95 transition-all ml-auto disabled:opacity-50"
                 >
-                  <span>{isSubmitting ? "Mengikrarkan..." : "IKRARKAN JADWAL DAN KIRIM CERITA KAMI"}</span>
+                  <span>{isSubmitting ? "Memproses..." : "RESERVE DAN KIRIM CERITA KAMI"}</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               )}

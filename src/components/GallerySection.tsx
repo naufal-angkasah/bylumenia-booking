@@ -347,20 +347,21 @@ export default function GallerySection() {
           </div>
         </div>
 
-        {/* Instagram Attribution Pill */}
+        {/* Instagram Icon Button */}
         <div className="mt-14 text-center">
           <a
             href="https://www.instagram.com/bylumenia"
             target="_blank"
             rel="noopener noreferrer"
+            aria-label="Buka Instagram @bylumenia"
+            title="Instagram @bylumenia"
             onClick={(e) => {
               e.preventDefault();
               openInstagram("bylumenia");
             }}
-            className="inline-flex items-center gap-2.5 px-7 py-3 rounded-full glass-panel glass-panel-hover text-xs uppercase tracking-widest text-neutral-300 hover:text-gold-300 shadow-xl border border-white/10 hover:border-gold-400/40"
+            className="inline-flex items-center justify-center w-14 h-14 rounded-full glass-panel glass-panel-hover text-gold-400 hover:text-gold-300 shadow-xl border border-white/10 hover:border-gold-400/40 hover:scale-105 active:scale-95 transition-all touch-manipulation"
           >
-            <InstagramIcon className="w-4 h-4 text-gold-400" />
-            <span>Jelajahi Lebih Banyak Cerita di @bylumenia &bull; @hai_ivaan</span>
+            <InstagramIcon className="w-6 h-6" />
           </a>
         </div>
       </div>

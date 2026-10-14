@@ -162,7 +162,7 @@ export default function HeroSection({
             onClick={onOpenBooking}
             className="gold-gradient-btn w-full sm:w-auto px-7 py-3.5 sm:px-8 sm:py-4 rounded-full text-xs sm:text-sm font-semibold tracking-widest uppercase flex items-center justify-center gap-3 shadow-2xl hover:scale-105 active:scale-95 transition-all group"
           >
-            <span>Ikrarkan Jadwal Kami</span>
+            <span>Reserve</span>
             <span className="inline-block transition-transform group-hover:translate-x-1">&rarr;</span>
           </button>
 
