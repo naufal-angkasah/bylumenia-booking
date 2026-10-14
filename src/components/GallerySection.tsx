@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { GALLERY_ITEMS, GalleryItem } from "@/lib/constants";
 import { Maximize2, X, Eye, ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
+import { openInstagram } from "@/lib/instagram";
 
 function InstagramIcon({ className = "w-4 h-4" }: { className?: string }) {
   return (
@@ -40,7 +41,7 @@ const PORTFOLIO_SLIDES: PortfolioSlide[] = [
     theme: "Kebaya Renda & Ronce Melati",
     storyQuote:
       "“Dari dua dunia yang berbeda, dua hati yang saling mencari, hingga berlabuh dalam dekap restu yang sama.”",
-    imageUrl: "/images/Wedding/IMG_9064.PNG",
+    imageUrl: "/images/Wedding/IMG_9064.webp",
   },
   {
     id: 2,
@@ -49,7 +50,7 @@ const PORTFOLIO_SLIDES: PortfolioSlide[] = [
     theme: "Sungkeman & Tetes Air Mata Bahagia",
     storyQuote:
       "“Tetes air mata haru di hadapan orang tua, mengawali langkah baru seumur hidup.”",
-    imageUrl: "/images/Wedding/IMG_9060.PNG",
+    imageUrl: "/images/Wedding/IMG_9060.webp",
   },
   {
     id: 3,
@@ -58,7 +59,7 @@ const PORTFOLIO_SLIDES: PortfolioSlide[] = [
     theme: "Padang Terbuka & Tawa Lepas Alami",
     storyQuote:
       "“Langkah santai berdua di bawah semesta, tawa lepas tanpa rekayasa.”",
-    imageUrl: "/images/Prewedding/IMG_9033.PNG",
+    imageUrl: "/images/Prewedding/IMG_9033.webp",
   },
   {
     id: 4,
@@ -67,7 +68,7 @@ const PORTFOLIO_SLIDES: PortfolioSlide[] = [
     theme: "Sorot Beludru Merah & Nuansa Hangat",
     storyQuote:
       "“Keanggunan sinematik dalam balutan pencahayaan temaram yang abadi.”",
-    imageUrl: "/images/Prewedding/IMG_9052.PNG",
+    imageUrl: "/images/Prewedding/IMG_9052.webp",
   },
 ];
 
@@ -283,6 +284,10 @@ export default function GallerySection() {
               href="https://www.instagram.com/bylumenia"
               target="_blank"
               rel="noopener noreferrer"
+              onClick={(e) => {
+                e.preventDefault();
+                openInstagram("bylumenia");
+              }}
               className="inline-flex items-center gap-2 text-xs uppercase tracking-wider text-neutral-300 hover:text-gold-300 transition-colors"
             >
               <InstagramIcon className="w-4 h-4 text-gold-400" />
@@ -348,6 +353,10 @@ export default function GallerySection() {
             href="https://www.instagram.com/bylumenia"
             target="_blank"
             rel="noopener noreferrer"
+            onClick={(e) => {
+              e.preventDefault();
+              openInstagram("bylumenia");
+            }}
             className="inline-flex items-center gap-2.5 px-7 py-3 rounded-full glass-panel glass-panel-hover text-xs uppercase tracking-widest text-neutral-300 hover:text-gold-300 shadow-xl border border-white/10 hover:border-gold-400/40"
           >
             <InstagramIcon className="w-4 h-4 text-gold-400" />

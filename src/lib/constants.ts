@@ -14,7 +14,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     subtitle: "Detik hening saat doa dipanjatkan di hadapan semesta",
     category: "Akad & Resepsi",
     aspect: "tall",
-    imageUrl: "/images/Wedding/IMG_9060.PNG",
+    imageUrl: "/images/Wedding/IMG_9060.webp",
   },
   {
     id: "gal-2",
@@ -22,7 +22,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     subtitle: "Tawa lepas berdua di bawah langit cerah tanpa rekayasa",
     category: "Prewedding",
     aspect: "tall",
-    imageUrl: "/images/Prewedding/IMG_9033.PNG",
+    imageUrl: "/images/Prewedding/IMG_9033.webp",
   },
   {
     id: "gal-3",
@@ -30,7 +30,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     subtitle: "Kebaya renda putih berpadu kemegahan ronce melati",
     category: "Adat & Budaya",
     aspect: "tall",
-    imageUrl: "/images/Wedding/IMG_9064.PNG",
+    imageUrl: "/images/Wedding/IMG_9064.webp",
   },
   {
     id: "gal-4",
@@ -38,7 +38,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     subtitle: "Nuansa studio hangat berpadu keanggunan busana modern",
     category: "Prewedding",
     aspect: "tall",
-    imageUrl: "/images/Prewedding/IMG_9052.PNG",
+    imageUrl: "/images/Prewedding/IMG_9052.webp",
   },
   {
     id: "gal-5",
@@ -46,7 +46,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     subtitle: "Rangkaian simbol, cincin, wewangian, dan corak adat",
     category: "Editorial",
     aspect: "square",
-    imageUrl: "/images/Wedding/IMG_9062.PNG",
+    imageUrl: "/images/Wedding/IMG_9062.webp",
   },
   {
     id: "gal-6",
@@ -54,7 +54,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     subtitle: "Tiga bingkai senyum manis mengawali babak baru",
     category: "Prewedding",
     aspect: "tall",
-    imageUrl: "/images/Prewedding/IMG_9045.PNG",
+    imageUrl: "/images/Prewedding/IMG_9045.webp",
   },
   {
     id: "gal-7",
@@ -62,7 +62,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     subtitle: "Sorot cahaya dramatis yang menonjolkan lekuk keanggunan",
     category: "Editorial",
     aspect: "tall",
-    imageUrl: "/images/Wedding/IMG_9065.PNG",
+    imageUrl: "/images/Wedding/IMG_9065.webp",
   },
   {
     id: "gal-8",
@@ -70,7 +70,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     subtitle: "Ketelitian setiap detail busana adat pengantin Jawa",
     category: "Adat & Budaya",
     aspect: "tall",
-    imageUrl: "/images/Wedding/IMG_9068.PNG",
+    imageUrl: "/images/Wedding/IMG_9068.webp",
   },
   {
     id: "gal-9",
@@ -78,7 +78,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     subtitle: "Rangkuman tawa, sungkeman, dan dekap hangat keluarga",
     category: "Akad & Resepsi",
     aspect: "square",
-    imageUrl: "/images/Wedding/IMG_9069.PNG",
+    imageUrl: "/images/Wedding/IMG_9069.webp",
   },
 ];
 

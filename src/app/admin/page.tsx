@@ -25,6 +25,8 @@ import {
   Coins,
   Save,
   Check,
+  Copy,
+  X,
 } from "lucide-react";
 
 interface BookingItem {
@@ -81,6 +83,53 @@ export default function AdminPage() {
   const [filterStatus, setFilterStatus] = useState<string>("ALL");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedProofUrl, setSelectedProofUrl] = useState<string | null>(null);
+
+  // Quick WhatsApp Message Templates State
+  const [waModalBooking, setWaModalBooking] = useState<BookingItem | null>(null);
+  const [waTemplateKey, setWaTemplateKey] = useState<"hold" | "confirmed" | "proof_issue" | "consult">("hold");
+  const [waMessageText, setWaMessageText] = useState("");
+  const [waCopiedToast, setWaCopiedToast] = useState(false);
+
+  const getWaTemplateContent = (booking: BookingItem, key: "hold" | "confirmed" | "proof_issue" | "consult") => {
+    const dpFormatted = `Rp ${(booking.downPayment || 1000000).toLocaleString("id-ID")}`;
+    switch (key) {
+      case "hold":
+        return `Halo Kak ${booking.coupleName}, salam hangat dari Bylumenia Studio ✨\n\nKami mengonfirmasi bahwa slot tanggal *${booking.eventDate}* untuk paket *${booking.packageName}* saat ini sedang kami hold khusus untuk Kakak.\n\nBatas waktu hold 30 menit akan segera berakhir. Mohon konfirmasi kelanjutan reservasi dan unggah bukti transfer tanda jadi agar tanggal bahagia kalian tetap terkunci aman secara eksklusif.\n\nJika ada pertanyaan atau kendala, silakan langsung balas pesan ini ya Kak. Terima kasih banyak! 🙏`;
+      case "confirmed":
+        return `Selamat Kak ${booking.coupleName}! 🎉✨\n\nPembayaran tanda jadi (DP) sebesar *${dpFormatted}* untuk paket *${booking.packageName}* pada tanggal *${booking.eventDate}* telah berhasil diverifikasi oleh tim kurator Bylumenia.\n\nRestu waktu untuk hari bahagia kalian kini resmi *TERKUNCI EKSKLUSIF* di kalender kami. Kami hanya menerima 1 pasangan dalam satu hari agar fokus karya kami utuh untuk kalian.\n\nTim kurator kami akan segera berkoordinasi lebih lanjut terkait pengarahan moodboard & konsep visual. Terima kasih atas kepercayaan Kakak berdua bersama Bylumenia Studio! 🤍`;
+      case "proof_issue":
+        return `Halo Kak ${booking.coupleName}, salam hangat dari Bylumenia Studio 🙏\n\nTerima kasih telah melakukan pemesanan dan mengirimkan bukti transfer untuk tanggal *${booking.eventDate}*.\n\nMohon maaf, file slip transfer yang kami terima terlihat kurang jelas / terpotong sehingga belum dapat kami verifikasi dengan sistem perbankan. Mohon bantuan Kakak untuk mengirimkan foto atau screenshot bukti transfer yang lebih jelas melalui chat ini ya Kak, agar jadwal kalian dapat segera kami kunci.\n\nTerima kasih banyak atas pengertiannya!`;
+      case "consult":
+        return `Halo Kak ${booking.coupleName}, salam hangat dari tim visual Bylumenia Studio ✨\n\nSenang sekali bisa menyambut rencana hari bahagia Kakak pada tanggal *${booking.eventDate}* di ${booking.eventLocation || "Semarang"}.\n\nApakah ada referensi gaya, busana, atau nuansa visual tertentu yang ingin Kakak diskusikan bersama tim kami? Kami siap membantu merancang konsep yang paling sesuai dengan kisah cinta kalian berdua. Salam hangat! 🌿`;
+    }
+  };
+
+  const handleOpenWaModal = (booking: BookingItem, defaultKey?: "hold" | "confirmed" | "proof_issue" | "consult") => {
+    const key = defaultKey || (booking.status === "CONFIRMED" ? "confirmed" : booking.status === "PENDING_VERIFY" ? "proof_issue" : "hold");
+    setWaModalBooking(booking);
+    setWaTemplateKey(key);
+    setWaMessageText(getWaTemplateContent(booking, key));
+    setWaCopiedToast(false);
+  };
+
+  const handleSelectWaTemplate = (key: "hold" | "confirmed" | "proof_issue" | "consult") => {
+    if (!waModalBooking) return;
+    setWaTemplateKey(key);
+    setWaMessageText(getWaTemplateContent(waModalBooking, key));
+  };
+
+  const handleSendWa = () => {
+    if (!waModalBooking) return;
+    const cleanNumber = waModalBooking.whatsapp.replace(/^0/, "62").replace(/[^0-9]/g, "");
+    const url = `https://api.whatsapp.com/send?phone=${cleanNumber}&text=${encodeURIComponent(waMessageText)}`;
+    window.open(url, "_blank");
+  };
+
+  const handleCopyWaText = () => {
+    navigator.clipboard.writeText(waMessageText);
+    setWaCopiedToast(true);
+    setTimeout(() => setWaCopiedToast(false), 2000);
+  };
 
   // Interactive Monthly Calendar State (Overview)
   const [calendarDate, setCalendarDate] = useState<Date>(new Date());
@@ -623,15 +672,15 @@ export default function AdminPage() {
                             <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-gold-400/20 text-gold-300 border border-gold-400/30">
                               {b.status}
                             </span>
-                            <a
-                              href={`https://wa.me/${b.whatsapp.replace(/^0/, "62")}?text=Halo%20${encodeURIComponent(b.coupleName)}%2C%20salam%20hangat%20dari%20kurator%20Bylumenia.`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="px-3 py-1.5 rounded-lg bg-emerald-600/30 text-emerald-300 border border-emerald-500/40 text-xs flex items-center gap-1"
+                            <button
+                              type="button"
+                              onClick={() => handleOpenWaModal(b)}
+                              className="px-3 py-1.5 rounded-lg bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-300 border border-emerald-500/40 text-xs flex items-center gap-1.5 transition-colors"
+                              title="Kirim Pesan WhatsApp Cepat"
                             >
                               <MessageSquare className="w-3.5 h-3.5" />
-                              <span>WhatsApp</span>
-                            </a>
+                              <span>WhatsApp Cepat</span>
+                            </button>
                           </div>
                         </div>
                       ))}
@@ -700,16 +749,16 @@ export default function AdminPage() {
                           <tr key={b.id} className="hover:bg-white/[0.02] transition-colors">
                             <td className="p-4">
                               <span className="font-mono text-[10px] text-gold-400 block mb-0.5">{b.bookingCode}</span>
-                              <span className="font-medium text-white block">{b.coupleName}</span>
-                              <a
-                                href={`https://wa.me/${b.whatsapp.replace(/^0/, "62")}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-[11px] text-emerald-400 hover:underline flex items-center gap-1 mt-0.5"
+                              <button
+                                type="button"
+                                onClick={() => handleOpenWaModal(b)}
+                                className="text-[11px] text-emerald-400 hover:text-emerald-300 flex items-center gap-1 mt-0.5 text-left"
+                                title="Kirim Pesan WhatsApp Cepat"
                               >
                                 <MessageSquare className="w-3 h-3" />
                                 <span>{b.whatsapp}</span>
-                              </a>
+                                <span className="text-[9px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 font-mono ml-0.5">Template</span>
+                              </button>
                             </td>
                             <td className="p-4">
                               <span className="font-medium text-white block">{b.eventDate}</span>
@@ -753,6 +802,14 @@ export default function AdminPage() {
                             </td>
                             <td className="p-4 text-right">
                               <div className="flex items-center justify-end gap-1.5">
+                                <button
+                                  type="button"
+                                  onClick={() => handleOpenWaModal(b)}
+                                  className="p-1.5 rounded-lg bg-emerald-600/20 text-emerald-300 hover:bg-emerald-600/40 border border-emerald-500/30 transition-colors"
+                                  title="Template Pesan WhatsApp Cepat"
+                                >
+                                  <MessageSquare className="w-4 h-4" />
+                                </button>
                                 {b.status === "PENDING_VERIFY" && (
                                   <>
                                     <button
@@ -1297,6 +1354,163 @@ export default function AdminPage() {
                 alt="Bukti Transfer"
                 className="max-h-[70vh] w-auto object-contain rounded-lg"
               />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Quick WhatsApp Template Modal */}
+      {waModalBooking && (
+        <div
+          onClick={() => setWaModalBooking(null)}
+          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative max-w-xl w-full glass-panel p-5 sm:p-6 rounded-3xl border border-white/20 shadow-2xl"
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between pb-3 border-b border-white/10 mb-4">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+                  <MessageSquare className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold text-white">Template Pesan WhatsApp</h3>
+                  <p className="text-[11px] text-neutral-400">
+                    Kirim ke: <span className="text-emerald-300 font-medium">{waModalBooking.coupleName}</span> ({waModalBooking.whatsapp})
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setWaModalBooking(null)}
+                className="text-xs text-neutral-400 hover:text-white p-1 rounded-lg hover:bg-white/10"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Client Context Banner */}
+            <div className="p-3 rounded-xl bg-white/[0.03] border border-white/10 mb-4 flex items-center justify-between text-xs flex-wrap gap-2">
+              <div>
+                <span className="text-neutral-400 text-[10px] uppercase tracking-wider block">Tanggal &amp; Paket</span>
+                <span className="text-white font-medium">{waModalBooking.eventDate} &bull; {waModalBooking.packageName}</span>
+              </div>
+              <div>
+                <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider ${
+                  waModalBooking.status === "CONFIRMED"
+                    ? "bg-gold-400/20 text-gold-300 border border-gold-400/30"
+                    : waModalBooking.status === "PENDING_VERIFY"
+                    ? "bg-amber-400/20 text-amber-300 border border-amber-400/30"
+                    : "bg-blue-400/20 text-blue-300 border border-blue-400/30"
+                }`}>
+                  Status: {waModalBooking.status}
+                </span>
+              </div>
+            </div>
+
+            {/* Template Selector Chips */}
+            <div className="mb-3">
+              <span className="text-[10px] uppercase tracking-widest text-neutral-400 font-semibold block mb-2">
+                Pilih Skenario Template:
+              </span>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <button
+                  type="button"
+                  onClick={() => handleSelectWaTemplate("hold")}
+                  className={`px-2.5 py-2 rounded-xl text-[11px] font-medium text-left transition-all border ${
+                    waTemplateKey === "hold"
+                      ? "bg-amber-500/20 border-amber-400/60 text-amber-300 shadow-sm"
+                      : "bg-white/[0.02] border-white/10 text-neutral-400 hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  ⏱️ Pengingat Hold
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSelectWaTemplate("confirmed")}
+                  className={`px-2.5 py-2 rounded-xl text-[11px] font-medium text-left transition-all border ${
+                    waTemplateKey === "confirmed"
+                      ? "bg-emerald-500/20 border-emerald-400/60 text-emerald-300 shadow-sm"
+                      : "bg-white/[0.02] border-white/10 text-neutral-400 hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  🎉 Konfirmasi DP
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSelectWaTemplate("proof_issue")}
+                  className={`px-2.5 py-2 rounded-xl text-[11px] font-medium text-left transition-all border ${
+                    waTemplateKey === "proof_issue"
+                      ? "bg-rose-500/20 border-rose-400/60 text-rose-300 shadow-sm"
+                      : "bg-white/[0.02] border-white/10 text-neutral-400 hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  📄 Slip Buram
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSelectWaTemplate("consult")}
+                  className={`px-2.5 py-2 rounded-xl text-[11px] font-medium text-left transition-all border ${
+                    waTemplateKey === "consult"
+                      ? "bg-blue-500/20 border-blue-400/60 text-blue-300 shadow-sm"
+                      : "bg-white/[0.02] border-white/10 text-neutral-400 hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  💬 Sapaan Konsep
+                </button>
+              </div>
+            </div>
+
+            {/* Editable Text Area */}
+            <div className="mb-4">
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-[10px] uppercase tracking-widest text-neutral-400 font-semibold">
+                  Isi Pesan (Dapat Disesuaikan):
+                </span>
+                {waCopiedToast && (
+                  <span className="text-[10px] text-emerald-400 font-medium flex items-center gap-1 animate-fade-in">
+                    <Check className="w-3 h-3" /> Teks tersalin!
+                  </span>
+                )}
+              </div>
+              <textarea
+                rows={6}
+                value={waMessageText}
+                onChange={(e) => setWaMessageText(e.target.value)}
+                className="w-full p-3.5 rounded-xl bg-white/[0.04] border border-white/10 focus:border-emerald-500/60 focus:outline-none text-xs text-neutral-200 leading-relaxed font-sans resize-none transition-colors"
+              />
+            </div>
+
+            {/* Modal Actions */}
+            <div className="flex items-center justify-between gap-3 pt-2">
+              <button
+                type="button"
+                onClick={handleCopyWaText}
+                className="px-3.5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-neutral-300 hover:text-white transition-colors flex items-center gap-1.5"
+              >
+                <Copy className="w-3.5 h-3.5 text-neutral-400" />
+                <span>Salin Pesan</span>
+              </button>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setWaModalBooking(null)}
+                  className="px-4 py-2.5 rounded-xl text-xs text-neutral-400 hover:text-white transition-colors"
+                >
+                  Tutup
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSendWa}
+                  className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-xs flex items-center gap-2 shadow-lg shadow-emerald-950/40 transition-all hover:scale-105 active:scale-95"
+                >
+                  <MessageSquare className="w-4 h-4" />
+                  <span>Kirim ke WhatsApp</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>

@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { MapPin, Heart, ShieldCheck } from "lucide-react";
+import { openInstagram } from "@/lib/instagram";
 
 function InstagramIcon({ className = "w-4 h-4" }: { className?: string }) {
   return (
@@ -46,6 +47,10 @@ export default function Footer() {
             href="https://www.instagram.com/bylumenia"
             target="_blank"
             rel="noopener noreferrer"
+            onClick={(e) => {
+              e.preventDefault();
+              openInstagram("bylumenia");
+            }}
             className="flex items-center gap-1.5 hover:text-gold-300 transition-colors"
           >
             <InstagramIcon className="w-4 h-4 text-gold-400" />
@@ -55,6 +60,10 @@ export default function Footer() {
             href="https://www.instagram.com/hai_ivaan"
             target="_blank"
             rel="noopener noreferrer"
+            onClick={(e) => {
+              e.preventDefault();
+              openInstagram("hai_ivaan");
+            }}
             className="flex items-center gap-1.5 hover:text-gold-300 transition-colors"
           >
             <InstagramIcon className="w-4 h-4 text-gold-400" />
