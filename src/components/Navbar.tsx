@@ -39,26 +39,26 @@ export default function Navbar({ onOpenBooking, isMuted = true, onToggleAudio }:
           <span className="inline-block w-1.5 h-1.5 rounded-full bg-gold-400 shadow-[0_0_8px_#D4AF37] animate-pulse"></span>
         </Link>
 
-        {/* Desktop Links */}
-        <div className="hidden md:flex items-center gap-8 text-xs uppercase tracking-widest text-neutral-300 font-medium">
+        {/* Desktop & Tablet Links */}
+        <div className="hidden md:flex items-center gap-4 lg:gap-8 text-xs uppercase tracking-widest text-neutral-300 font-medium shrink-0">
           <a
             href="#galeri"
-            className="hover:text-gold-300 transition-colors"
+            className="hover:text-gold-300 transition-colors py-1"
           >
             Kisah Kamu
           </a>
           <a
             href="#filosofi"
-            className="hover:text-gold-300 transition-colors"
+            className="hover:text-gold-300 transition-colors py-1"
           >
             Filosofi
           </a>
           <Link
             href="/admin"
-            className="flex items-center gap-1.5 text-neutral-400 hover:text-gold-400 transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 hover:bg-gold-400/15 text-neutral-300 hover:text-gold-300 border border-white/10 hover:border-gold-400/40 transition-all text-xs touch-manipulation shrink-0"
             title="Ruang Kurator Internal"
           >
-            <ShieldCheck className="w-3.5 h-3.5 text-gold-400/70" />
+            <ShieldCheck className="w-3.5 h-3.5 text-gold-400" />
             <span>Kurator</span>
           </Link>
         </div>
@@ -100,7 +100,7 @@ export default function Navbar({ onOpenBooking, isMuted = true, onToggleAudio }:
           {/* Mobile menu toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-1.5 text-neutral-300 hover:text-white active:scale-90 transition-transform"
+            className="md:hidden p-2 text-neutral-300 hover:text-white active:scale-90 transition-transform touch-manipulation"
             aria-label="Toggle Menu"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -115,23 +115,23 @@ export default function Navbar({ onOpenBooking, isMuted = true, onToggleAudio }:
             <a
               href="#galeri"
               onClick={() => setMobileMenuOpen(false)}
-              className="px-3 py-2 rounded-lg hover:bg-white/5 hover:text-gold-300 transition-colors"
+              className="px-3 py-2 rounded-lg hover:bg-white/5 hover:text-gold-300 transition-colors touch-manipulation"
             >
               Kisah Kamu (Galeri)
             </a>
             <a
               href="#filosofi"
               onClick={() => setMobileMenuOpen(false)}
-              className="px-3 py-2 rounded-lg hover:bg-white/5 hover:text-gold-300 transition-colors"
+              className="px-3 py-2 rounded-lg hover:bg-white/5 hover:text-gold-300 transition-colors touch-manipulation"
             >
               Filosofi Kami
             </a>
             <Link
               href="/admin"
               onClick={() => setMobileMenuOpen(false)}
-              className="px-3 py-2 rounded-lg hover:bg-white/5 hover:text-gold-400 transition-colors flex items-center gap-2 text-gold-300"
+              className="px-3.5 py-2.5 rounded-xl bg-gold-400/10 hover:bg-gold-400/20 text-gold-300 border border-gold-400/25 transition-colors flex items-center gap-2 text-xs font-medium touch-manipulation"
             >
-              <ShieldCheck className="w-4 h-4" />
+              <ShieldCheck className="w-4 h-4 text-gold-400" />
               <span>Ruang Kurator Admin</span>
             </Link>
           </div>

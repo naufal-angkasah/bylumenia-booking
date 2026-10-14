@@ -7,11 +7,17 @@
   --foreground: #EDEDED;
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
 body {
   color: var(--foreground);
   background: var(--background);
   font-family: var(--font-sans), system-ui, sans-serif;
   overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
   selection-background-color: #D4AF37;
   selection-color: #0A0A0A;
 }

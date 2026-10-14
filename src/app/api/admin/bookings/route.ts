@@ -8,12 +8,18 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const pin = searchParams.get("pin");
-    const expectedPin = process.env.ADMIN_PIN || "1928";
+    const expectedPin = (process.env.ADMIN_PIN || "1928").trim();
 
-    if (pin !== expectedPin) {
+    if ((pin || "").trim() !== expectedPin) {
       return NextResponse.json(
         { success: false, message: "Kunci akses kurator tidak sesuai." },
-        { status: 401 }
+        {
+          status: 401,
+          headers: {
+            "Cache-Control": "no-store, no-cache, must-revalidate",
+            Pragma: "no-cache",
+          },
+        }
       );
     }
 
@@ -104,18 +110,26 @@ export async function GET(request: Request) {
       .filter((b) => b.status === "CONFIRMED")
       .reduce((sum, b) => sum + (Number(b.downPayment) || 0), 0);
 
-    return NextResponse.json({
-      success: true,
-      bookings,
-      logs,
-      metrics: {
-        totalBookings,
-        confirmedCount,
-        pendingCount,
-        activeHoldCount,
-        totalRevenueConfirmed,
+    return NextResponse.json(
+      {
+        success: true,
+        bookings,
+        logs,
+        metrics: {
+          totalBookings,
+          confirmedCount,
+          pendingCount,
+          activeHoldCount,
+          totalRevenueConfirmed,
+        },
       },
-    });
+      {
+        headers: {
+          "Cache-Control": "no-store, no-cache, must-revalidate",
+          Pragma: "no-cache",
+        },
+      }
+    );
   } catch (error) {
     console.error("Error fetching admin bookings:", error);
     return NextResponse.json(

@@ -10,9 +10,9 @@ export async function PATCH(
     const { id } = params;
     const body = await request.json();
     const { pin, action, notes } = body; // action: "CONFIRM" | "REJECT" | "RELEASE" | "EXTEND"
-    const expectedPin = process.env.ADMIN_PIN || "1928";
+    const expectedPin = (process.env.ADMIN_PIN || "1928").trim();
 
-    if (pin !== expectedPin) {
+    if (String(pin || "").trim() !== expectedPin) {
       return NextResponse.json(
         { success: false, message: "Kunci akses kurator tidak sah." },
         { status: 401 }

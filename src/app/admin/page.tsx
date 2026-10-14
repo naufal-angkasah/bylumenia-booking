@@ -27,7 +27,40 @@ import {
   Check,
   Copy,
   X,
+  EyeOff,
 } from "lucide-react";
+
+// Safe Storage helper resilient against iPadOS / iOS Safari Private Browsing quota restrictions
+const safeStorage = {
+  getItem: (key: string): string | null => {
+    try {
+      if (typeof window !== "undefined" && window.localStorage) {
+        return window.localStorage.getItem(key);
+      }
+    } catch {
+      // Storage blocked or Private Browsing
+    }
+    return null;
+  },
+  setItem: (key: string, value: string): void => {
+    try {
+      if (typeof window !== "undefined" && window.localStorage) {
+        window.localStorage.setItem(key, value);
+      }
+    } catch {
+      // Storage blocked or Private Browsing
+    }
+  },
+  removeItem: (key: string): void => {
+    try {
+      if (typeof window !== "undefined" && window.localStorage) {
+        window.localStorage.removeItem(key);
+      }
+    } catch {
+      // Storage blocked or Private Browsing
+    }
+  },
+};
 
 interface BookingItem {
   id: string;
@@ -61,6 +94,7 @@ interface SystemLogItem {
 
 export default function AdminPage() {
   const [pin, setPin] = useState("");
+  const [showPin, setShowPin] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [pinError, setPinError] = useState(false);
 
@@ -122,13 +156,31 @@ export default function AdminPage() {
     if (!waModalBooking) return;
     const cleanNumber = waModalBooking.whatsapp.replace(/^0/, "62").replace(/[^0-9]/g, "");
     const url = `https://api.whatsapp.com/send?phone=${cleanNumber}&text=${encodeURIComponent(waMessageText)}`;
-    window.open(url, "_blank");
+    window.open(url, "_blank", "noopener,noreferrer");
   };
 
-  const handleCopyWaText = () => {
-    navigator.clipboard.writeText(waMessageText);
-    setWaCopiedToast(true);
-    setTimeout(() => setWaCopiedToast(false), 2000);
+  const handleCopyWaText = async () => {
+    try {
+      if (typeof navigator !== "undefined" && navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(waMessageText);
+        setWaCopiedToast(true);
+        setTimeout(() => setWaCopiedToast(false), 2000);
+      } else {
+        const textarea = document.createElement("textarea");
+        textarea.value = waMessageText;
+        textarea.style.position = "fixed";
+        textarea.style.opacity = "0";
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+        setWaCopiedToast(true);
+        setTimeout(() => setWaCopiedToast(false), 2000);
+      }
+    } catch {
+      // Clipboard fallback failed silently
+    }
   };
 
   // Interactive Monthly Calendar State (Overview)
@@ -153,12 +205,13 @@ export default function AdminPage() {
     narrative5: "Bismillah, mari kita mulai merangkai semesta kalian sendiri, selamanya...",
   });
 
-  // Load PIN from localStorage if previously stored
+  // Load PIN from storage if previously stored
   useEffect(() => {
-    const savedPin = localStorage.getItem("bylumenia_admin_pin");
+    const savedPin = safeStorage.getItem("bylumenia_admin_pin");
     if (savedPin) {
-      setPin(savedPin);
-      fetchDashboardData(savedPin);
+      const trimmed = savedPin.trim();
+      setPin(trimmed);
+      fetchDashboardData(trimmed);
     }
   }, []);
 
@@ -169,14 +222,27 @@ export default function AdminPage() {
   };
 
   const fetchDashboardData = async (authPin: string) => {
+    const cleanPin = (authPin || "").trim();
+    if (!cleanPin) {
+      setPinError(true);
+      return;
+    }
+
     setLoading(true);
+    setPinError(false);
     try {
-      const res = await fetch(`/api/admin/bookings?pin=${encodeURIComponent(authPin)}`);
+      const res = await fetch(`/api/admin/bookings?pin=${encodeURIComponent(cleanPin)}&_t=${Date.now()}`, {
+        cache: "no-store",
+        headers: {
+          "Cache-Control": "no-cache, no-store, must-revalidate",
+          Pragma: "no-cache",
+        },
+      });
       const data = await res.json();
 
       if (res.ok && data.success) {
         setIsAuthenticated(true);
-        localStorage.setItem("bylumenia_admin_pin", authPin);
+        safeStorage.setItem("bylumenia_admin_pin", cleanPin);
         setBookings(data.bookings || []);
         setLogs(data.logs || []);
         setMetrics(
@@ -257,6 +323,7 @@ export default function AdminPage() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
+    link.target = "_blank";
     link.setAttribute("download", `Laporan_Reservasi_Bylumenia_${new Date().toISOString().split("T")[0]}.csv`);
     document.body.appendChild(link);
     link.click();
@@ -268,7 +335,7 @@ export default function AdminPage() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("bylumenia_admin_pin");
+    safeStorage.removeItem("bylumenia_admin_pin");
     setIsAuthenticated(false);
     setPin("");
   };
@@ -311,7 +378,7 @@ export default function AdminPage() {
   // Login Gate
   if (!isAuthenticated) {
     return (
-      <main className="min-h-screen bg-obsidian-950 flex items-center justify-center p-4">
+      <main className="min-h-[100dvh] bg-obsidian-950 flex items-center justify-center p-4">
         <div className="max-w-md w-full glass-panel p-8 sm:p-10 rounded-3xl border border-white/10 shadow-2xl text-center">
           <div className="w-16 h-16 rounded-full bg-gold-400/10 border border-gold-400/30 flex items-center justify-center mx-auto mb-6 text-gold-400">
             <KeyRound className="w-7 h-7" />
@@ -328,13 +395,31 @@ export default function AdminPage() {
           </p>
 
           <form onSubmit={handleLogin} className="space-y-4">
-            <input
-              type="password"
-              placeholder="Masukkan PIN (Default: 1928)"
-              value={pin}
-              onChange={(e) => setPin(e.target.value)}
-              className="w-full px-4 py-3.5 rounded-xl bg-white/[0.04] border border-white/10 focus:border-gold-400 focus:outline-none text-center font-mono tracking-widest text-white text-lg placeholder-neutral-600 transition-colors"
-            />
+            <div className="relative">
+              <input
+                type={showPin ? "text" : "password"}
+                inputMode="numeric"
+                pattern="[0-9]*"
+                autoComplete="current-password"
+                placeholder="Masukkan PIN (Default: 1928)"
+                value={pin}
+                onChange={(e) => setPin(e.target.value)}
+                className="w-full px-4 py-3.5 pr-12 rounded-xl bg-white/[0.04] border border-white/10 focus:border-gold-400 focus:outline-none text-center font-mono tracking-widest text-white text-lg placeholder-neutral-600 transition-colors"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPin(!showPin)}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1.5 text-neutral-400 hover:text-white transition-colors touch-manipulation"
+                title={showPin ? "Sembunyikan PIN" : "Tampilkan PIN"}
+                tabIndex={-1}
+              >
+                {showPin ? (
+                  <EyeOff className="w-4 h-4 text-gold-400" />
+                ) : (
+                  <Eye className="w-4 h-4" />
+                )}
+              </button>
+            </div>
 
             {pinError && (
               <p className="text-xs text-rose-400 animate-fade-in">
@@ -345,7 +430,7 @@ export default function AdminPage() {
             <button
               type="submit"
               disabled={loading}
-              className="gold-gradient-btn w-full py-3.5 rounded-xl text-xs font-semibold uppercase tracking-widest flex items-center justify-center gap-2 shadow-lg"
+              className="gold-gradient-btn w-full py-3.5 rounded-xl text-xs font-semibold uppercase tracking-widest flex items-center justify-center gap-2 shadow-lg touch-manipulation"
             >
               {loading ? (
                 <RefreshCw className="w-4 h-4 animate-spin text-obsidian-950" />
@@ -361,7 +446,7 @@ export default function AdminPage() {
           <div className="mt-8 pt-6 border-t border-white/10">
             <Link
               href="/"
-              className="text-xs text-neutral-400 hover:text-white transition-colors flex items-center justify-center gap-1.5"
+              className="text-xs text-neutral-400 hover:text-white transition-colors flex items-center justify-center gap-1.5 touch-manipulation"
             >
               <ChevronLeft className="w-3.5 h-3.5" />
               <span>Kembali ke Halaman Publik</span>
@@ -416,10 +501,10 @@ export default function AdminPage() {
       </header>
 
       {/* Main Body with 6-Menu Navigation Layout */}
-      <div className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 pb-24 md:pb-6 flex flex-col md:flex-row gap-6">
+      <div className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 pb-28 lg:pb-6 flex flex-col lg:flex-row gap-6">
         
-        {/* SIDEBAR NAVIGATION (6 MENUS PER V3 SPECIFICATION - DESKTOP ONLY) */}
-        <aside className="hidden md:block w-full md:w-64 shrink-0">
+        {/* SIDEBAR NAVIGATION (6 MENUS PER V3 SPECIFICATION - DESKTOP & LANDSCAPE TABLET) */}
+        <aside className="hidden lg:block w-full lg:w-64 shrink-0">
           <div className="glass-panel rounded-2xl p-3 border border-white/10 sticky top-20 space-y-1">
             <div className="px-3 py-2 text-[10px] uppercase tracking-widest text-neutral-400 font-semibold border-b border-white/10 mb-2">
               Menu Kurasi Internal
@@ -1249,82 +1334,84 @@ export default function AdminPage() {
         </div>
       </div>
 
-      {/* Mobile Bottom Navigation Bar (< md) */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-obsidian-950/95 backdrop-blur-xl border-t border-white/10 px-1 py-1.5 flex items-center justify-around shadow-[0_-4px_24px_rgba(0,0,0,0.8)]">
-        <button
-          onClick={() => setActiveTab("overview")}
-          className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all ${
-            activeTab === "overview"
-              ? "text-gold-400 font-semibold bg-white/5"
-              : "text-neutral-400 hover:text-white"
-          }`}
-        >
-          <LayoutDashboard className="w-4 h-4 mb-1" />
-          <span className="text-[10px] tracking-tight">Overview</span>
-        </button>
+      {/* Mobile & Tablet Bottom Navigation Bar (< lg) */}
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-obsidian-950/95 backdrop-blur-xl border-t border-white/10 px-2 py-2 shadow-[0_-4px_24px_rgba(0,0,0,0.8)]">
+        <div className="max-w-xl mx-auto flex items-center justify-around">
+          <button
+            onClick={() => setActiveTab("overview")}
+            className={`flex flex-col items-center justify-center py-1.5 px-3 rounded-xl transition-all touch-manipulation ${
+              activeTab === "overview"
+                ? "text-gold-400 font-semibold bg-white/5"
+                : "text-neutral-400 hover:text-white"
+            }`}
+          >
+            <LayoutDashboard className="w-5 h-5 mb-1" />
+            <span className="text-[10px] tracking-tight">Overview</span>
+          </button>
 
-        <button
-          onClick={() => setActiveTab("client")}
-          className={`relative flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all ${
-            activeTab === "client"
-              ? "text-gold-400 font-semibold bg-white/5"
-              : "text-neutral-400 hover:text-white"
-          }`}
-        >
-          <Users className="w-4 h-4 mb-1" />
-          <span className="text-[10px] tracking-tight">Client</span>
-          {metrics.pendingCount > 0 && (
-            <span className="absolute top-1 right-2 w-2 h-2 rounded-full bg-amber-400 ring-2 ring-obsidian-950 animate-pulse" />
-          )}
-        </button>
+          <button
+            onClick={() => setActiveTab("client")}
+            className={`relative flex flex-col items-center justify-center py-1.5 px-3 rounded-xl transition-all touch-manipulation ${
+              activeTab === "client"
+                ? "text-gold-400 font-semibold bg-white/5"
+                : "text-neutral-400 hover:text-white"
+            }`}
+          >
+            <Users className="w-5 h-5 mb-1" />
+            <span className="text-[10px] tracking-tight">Client</span>
+            {metrics.pendingCount > 0 && (
+              <span className="absolute top-1 right-2 w-2 h-2 rounded-full bg-amber-400 ring-2 ring-obsidian-950 animate-pulse" />
+            )}
+          </button>
 
-        <button
-          onClick={() => setActiveTab("analytic")}
-          className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all ${
-            activeTab === "analytic"
-              ? "text-gold-400 font-semibold bg-white/5"
-              : "text-neutral-400 hover:text-white"
-          }`}
-        >
-          <BarChart3 className="w-4 h-4 mb-1" />
-          <span className="text-[10px] tracking-tight">Analytic</span>
-        </button>
+          <button
+            onClick={() => setActiveTab("analytic")}
+            className={`flex flex-col items-center justify-center py-1.5 px-3 rounded-xl transition-all touch-manipulation ${
+              activeTab === "analytic"
+                ? "text-gold-400 font-semibold bg-white/5"
+                : "text-neutral-400 hover:text-white"
+            }`}
+          >
+            <BarChart3 className="w-5 h-5 mb-1" />
+            <span className="text-[10px] tracking-tight">Analytic</span>
+          </button>
 
-        <button
-          onClick={() => setActiveTab("log")}
-          className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all ${
-            activeTab === "log"
-              ? "text-gold-400 font-semibold bg-white/5"
-              : "text-neutral-400 hover:text-white"
-          }`}
-        >
-          <History className="w-4 h-4 mb-1" />
-          <span className="text-[10px] tracking-tight">Log</span>
-        </button>
+          <button
+            onClick={() => setActiveTab("log")}
+            className={`flex flex-col items-center justify-center py-1.5 px-3 rounded-xl transition-all touch-manipulation ${
+              activeTab === "log"
+                ? "text-gold-400 font-semibold bg-white/5"
+                : "text-neutral-400 hover:text-white"
+            }`}
+          >
+            <History className="w-5 h-5 mb-1" />
+            <span className="text-[10px] tracking-tight">Log</span>
+          </button>
 
-        <button
-          onClick={() => setActiveTab("form-edit")}
-          className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all ${
-            activeTab === "form-edit"
-              ? "text-gold-400 font-semibold bg-white/5"
-              : "text-neutral-400 hover:text-white"
-          }`}
-        >
-          <FileEdit className="w-4 h-4 mb-1" />
-          <span className="text-[10px] tracking-tight">CMS</span>
-        </button>
+          <button
+            onClick={() => setActiveTab("form-edit")}
+            className={`flex flex-col items-center justify-center py-1.5 px-3 rounded-xl transition-all touch-manipulation ${
+              activeTab === "form-edit"
+                ? "text-gold-400 font-semibold bg-white/5"
+                : "text-neutral-400 hover:text-white"
+            }`}
+          >
+            <FileEdit className="w-5 h-5 mb-1" />
+            <span className="text-[10px] tracking-tight">CMS</span>
+          </button>
 
-        <button
-          onClick={() => setActiveTab("report")}
-          className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all ${
-            activeTab === "report"
-              ? "text-gold-400 font-semibold bg-white/5"
-              : "text-neutral-400 hover:text-white"
-          }`}
-        >
-          <FileText className="w-4 h-4 mb-1" />
-          <span className="text-[10px] tracking-tight">Report</span>
-        </button>
+          <button
+            onClick={() => setActiveTab("report")}
+            className={`flex flex-col items-center justify-center py-1.5 px-3 rounded-xl transition-all touch-manipulation ${
+              activeTab === "report"
+                ? "text-gold-400 font-semibold bg-white/5"
+                : "text-neutral-400 hover:text-white"
+            }`}
+          >
+            <FileText className="w-5 h-5 mb-1" />
+            <span className="text-[10px] tracking-tight">Report</span>
+          </button>
+        </div>
       </nav>
 
       {/* Proof Lightbox Modal */}

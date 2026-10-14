@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Volume2, Heart } from "lucide-react";
+import { Volume2, Heart, ShieldCheck } from "lucide-react";
 
 interface WelcomeScreenProps {
   onEnter: () => void;
@@ -64,6 +64,19 @@ export default function WelcomeScreen({ onEnter }: WelcomeScreenProps) {
         <p className="text-[11px] text-neutral-500 mt-4 tracking-wider">
           Sentuh untuk memulai pengalaman sinematik dengan audio aktif ♪
         </p>
+
+        {/* Direct Curator Access Link for Admins */}
+        <div className="mt-6 pt-5 border-t border-white/10 flex items-center justify-center">
+          <a
+            href="/admin"
+            onClick={(e) => e.stopPropagation()}
+            className="text-[11px] text-neutral-400 hover:text-gold-300 transition-colors flex items-center gap-1.5 py-1 px-3 rounded-full hover:bg-white/5 touch-manipulation"
+            title="Masuk ke Ruang Kurator Admin"
+          >
+            <ShieldCheck className="w-3.5 h-3.5 text-gold-400/80" />
+            <span>Ruang Kurator Admin</span>
+          </a>
+        </div>
       </div>
     </div>
   );
