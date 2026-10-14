@@ -367,10 +367,10 @@ export default function AdminPage() {
       </header>
 
       {/* Main Body with 6-Menu Navigation Layout */}
-      <div className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 flex flex-col md:flex-row gap-6">
+      <div className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 pb-24 md:pb-6 flex flex-col md:flex-row gap-6">
         
-        {/* SIDEBAR NAVIGATION (6 MENUS PER V3 SPECIFICATION) */}
-        <aside className="w-full md:w-64 shrink-0">
+        {/* SIDEBAR NAVIGATION (6 MENUS PER V3 SPECIFICATION - DESKTOP ONLY) */}
+        <aside className="hidden md:block w-full md:w-64 shrink-0">
           <div className="glass-panel rounded-2xl p-3 border border-white/10 sticky top-20 space-y-1">
             <div className="px-3 py-2 text-[10px] uppercase tracking-widest text-neutral-400 font-semibold border-b border-white/10 mb-2">
               Menu Kurasi Internal
@@ -1191,6 +1191,84 @@ export default function AdminPage() {
 
         </div>
       </div>
+
+      {/* Mobile Bottom Navigation Bar (< md) */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-obsidian-950/95 backdrop-blur-xl border-t border-white/10 px-1 py-1.5 flex items-center justify-around shadow-[0_-4px_24px_rgba(0,0,0,0.8)]">
+        <button
+          onClick={() => setActiveTab("overview")}
+          className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all ${
+            activeTab === "overview"
+              ? "text-gold-400 font-semibold bg-white/5"
+              : "text-neutral-400 hover:text-white"
+          }`}
+        >
+          <LayoutDashboard className="w-4 h-4 mb-1" />
+          <span className="text-[10px] tracking-tight">Overview</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab("client")}
+          className={`relative flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all ${
+            activeTab === "client"
+              ? "text-gold-400 font-semibold bg-white/5"
+              : "text-neutral-400 hover:text-white"
+          }`}
+        >
+          <Users className="w-4 h-4 mb-1" />
+          <span className="text-[10px] tracking-tight">Client</span>
+          {metrics.pendingCount > 0 && (
+            <span className="absolute top-1 right-2 w-2 h-2 rounded-full bg-amber-400 ring-2 ring-obsidian-950 animate-pulse" />
+          )}
+        </button>
+
+        <button
+          onClick={() => setActiveTab("analytic")}
+          className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all ${
+            activeTab === "analytic"
+              ? "text-gold-400 font-semibold bg-white/5"
+              : "text-neutral-400 hover:text-white"
+          }`}
+        >
+          <BarChart3 className="w-4 h-4 mb-1" />
+          <span className="text-[10px] tracking-tight">Analytic</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab("log")}
+          className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all ${
+            activeTab === "log"
+              ? "text-gold-400 font-semibold bg-white/5"
+              : "text-neutral-400 hover:text-white"
+          }`}
+        >
+          <History className="w-4 h-4 mb-1" />
+          <span className="text-[10px] tracking-tight">Log</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab("form-edit")}
+          className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all ${
+            activeTab === "form-edit"
+              ? "text-gold-400 font-semibold bg-white/5"
+              : "text-neutral-400 hover:text-white"
+          }`}
+        >
+          <FileEdit className="w-4 h-4 mb-1" />
+          <span className="text-[10px] tracking-tight">CMS</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab("report")}
+          className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all ${
+            activeTab === "report"
+              ? "text-gold-400 font-semibold bg-white/5"
+              : "text-neutral-400 hover:text-white"
+          }`}
+        >
+          <FileText className="w-4 h-4 mb-1" />
+          <span className="text-[10px] tracking-tight">Report</span>
+        </button>
+      </nav>
 
       {/* Proof Lightbox Modal */}
       {selectedProofUrl && (

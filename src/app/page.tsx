@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import GallerySection from "@/components/GallerySection";
-import PackagesSection from "@/components/PackagesSection";
 import PhilosophySection from "@/components/PhilosophySection";
 import Footer from "@/components/Footer";
 import BookingModal from "@/components/BookingModal";
@@ -25,11 +24,6 @@ export default function Home() {
 
   const handleOpenBooking = () => {
     setSelectedPackage(null);
-    setBookingModalOpen(true);
-  };
-
-  const handleSelectPackage = (pkg: PackageItem) => {
-    setSelectedPackage(pkg);
     setBookingModalOpen(true);
   };
 
@@ -61,9 +55,6 @@ export default function Home() {
 
       {/* Modul "Kisah Kami" — Slider Otomatis Portofolio Asli 4 Detik & Galeri */}
       <GallerySection />
-
-      {/* Katalog Lembaran Cerita & Ruang Lingkup */}
-      <PackagesSection onSelectPackage={handleSelectPackage} />
 
       {/* Filosofi Butik & Restu Waktu yang Terjaga */}
       <PhilosophySection />

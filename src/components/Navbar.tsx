@@ -48,12 +48,6 @@ export default function Navbar({ onOpenBooking, isMuted = true, onToggleAudio }:
             Kisah Kamu
           </a>
           <a
-            href="#paket"
-            className="hover:text-gold-300 transition-colors"
-          >
-            Paket Cerita
-          </a>
-          <a
             href="#filosofi"
             className="hover:text-gold-300 transition-colors"
           >
@@ -124,13 +118,6 @@ export default function Navbar({ onOpenBooking, isMuted = true, onToggleAudio }:
               className="px-3 py-2 rounded-lg hover:bg-white/5 hover:text-gold-300 transition-colors"
             >
               Kisah Kamu (Galeri)
-            </a>
-            <a
-              href="#paket"
-              onClick={() => setMobileMenuOpen(false)}
-              className="px-3 py-2 rounded-lg hover:bg-white/5 hover:text-gold-300 transition-colors"
-            >
-              Paket Cerita
             </a>
             <a
               href="#filosofi"

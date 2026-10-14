@@ -185,45 +185,23 @@ export default function HeroSection({
             <span>Kisah Kamu</span>
           </a>
         </div>
-
-        {/* Trust Badges */}
-        <div className="mt-10 sm:mt-14 grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-12 pt-6 sm:pt-8 border-t border-white/10 text-neutral-400 text-xs sm:text-sm tracking-wider uppercase w-full">
-          <div>
-            <p className="text-white font-serif text-base sm:text-xl font-normal text-gold-300">1 Pasangan</p>
-            <p className="text-[10px] sm:text-[11px] text-neutral-400">Fokus Penuh Per Hari</p>
-          </div>
-          <div>
-            <p className="text-white font-serif text-base sm:text-xl font-normal text-gold-300">Sinematik</p>
-            <p className="text-[10px] sm:text-[11px] text-neutral-400">Editorial &amp; Gestur</p>
-          </div>
-          <div className="col-span-2 sm:col-span-1">
-            <p className="text-white font-serif text-base sm:text-xl font-normal text-gold-300">Restu Waktu</p>
-            <p className="text-[10px] sm:text-[11px] text-neutral-400">Terkunci Hening Eksklusif</p>
-          </div>
-        </div>
       </div>
 
-      {/* Audio Controller Indicator — Bottom-Left */}
+      {/* Audio Controller Icon Only — Bottom-Left */}
       <button
         onClick={toggleMute}
-        className={`fixed sm:absolute bottom-6 left-6 z-30 flex items-center gap-2 rounded-full transition-all shadow-lg active:scale-95 px-3.5 py-2 border backdrop-blur-md ${
+        className={`fixed sm:absolute bottom-6 left-6 z-30 flex items-center justify-center w-11 h-11 rounded-full transition-all duration-300 shadow-xl active:scale-90 border backdrop-blur-md ${
           isMuted
-            ? "bg-obsidian-900/80 border-white/15 text-neutral-300 hover:text-white hover:border-gold-400/40"
-            : "bg-gold-400/20 border-gold-400/50 text-gold-400 shadow-[0_0_16px_rgba(212,175,55,0.3)]"
+            ? "bg-black/60 border-white/20 text-neutral-400 hover:text-white hover:border-gold-400/50 hover:scale-105"
+            : "bg-black/70 border-gold-400/60 text-gold-400 shadow-[0_0_18px_rgba(212,175,55,0.45)] hover:scale-105"
         }`}
-        title={isMuted ? "Putar Musik Latar" : "Senyapkan Musik"}
+        title={isMuted ? "Putar Musik" : "Senyapkan Musik"}
         aria-label="Audio Toggle"
       >
         {isMuted ? (
-          <>
-            <VolumeX className="w-4 h-4 text-neutral-400" />
-            <span className="text-[11px] tracking-wide text-neutral-300 font-medium">Musik Hening (Ketuk Suara)</span>
-          </>
+          <VolumeX className="w-5 h-5 text-neutral-300" />
         ) : (
-          <>
-            <Volume2 className="w-4 h-4 text-gold-400 animate-pulse" />
-            <span className="text-[11px] tracking-wide text-gold-300 font-medium">Musik Mengalun ♪</span>
-          </>
+          <Volume2 className="w-5 h-5 text-gold-400 animate-pulse" />
         )}
       </button>
 

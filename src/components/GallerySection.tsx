@@ -35,43 +35,39 @@ interface PortfolioSlide {
 const PORTFOLIO_SLIDES: PortfolioSlide[] = [
   {
     id: 1,
-    coupleTitle: "Ruth & Mas Nafi'i",
+    coupleTitle: "Pernikahan Tradisi Klasik",
     category: "Pernikahan Tradisi Klasik",
-    theme: "Kebaya Jawa & Pintu Ukir Klasik",
+    theme: "Kebaya Renda & Ronce Melati",
     storyQuote:
       "“Dari dua dunia yang berbeda, dua hati yang saling mencari, hingga berlabuh dalam dekap restu yang sama.”",
-    imageUrl:
-      "https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=1600&q=85",
+    imageUrl: "/images/Wedding/IMG_9064.PNG",
   },
   {
     id: 2,
-    coupleTitle: "Intimate Siraman Melati",
+    coupleTitle: "Tangis Haru & Doa Restu",
     category: "Ritual Sakral Adat",
-    theme: "Siraman Adat & Harum Rangkaian Melati",
+    theme: "Sungkeman & Tetes Air Mata Bahagia",
     storyQuote:
-      "“Tetes air siraman, senyum syahdu pembersih jiwa di hadapan orang tua.”",
-    imageUrl:
-      "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&w=1600&q=85",
+      "“Tetes air mata haru di hadapan orang tua, mengawali langkah baru seumur hidup.”",
+    imageUrl: "/images/Wedding/IMG_9060.PNG",
   },
   {
     id: 3,
-    coupleTitle: "Prewedding Outdoor Kasual",
+    coupleTitle: "Dhiyaa & Nadiya",
     category: "Prewedding Sinematik",
     theme: "Padang Terbuka & Tawa Lepas Alami",
     storyQuote:
       "“Langkah santai berdua di bawah semesta, tawa lepas tanpa rekayasa.”",
-    imageUrl:
-      "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=1600&q=85",
+    imageUrl: "/images/Prewedding/IMG_9033.PNG",
   },
   {
     id: 4,
-    coupleTitle: "Kebaya Beludru Marun",
-    category: "Editorial Adat Jawa",
-    theme: "Keanggunan Tradisi Beludru & Sorot Temaram",
+    coupleTitle: "Purnalita & Nico",
+    category: "Editorial Studio",
+    theme: "Sorot Beludru Merah & Nuansa Hangat",
     storyQuote:
-      "“Keanggunan tradisi dalam balutan pencahayaan sinematik abadi.”",
-    imageUrl:
-      "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1600&q=85",
+      "“Keanggunan sinematik dalam balutan pencahayaan temaram yang abadi.”",
+    imageUrl: "/images/Prewedding/IMG_9052.PNG",
   },
 ];
 
@@ -135,14 +131,14 @@ export default function GallerySection() {
         <div className="text-center max-w-2xl mx-auto mb-16">
           <span className="text-gold-400 text-xs tracking-widest uppercase font-medium flex items-center justify-center gap-1.5">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Portofolio Asli Bylumenia</span>
+            <span>Koleksi Cerita</span>
           </span>
           <h2 className="font-serif text-3xl sm:text-5xl text-white font-light mt-3 mb-4">
-            Kisah Kami &bull; Arsip Keabadian
+            Momen yang Terabadikan
           </h2>
           <p className="text-neutral-400 text-sm sm:text-base font-light leading-relaxed">
-            Setiap bingkai bukan sekadar gambar, melainkan dekap rasa yang tak lekang zaman.
-            Jelajahi untaian cerita asli sepasang kekasih yang telah mengikrarkan janji sucinya bersama kami.
+            Setiap tawa, tatapan haru, dan sentuhan tulus kami rekam apa adanya.
+            Inilah cerita mereka yang telah mempercayakan momen bahagianya bersama Bylumenia.
           </p>
         </div>
 
@@ -278,10 +274,10 @@ export default function GallerySection() {
           <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/10">
             <div>
               <span className="text-xs uppercase tracking-widest text-gold-400 font-medium">
-                Eksplorasi Sudut Pandang
+                Portofolio
               </span>
               <h3 className="font-serif text-2xl text-white font-light mt-1">
-                Koleksi Bingkai & Ragam Suasana
+                Koleksi Karya
               </h3>
             </div>
             <a
