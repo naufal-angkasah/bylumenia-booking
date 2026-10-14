@@ -2,7 +2,7 @@
 
 import React from "react";
 import { PACKAGES, PackageItem } from "@/lib/constants";
-import { Check, Sparkles, ArrowRight } from "lucide-react";
+import { Check, ArrowRight } from "lucide-react";
 
 interface PackagesSectionProps {
   onSelectPackage: (pkg: PackageItem) => void;
@@ -39,7 +39,6 @@ export default function PackagesSection({ onSelectPackage }: PackagesSectionProp
             >
               {pkg.recommended && (
                 <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gold-400 text-obsidian-950 text-[10px] font-bold tracking-widest uppercase shadow-md flex items-center gap-1.5">
-                  <Sparkles className="w-3 h-3" />
                   <span>Pilihan Paling Diminati</span>
                 </div>
               )}

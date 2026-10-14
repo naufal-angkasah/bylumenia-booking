@@ -22,7 +22,7 @@ import {
   ChevronRight,
   ShieldCheck,
   KeyRound,
-  Sparkles,
+  Coins,
   Save,
   Check,
 } from "lucide-react";
@@ -299,7 +299,7 @@ export default function AdminPage() {
               className="gold-gradient-btn w-full py-3.5 rounded-xl text-xs font-semibold uppercase tracking-widest flex items-center justify-center gap-2 shadow-lg"
             >
               {loading ? (
-                <Sparkles className="w-4 h-4 animate-spin" />
+                <RefreshCw className="w-4 h-4 animate-spin text-obsidian-950" />
               ) : (
                 <>
                   <ShieldCheck className="w-4 h-4" />
@@ -490,7 +490,7 @@ export default function AdminPage() {
                 <div className="glass-panel p-5 rounded-2xl border border-emerald-500/20 bg-emerald-950/10">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-xs uppercase tracking-wider text-emerald-300 font-medium">DP Masuk</span>
-                    <Sparkles className="w-4 h-4 text-emerald-400" />
+                    <Coins className="w-4 h-4 text-emerald-400" />
                   </div>
                   <div className="text-xl font-serif text-emerald-200 font-medium">
                     Rp {(metrics.totalRevenueConfirmed || 0).toLocaleString("id-ID")}

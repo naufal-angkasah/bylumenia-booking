@@ -6,7 +6,6 @@ import {
   X,
   Volume2,
   VolumeX,
-  Sparkles,
   Heart,
   Check,
   ChevronRight,
@@ -605,7 +604,7 @@ export default function BookingModal({
                           >
                             {dateStatus.available ? (
                               <div className="flex items-start gap-2">
-                                <Sparkles className="w-4 h-4 text-gold-400 shrink-0 mt-0.5" />
+                                <Check className="w-4 h-4 text-gold-400 shrink-0 mt-0.5" />
                                 <span>
                                   <strong>Semesta merestui hari itu.</strong> Pintu jadwal kami masih terbuka lebar untuk menyambut cerita kalian berdua.
                                 </span>

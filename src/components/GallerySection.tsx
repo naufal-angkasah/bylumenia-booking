@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { GALLERY_ITEMS, GalleryItem } from "@/lib/constants";
-import { Maximize2, X, Eye, ChevronLeft, ChevronRight, Pause, Play, Sparkles } from "lucide-react";
+import { Maximize2, X, Eye, ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 
 function InstagramIcon({ className = "w-4 h-4" }: { className?: string }) {
   return (
@@ -129,16 +129,15 @@ export default function GallerySection() {
       <div className="max-w-6xl mx-auto">
         {/* Section Heading */}
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <span className="text-gold-400 text-xs tracking-widest uppercase font-medium flex items-center justify-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Koleksi Cerita</span>
+          <span className="text-gold-400 text-xs tracking-widest uppercase font-medium inline-block">
+            PORTOFOLIO BYLUMENIA
           </span>
           <h2 className="font-serif text-3xl sm:text-5xl text-white font-light mt-3 mb-4">
-            Momen yang Terabadikan
+            Kisah Kamu
           </h2>
           <p className="text-neutral-400 text-sm sm:text-base font-light leading-relaxed">
-            Setiap tawa, tatapan haru, dan sentuhan tulus kami rekam apa adanya.
-            Inilah cerita mereka yang telah mempercayakan momen bahagianya bersama Bylumenia.
+            Setiap bingkai bukan sekadar gambar, melainkan dekap rasa yang tak lekang zaman.
+            Jelajahi untaian cerita sepasang kekasih yang telah mengikrarkan janji sucinya bersama kami.
           </p>
         </div>
 

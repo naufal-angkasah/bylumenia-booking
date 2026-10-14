@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useState, useEffect } from "react";
-import { Sparkles, Volume2, VolumeX, ArrowDown } from "lucide-react";
+import { Volume2, VolumeX, ArrowDown } from "lucide-react";
 
 interface HeroSectionProps {
   onOpenBooking: () => void;
@@ -150,7 +150,7 @@ export default function HeroSection({
       <div className="relative z-10 max-w-5xl mx-auto px-5 pt-28 pb-16 text-center flex flex-col items-center">
         {/* Boutique Tag */}
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-panel border border-gold-400/30 text-gold-300 text-xs tracking-widest uppercase mb-8 shadow-glow animate-fade-in">
-          <Sparkles className="w-3.5 h-3.5 text-gold-400" />
+          <span className="w-1.5 h-1.5 rounded-full bg-gold-400 shadow-[0_0_8px_#D4AF37]" />
           <span>Butik Visual Pernikahan &bull; Semarang & Luar Kota</span>
         </div>
 

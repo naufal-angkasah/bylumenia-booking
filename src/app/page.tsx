@@ -53,7 +53,7 @@ export default function Home() {
         onAudioChange={setIsMuted}
       />
 
-      {/* Modul "Kisah Kami" — Slider Otomatis Portofolio Asli 4 Detik & Galeri */}
+      {/* Modul "Kisah Kamu" — Slider Otomatis Portofolio 4 Detik & Galeri */}
       <GallerySection />
 
       {/* Filosofi Butik & Restu Waktu yang Terjaga */}
