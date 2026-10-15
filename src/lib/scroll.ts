@@ -1,27 +1,40 @@
 /**
- * Robust smooth scrolling utility for all devices (Mobile, Tablet, Desktop)
- * Uses native hardware-accelerated smooth scrolling with precise offset calculation
+ * Cinematic smooth scrolling utility with custom Ease-In-Out-Quart animation.
+ * Delivers buttery smooth, luxurious scrolling on all devices (Mobile, Tablet, Desktop).
  */
 
-export function smoothScrollTo(target: number | string, offset = 80): void {
+// Active animation frame tracker to cleanly cancel previous running scrolls
+let activeScrollAnimationId: number | null = null;
+
+// Easing function: Ease-In-Out-Quart (gentle start, silky glide, soft deceleration)
+function easeInOutQuart(t: number): number {
+  return t < 0.5 ? 8 * t * t * t * t : 1 - Math.pow(-2 * t + 2, 4) / 2;
+}
+
+export function smoothScrollTo(
+  target: number | string,
+  offset = 80,
+  customDuration?: number
+): void {
   if (typeof window === "undefined") return;
 
-  if (target === 0 || target === "top") {
-    try {
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
-    } catch {
-      window.scrollTo(0, 0);
-    }
-    return;
+  // Cancel any ongoing smooth scroll animation
+  if (activeScrollAnimationId !== null) {
+    cancelAnimationFrame(activeScrollAnimationId);
+    activeScrollAnimationId = null;
   }
+
+  // Check if user prefers reduced motion
+  const prefersReducedMotion =
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   let endY = 0;
   let targetEl: HTMLElement | null = null;
 
-  if (typeof target === "string") {
+  if (target === 0 || target === "top") {
+    endY = 0;
+  } else if (typeof target === "string") {
     const cleanId = target.replace(/^#/, "");
     targetEl =
       document.getElementById(cleanId) ||
@@ -43,17 +56,64 @@ export function smoothScrollTo(target: number | string, offset = 80): void {
     document.documentElement.scrollHeight - window.innerHeight
   );
   endY = Math.max(0, Math.min(endY, maxScroll));
+  const startY = window.scrollY;
+  const distance = endY - startY;
 
-  try {
-    window.scrollTo({
-      top: endY,
-      behavior: "smooth",
-    });
-  } catch {
-    if (targetEl && typeof targetEl.scrollIntoView === "function") {
-      targetEl.scrollIntoView({ behavior: "smooth", block: "start" });
+  // If already at target position, no animation needed
+  if (Math.abs(distance) < 2) {
+    return;
+  }
+
+  if (prefersReducedMotion) {
+    window.scrollTo(0, endY);
+    return;
+  }
+
+  // Adaptive duration: 750ms for short distance up to 1050ms for long distance
+  const duration =
+    customDuration ||
+    Math.min(1050, Math.max(750, Math.round(Math.abs(distance) * 0.5)));
+
+  let startTime: number | null = null;
+  const prevScrollBehavior = document.documentElement.style.scrollBehavior;
+  document.documentElement.style.scrollBehavior = "auto";
+
+  // Clean-up handler if user interrupts by touching screen or scrolling
+  const cancelEvents = ["wheel", "touchstart", "touchmove", "keydown"];
+  const handleUserInterrupt = () => {
+    if (activeScrollAnimationId !== null) {
+      cancelAnimationFrame(activeScrollAnimationId);
+      activeScrollAnimationId = null;
+    }
+    cleanup();
+  };
+
+  const cleanup = () => {
+    cancelEvents.forEach((ev) =>
+      window.removeEventListener(ev, handleUserInterrupt)
+    );
+    document.documentElement.style.scrollBehavior = prevScrollBehavior;
+  };
+
+  cancelEvents.forEach((ev) =>
+    window.addEventListener(ev, handleUserInterrupt, { passive: true })
+  );
+
+  function step(currentTime: number) {
+    if (startTime === null) startTime = currentTime;
+    const elapsed = currentTime - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const easedProgress = easeInOutQuart(progress);
+
+    window.scrollTo(0, Math.round(startY + distance * easedProgress));
+
+    if (progress < 1) {
+      activeScrollAnimationId = requestAnimationFrame(step);
     } else {
-      window.scrollTo(0, endY);
+      activeScrollAnimationId = null;
+      cleanup();
     }
   }
+
+  activeScrollAnimationId = requestAnimationFrame(step);
 }

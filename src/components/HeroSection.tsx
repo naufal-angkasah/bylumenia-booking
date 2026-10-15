@@ -198,7 +198,11 @@ export default function HeroSection({
       {/* Scroll Down Indicator */}
       <a
         href="#galeri"
-        className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 text-neutral-400 hover:text-gold-300 transition-colors animate-bounce"
+        onClick={(e) => {
+          e.preventDefault();
+          smoothScrollTo("#galeri", 80);
+        }}
+        className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 text-neutral-400 hover:text-gold-300 transition-colors animate-bounce cursor-pointer touch-manipulation"
         aria-label="Gulir ke bawah"
       >
         <ArrowDown className="w-4 h-4" />
