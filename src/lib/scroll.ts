@@ -1,98 +1,59 @@
 /**
- * Ultra-smooth scrolling utility with cinematic cubic easing curve
- * Handles adaptive duration, cancel on user touch/wheel, and offset calculation
+ * Robust smooth scrolling utility for all devices (Mobile, Tablet, Desktop)
+ * Uses native hardware-accelerated smooth scrolling with precise offset calculation
  */
 
-function easeInOutCubic(t: number): number {
-  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-}
-
-let activeScrollAnimation: number | null = null;
-
-export function smoothScrollTo(
-  target: number | string,
-  offset = 80,
-  customDuration?: number
-): void {
+export function smoothScrollTo(target: number | string, offset = 80): void {
   if (typeof window === "undefined") return;
 
-  let endY = 0;
-  if (typeof target === "string") {
-    if (target.startsWith("#")) {
-      const el = document.querySelector(target);
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      endY = window.scrollY + rect.top - offset;
-    } else {
-      const el = document.getElementById(target);
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      endY = window.scrollY + rect.top - offset;
+  if (target === 0 || target === "top") {
+    try {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    } catch {
+      window.scrollTo(0, 0);
     }
-  } else {
-    endY = target;
+    return;
   }
 
-  // Ensure target is within document bounds
+  let endY = 0;
+  let targetEl: HTMLElement | null = null;
+
+  if (typeof target === "string") {
+    const cleanId = target.replace(/^#/, "");
+    targetEl =
+      document.getElementById(cleanId) ||
+      document.querySelector<HTMLElement>(target);
+
+    if (targetEl) {
+      const rect = targetEl.getBoundingClientRect();
+      endY = Math.round(window.scrollY + rect.top - offset);
+    } else {
+      return;
+    }
+  } else {
+    endY = Math.round(target);
+  }
+
+  // Ensure scroll target stays within valid document scroll bounds
   const maxScroll = Math.max(
     0,
     document.documentElement.scrollHeight - window.innerHeight
   );
   endY = Math.max(0, Math.min(endY, maxScroll));
 
-  const startY = window.scrollY;
-  const distance = Math.abs(endY - startY);
-
-  // If already at or very close to target, finish immediately
-  if (distance < 3) {
-    window.scrollTo(0, endY);
-    return;
-  }
-
-  // Cancel any existing active scroll animation
-  if (activeScrollAnimation !== null) {
-    cancelAnimationFrame(activeScrollAnimation);
-    activeScrollAnimation = null;
-  }
-
-  // Adaptive duration: smooth glide between 550ms (short) and 900ms (long)
-  const duration =
-    customDuration ??
-    Math.min(900, Math.max(550, Math.sqrt(distance) * 20));
-  const startTime = performance.now();
-
-  const cancel = () => {
-    if (activeScrollAnimation !== null) {
-      cancelAnimationFrame(activeScrollAnimation);
-      activeScrollAnimation = null;
-    }
-    cleanup();
-  };
-
-  const cleanup = () => {
-    window.removeEventListener("wheel", cancel);
-    window.removeEventListener("touchstart", cancel);
-  };
-
-  // Allow user to naturally interrupt smooth scroll by scrolling or touching
-  window.addEventListener("wheel", cancel, { passive: true });
-  window.addEventListener("touchstart", cancel, { passive: true });
-
-  const step = (now: number) => {
-    const elapsed = now - startTime;
-    const progress = Math.min(1, elapsed / duration);
-    const easedProgress = easeInOutCubic(progress);
-
-    const currentY = Math.round(startY + (endY - startY) * easedProgress);
-    window.scrollTo(0, currentY);
-
-    if (progress < 1) {
-      activeScrollAnimation = requestAnimationFrame(step);
+  try {
+    window.scrollTo({
+      top: endY,
+      behavior: "smooth",
+    });
+  } catch {
+    if (targetEl && typeof targetEl.scrollIntoView === "function") {
+      targetEl.scrollIntoView({ behavior: "smooth", block: "start" });
     } else {
-      activeScrollAnimation = null;
-      cleanup();
+      window.scrollTo(0, endY);
     }
-  };
-
-  activeScrollAnimation = requestAnimationFrame(step);
+  }
 }

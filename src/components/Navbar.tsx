@@ -42,26 +42,20 @@ export default function Navbar({ onOpenBooking, isMuted = true, onToggleAudio }:
 
         {/* Desktop & Tablet Links */}
         <div className="hidden md:flex items-center gap-4 lg:gap-8 text-xs uppercase tracking-widest text-neutral-300 font-medium shrink-0">
-          <a
-            href="#galeri"
-            onClick={(e) => {
-              e.preventDefault();
-              smoothScrollTo("#galeri", 80);
-            }}
-            className="hover:text-gold-300 transition-colors py-1"
+          <button
+            type="button"
+            onClick={() => smoothScrollTo("#galeri", 80)}
+            className="hover:text-gold-300 transition-colors py-1 cursor-pointer touch-manipulation"
           >
             Kisah Kamu
-          </a>
-          <a
-            href="#filosofi"
-            onClick={(e) => {
-              e.preventDefault();
-              smoothScrollTo("#filosofi", 80);
-            }}
-            className="hover:text-gold-300 transition-colors py-1"
+          </button>
+          <button
+            type="button"
+            onClick={() => smoothScrollTo("#filosofi", 80)}
+            className="hover:text-gold-300 transition-colors py-1 cursor-pointer touch-manipulation"
           >
             Tentang Kami
-          </a>
+          </button>
         </div>
 
         {/* Action Button & Audio Toggle */}
@@ -111,30 +105,30 @@ export default function Navbar({ onOpenBooking, isMuted = true, onToggleAudio }:
 
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
-        <div className="md:hidden mt-2 max-w-sm mx-auto glass-panel rounded-2xl p-4 border border-white/10 animate-fade-in shadow-2xl">
-          <div className="flex flex-col gap-3 text-sm tracking-wide text-neutral-300">
-            <a
-              href="#galeri"
-              onClick={(e) => {
-                e.preventDefault();
+        <div className="md:hidden mt-2 max-w-sm mx-auto glass-panel rounded-2xl p-3 sm:p-4 border border-gold-400/25 bg-obsidian-950/95 backdrop-blur-2xl animate-fade-in shadow-[0_12px_40px_rgba(0,0,0,0.85)] pointer-events-auto">
+          <div className="flex flex-col gap-1.5 text-sm tracking-wide text-neutral-300">
+            <button
+              type="button"
+              onClick={() => {
                 setMobileMenuOpen(false);
                 smoothScrollTo("#galeri", 80);
               }}
-              className="px-3 py-2 rounded-lg hover:bg-white/5 hover:text-gold-300 transition-colors touch-manipulation"
+              className="w-full text-left px-4 py-3 rounded-xl hover:bg-white/10 hover:text-gold-300 active:bg-white/15 transition-all touch-manipulation cursor-pointer flex items-center justify-between group"
             >
-              Kisah Kamu (Galeri)
-            </a>
-            <a
-              href="#filosofi"
-              onClick={(e) => {
-                e.preventDefault();
+              <span className="font-medium">Kisah Kamu (Galeri)</span>
+              <span className="text-gold-400 text-xs transition-transform group-hover:translate-x-1">&rarr;</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
                 setMobileMenuOpen(false);
                 smoothScrollTo("#filosofi", 80);
               }}
-              className="px-3 py-2 rounded-lg hover:bg-white/5 hover:text-gold-300 transition-colors touch-manipulation"
+              className="w-full text-left px-4 py-3 rounded-xl hover:bg-white/10 hover:text-gold-300 active:bg-white/15 transition-all touch-manipulation cursor-pointer flex items-center justify-between group"
             >
-              Tentang Kami
-            </a>
+              <span className="font-medium">Tentang Kami</span>
+              <span className="text-gold-400 text-xs transition-transform group-hover:translate-x-1">&rarr;</span>
+            </button>
           </div>
         </div>
       )}

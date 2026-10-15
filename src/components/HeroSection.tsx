@@ -167,16 +167,13 @@ export default function HeroSection({
             <span className="inline-block transition-transform group-hover:translate-x-1">&rarr;</span>
           </button>
 
-          <a
-            href="#galeri"
-            onClick={(e) => {
-              e.preventDefault();
-              smoothScrollTo("#galeri", 80);
-            }}
-            className="glass-panel glass-panel-hover w-full sm:w-auto px-7 py-3.5 sm:px-8 sm:py-4 rounded-full text-xs sm:text-sm text-neutral-200 tracking-widest uppercase font-medium flex items-center justify-center gap-2 active:scale-95 transition-all"
+          <button
+            type="button"
+            onClick={() => smoothScrollTo("#galeri", 80)}
+            className="glass-panel glass-panel-hover w-full sm:w-auto px-7 py-3.5 sm:px-8 sm:py-4 rounded-full text-xs sm:text-sm text-neutral-200 tracking-widest uppercase font-medium flex items-center justify-center gap-2 active:scale-95 transition-all cursor-pointer touch-manipulation"
           >
             <span>Kisah Kamu</span>
-          </a>
+          </button>
         </div>
       </div>
 
