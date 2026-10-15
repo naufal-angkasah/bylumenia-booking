@@ -124,20 +124,29 @@ export async function POST(request: Request) {
       });
     }
 
-    // Try sending WhatsApp hold reminder if Fonnte is connected
+    // Send automated WhatsApp confirmation to client & alert to admin via Fonnte
     try {
-      const { sendWhatsAppMessage } = await import("@/lib/whatsapp");
-      await sendWhatsAppMessage({
-        target: whatsapp,
-        message:
-          `*KOMITMEN PENAHANAN JADWAL — BYLUMENIA STUDIO*\n\n` +
-          `Halo Kak *${coupleName}*,\n` +
-          `Slot perayaan kalian untuk tanggal *${eventDate}* telah kami tahan selama *30 menit*.\n\n` +
-          `• Kode Booking: *${bookingCode}*\n` +
-          `• Pilihan Paket: ${packageName}\n` +
-          `• Nominal Tanda Jadi (DP 30%): *Rp ${downPayment.toLocaleString("id-ID")}*\n\n` +
-          `Silakan selesaikan penyematan bukti transfer sebelum slot waktu berakhir agar hari bahagia ini terkunci sempurna.`,
-      });
+      const { sendClientHoldConfirmation, sendAdminNewHoldAlert } = await import("@/lib/whatsapp");
+      await Promise.allSettled([
+        sendClientHoldConfirmation({
+          coupleName,
+          whatsapp,
+          eventDate,
+          packageName,
+          bookingCode,
+          totalPrice: Number(totalPrice),
+          downPayment,
+        }),
+        sendAdminNewHoldAlert({
+          coupleName,
+          whatsapp,
+          eventDate,
+          packageName,
+          bookingCode,
+          eventLocation: eventLocation || "Semarang & Sekitarnya",
+          downPayment,
+        }),
+      ]);
     } catch (waErr) {
       console.warn("WhatsApp dispatch warning (non-fatal):", waErr);
     }
@@ -146,7 +155,7 @@ export async function POST(request: Request) {
       success: true,
       booking,
       expiresAt: holdExpiresAt.toISOString(),
-      message: "Hari bahagia ini kami tahan untuk kalian selama 30 menit ke depan dengan penuh kehangatan.",
+      message: "Jadwal berhasil ditahan untuk Anda selama 30 menit ke depan.",
     });
   } catch (error) {
     console.error("Error creating hold:", error);

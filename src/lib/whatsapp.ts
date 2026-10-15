@@ -1,23 +1,40 @@
 export interface SendWhatsAppParams {
   target: string;
   message: string;
+  url?: string;
 }
 
+export interface SendWhatsAppResult {
+  success: boolean;
+  response?: unknown;
+  error?: string;
+}
+
+/**
+ * Send WhatsApp message via Fonnte API Gateway
+ */
 export async function sendWhatsAppMessage({
   target,
   message,
-}: SendWhatsAppParams): Promise<{ success: boolean; response?: unknown; error?: string }> {
-  const token = process.env.FONNTE_TOKEN;
+  url,
+}: SendWhatsAppParams): Promise<SendWhatsAppResult> {
+  const token = (process.env.FONNTE_TOKEN || "").trim();
 
   if (!token) {
-    console.warn("FONNTE_TOKEN not set in environment variables. Skipping auto-message.");
-    return { success: false, error: "Token not configured" };
+    console.warn("FONNTE_TOKEN belum dikonfigurasi. Pengiriman WhatsApp dilewati.");
+    return { success: false, error: "Token Fonnte belum dikonfigurasi" };
   }
 
-  // Clean target number (remove spaces, dashes)
+  // Clean target number (remove spaces, dashes, parentheses)
   let cleanNumber = target.replace(/[^0-9]/g, "");
   if (cleanNumber.startsWith("0")) {
     cleanNumber = "62" + cleanNumber.slice(1);
+  } else if (cleanNumber.startsWith("8")) {
+    cleanNumber = "62" + cleanNumber;
+  }
+
+  if (cleanNumber.length < 9) {
+    return { success: false, error: "Nomor WhatsApp tidak valid" };
   }
 
   try {
@@ -25,6 +42,12 @@ export async function sendWhatsAppMessage({
     formData.append("target", cleanNumber);
     formData.append("message", message);
     formData.append("countryCode", "62");
+    if (url) {
+      formData.append("url", url);
+    }
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 12000); // 12s timeout
 
     const res = await fetch("https://api.fonnte.com/send", {
       method: "POST",
@@ -32,12 +55,218 @@ export async function sendWhatsAppMessage({
         Authorization: token,
       },
       body: formData,
+      signal: controller.signal,
     });
 
-    const data = await res.json();
-    return { success: res.ok, response: data };
-  } catch (error) {
-    console.error("Error sending WhatsApp message via Fonnte:", error);
-    return { success: false, error: String(error) };
+    clearTimeout(timeoutId);
+
+    const data = await res.json().catch(() => null);
+
+    if (!res.ok) {
+      console.error("Fonnte API responded with error:", data);
+      return { success: false, response: data, error: data?.reason || `HTTP ${res.status}` };
+    }
+
+    return { success: true, response: data };
+  } catch (error: unknown) {
+    const err = error as Error;
+    console.error("Error sending WhatsApp message via Fonnte:", err.message || err);
+    return { success: false, error: err.message || String(error) };
   }
+}
+
+/**
+ * Template: Notifikasi Hold Jadwal Baru ke Calon Pengantin
+ */
+export async function sendClientHoldConfirmation(booking: {
+  coupleName: string;
+  whatsapp: string;
+  eventDate: string;
+  packageName: string;
+  bookingCode: string;
+  totalPrice?: number;
+  downPayment?: number;
+}) {
+  const dpAmount = booking.downPayment || 2000000;
+  const message =
+    `*KONFIRMASI RESERVASI JADWAL — STUDIO LUMENIA*\n\n` +
+    `Halo Kak *${booking.coupleName}*,\n` +
+    `Terima kasih telah memilih Studio Lumenia untuk mengabadikan momen istimewa kalian.\n\n` +
+    `Jadwal acara kalian telah berhasil kami tahan sementara:\n` +
+    `• *Tanggal Acara*: ${booking.eventDate}\n` +
+    `• *Paket Pilihan*: ${booking.packageName}\n` +
+    `• *Kode Booking*: ${booking.bookingCode}\n` +
+    `• *Nilai Tanda Jadi (DP)*: Rp ${dpAmount.toLocaleString("id-ID")}\n\n` +
+    `*Instruksi Pembayaran Transfer Bank:*\n` +
+    `1. Bank BCA: *8030588219* a.n. Ivan / Bylumenia Studio\n` +
+    `2. Bank Mandiri: *1360018829102* a.n. Ivan / Bylumenia Studio\n\n` +
+    `Slot tanggal ini ditahan selama *30 menit*. Silakan selesaikan pembayaran dan unggah bukti transfer di website agar tanggal kalian resmi terkunci di kalender kami.\n\n` +
+    `Jika ada pertanyaan, Kakak bisa langsung membalas pesan ini. Terima kasih! ✨`;
+
+  return sendWhatsAppMessage({ target: booking.whatsapp, message });
+}
+
+/**
+ * Template: Notifikasi Booking Baru Masuk ke WhatsApp Owner/Admin
+ */
+export async function sendAdminNewHoldAlert(booking: {
+  coupleName: string;
+  whatsapp: string;
+  eventDate: string;
+  packageName: string;
+  bookingCode: string;
+  eventLocation?: string;
+  downPayment?: number;
+}) {
+  const adminNumber = process.env.FONNTE_ADMIN_PHONE || process.env.NEXT_PUBLIC_ADMIN_WHATSAPP || "6287777357373";
+  const dpAmount = booking.downPayment || 2000000;
+  const message =
+    `🔔 *NOTIFIKASI: RESERVASI BARU MASUK*\n\n` +
+    `Ada calon pengantin baru yang melakukan hold jadwal di website Studio Lumenia:\n\n` +
+    `• *Pasangan*: ${booking.coupleName}\n` +
+    `• *Tanggal Acara*: ${booking.eventDate}\n` +
+    `• *Paket*: ${booking.packageName}\n` +
+    `• *Lokasi*: ${booking.eventLocation || "Semarang & Sekitarnya"}\n` +
+    `• *Kode Booking*: ${booking.bookingCode}\n` +
+    `• *Nominal DP*: Rp ${dpAmount.toLocaleString("id-ID")}\n` +
+    `• *Kontak WA Klien*: https://wa.me/${booking.whatsapp.replace(/[^0-9]/g, "")}\n\n` +
+    `Status saat ini: *Menunggu Unggah Slip Transfer (Hold 30 Menit)*.`;
+
+  return sendWhatsAppMessage({ target: adminNumber, message });
+}
+
+/**
+ * Template: Notifikasi Bukti Transfer Diunggah ke Admin
+ */
+export async function sendAdminProofAlert(booking: {
+  coupleName: string;
+  whatsapp: string;
+  eventDate: string;
+  packageName: string;
+  bookingCode: string;
+  downPayment?: number;
+  proofFileUrl?: string | null;
+}) {
+  const adminNumber = process.env.FONNTE_ADMIN_PHONE || process.env.NEXT_PUBLIC_ADMIN_WHATSAPP || "6287777357373";
+  const message =
+    `📸 *BUKTI TRANSFER DP DITERIMA*\n\n` +
+    `Pasangan *${booking.coupleName}* baru saja mengunggah slip bukti transfer tanda jadi:\n\n` +
+    `• *Kode Booking*: ${booking.bookingCode}\n` +
+    `• *Tanggal Acara*: ${booking.eventDate}\n` +
+    `• *Paket*: ${booking.packageName}\n` +
+    `• *WhatsApp Klien*: https://wa.me/${booking.whatsapp.replace(/[^0-9]/g, "")}\n\n` +
+    `Silakan buka Dasbor Admin untuk memverifikasi dan mengunci tanggal resmi.`;
+
+  return sendWhatsAppMessage({ target: adminNumber, message, url: booking.proofFileUrl || undefined });
+}
+
+/**
+ * Template: Konfirmasi Resmi Tanggal Terkunci (DP Terverifikasi) ke Klien
+ */
+export async function sendClientBookingConfirmed(booking: {
+  coupleName: string;
+  whatsapp: string;
+  eventDate: string;
+  packageName: string;
+  bookingCode: string;
+  eventLocation?: string;
+  totalPrice?: number;
+  downPayment?: number;
+}) {
+  const total = booking.totalPrice || 6500000;
+  const dp = booking.downPayment || 2000000;
+  const sisa = Math.max(0, total - dp);
+
+  const message =
+    `🎉 *TANGGAL RESMI TERKUNCI — STUDIO LUMENIA*\n\n` +
+    `Halo Kak *${booking.coupleName}*,\n` +
+    `Pembayaran tanda jadi (DP) kalian telah berhasil kami verifikasi secara resmi.\n\n` +
+    `*Ringkasan Jadwal & Reservasi:*\n` +
+    `• *Kode SPK*: ${booking.bookingCode}\n` +
+    `• *Tanggal Acara*: ${booking.eventDate}\n` +
+    `• *Paket*: ${booking.packageName}\n` +
+    `• *Lokasi*: ${booking.eventLocation || "Semarang"}\n` +
+    `• *Total Kontrak*: Rp ${total.toLocaleString("id-ID")}\n` +
+    `• *DP Diterima*: Rp ${dp.toLocaleString("id-ID")}\n` +
+    `• *Sisa Pelunasan*: Rp ${sisa.toLocaleString("id-ID")} (Jatuh tempo H-7 acara)\n\n` +
+    `Jadwal kalian kini 100% terkunci eksklusif. Tim kami hanya melayani satu acara di hari tersebut untuk memastikan hasil karya terbaik.\n\n` +
+    `Tim kami akan segera menghubungi untuk koordinasi konsep dan rundown. Terima kasih atas kepercayaan Kakak kepada Studio Lumenia! ✨`;
+
+  return sendWhatsAppMessage({ target: booking.whatsapp, message });
+}
+
+/**
+ * Template: Pengiriman Lembar Invoice & Tagihan ke Klien
+ */
+export async function sendClientInvoice(
+  booking: {
+    coupleName: string;
+    whatsapp: string;
+    eventDate: string;
+    packageName: string;
+    bookingCode: string;
+  },
+  invoice: {
+    invoiceNo: string;
+    totalAmount: number;
+    paidAmount: number;
+    remainingAmount: number;
+    dueDate: string;
+    items: Array<{ name: string; price: number }>;
+  }
+) {
+  let itemList = "";
+  invoice.items.forEach((item, idx) => {
+    itemList += `${idx + 1}. ${item.name} — Rp ${item.price.toLocaleString("id-ID")}\n`;
+  });
+
+  const message =
+    `📄 *INVOICE TAGIHAN RESMI — STUDIO LUMENIA*\n` +
+    `No: *${invoice.invoiceNo}*\n\n` +
+    `Yth. Kak *${booking.coupleName}*,\n` +
+    `Berikut adalah rincian tagihan dokumentasi pernikahan Anda:\n\n` +
+    `*Rincian Layanan:*\n` +
+    `${itemList}\n` +
+    `• *Total Biaya*: Rp ${invoice.totalAmount.toLocaleString("id-ID")}\n` +
+    `• *Telah Dibayar (DP)*: Rp ${invoice.paidAmount.toLocaleString("id-ID")}\n` +
+    `• *Sisa Tagihan*: *Rp ${invoice.remainingAmount.toLocaleString("id-ID")}*\n` +
+    `• *Jatuh Tempo*: ${invoice.dueDate}\n\n` +
+    `*Rekening Pembayaran:*\n` +
+    `• Bank BCA: *8030588219* a.n. Ivan / Bylumenia Studio\n` +
+    `• Bank Mandiri: *1360018829102* a.n. Ivan / Bylumenia Studio\n\n` +
+    `Silakan konfirmasi ke admin jika pembayaran telah dilakukan. Terima kasih!`;
+
+  return sendWhatsAppMessage({ target: booking.whatsapp, message });
+}
+
+/**
+ * Template: Pengiriman Rundown Acara Hari-H ke Klien / Tim
+ */
+export async function sendClientRundown(
+  booking: {
+    coupleName: string;
+    whatsapp: string;
+    eventDate: string;
+    packageName: string;
+  },
+  rundown: Array<{ time: string; activity: string; notes?: string }>
+) {
+  let timeline = "";
+  rundown.forEach((item) => {
+    timeline += `⏰ *${item.time}* — ${item.activity}${item.notes ? ` (${item.notes})` : ""}\n`;
+  });
+
+  const message =
+    `📋 *RUNDOWN TIM DOKUMENTASI — STUDIO LUMENIA*\n` +
+    `Acara: *${booking.coupleName}*\n` +
+    `Tanggal: *${booking.eventDate}*\n` +
+    `Paket: *${booking.packageName}*\n\n` +
+    `*Susunan Timeline Dokumentasi:*\n` +
+    `${timeline}\n` +
+    `*Catatan Khusus Tim:*\n` +
+    `• Kru dokumentasi tiba 30 menit sebelum jadwal makeup.\n` +
+    `• Dresscode kru: Serba Hitam Rapi & Bersepatu.\n` +
+    `• Untuk koordinasi on-the-spot dapat menghubungi admin Studio Lumenia. Terima kasih! ✨`;
+
+  return sendWhatsAppMessage({ target: booking.whatsapp, message });
 }

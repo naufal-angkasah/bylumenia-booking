@@ -5,6 +5,7 @@ export interface GalleryItem {
   category: "Prewedding" | "Akad & Resepsi" | "Adat & Budaya" | "Editorial";
   aspect: "tall" | "wide" | "square";
   imageUrl: string;
+  images: string[];
 }
 
 export const GALLERY_ITEMS: GalleryItem[] = [
@@ -15,6 +16,12 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     category: "Akad & Resepsi",
     aspect: "tall",
     imageUrl: "/images/Wedding/IMG_9060.webp",
+    images: [
+      "/images/Wedding/IMG_9060.webp",
+      "/images/Wedding/IMG_9061.webp",
+      "/images/Wedding/IMG_9062.webp",
+      "/images/Wedding/IMG_9063.webp",
+    ],
   },
   {
     id: "gal-2",
@@ -23,6 +30,12 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     category: "Prewedding",
     aspect: "tall",
     imageUrl: "/images/Prewedding/IMG_9033.webp",
+    images: [
+      "/images/Prewedding/IMG_9033.webp",
+      "/images/Prewedding/IMG_9034.webp",
+      "/images/Prewedding/IMG_9035.webp",
+      "/images/Prewedding/IMG_9036.webp",
+    ],
   },
   {
     id: "gal-3",
@@ -31,6 +44,11 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     category: "Adat & Budaya",
     aspect: "tall",
     imageUrl: "/images/Wedding/IMG_9064.webp",
+    images: [
+      "/images/Wedding/IMG_9064.webp",
+      "/images/Wedding/IMG_9065.webp",
+      "/images/Wedding/IMG_9066.webp",
+    ],
   },
   {
     id: "gal-4",
@@ -39,6 +57,12 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     category: "Prewedding",
     aspect: "tall",
     imageUrl: "/images/Prewedding/IMG_9052.webp",
+    images: [
+      "/images/Prewedding/IMG_9052.webp",
+      "/images/Prewedding/IMG_9053.webp",
+      "/images/Prewedding/IMG_9054.webp",
+      "/images/Prewedding/IMG_9055.webp",
+    ],
   },
   {
     id: "gal-5",
@@ -47,6 +71,11 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     category: "Editorial",
     aspect: "square",
     imageUrl: "/images/Wedding/IMG_9062.webp",
+    images: [
+      "/images/Wedding/IMG_9062.webp",
+      "/images/Wedding/IMG_9067.webp",
+      "/images/Wedding/IMG_9068.webp",
+    ],
   },
   {
     id: "gal-6",
@@ -55,6 +84,12 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     category: "Prewedding",
     aspect: "tall",
     imageUrl: "/images/Prewedding/IMG_9045.webp",
+    images: [
+      "/images/Prewedding/IMG_9045.webp",
+      "/images/Prewedding/IMG_9046.webp",
+      "/images/Prewedding/IMG_9047.webp",
+      "/images/Prewedding/IMG_9048.webp",
+    ],
   },
   {
     id: "gal-7",
@@ -63,6 +98,11 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     category: "Editorial",
     aspect: "tall",
     imageUrl: "/images/Wedding/IMG_9065.webp",
+    images: [
+      "/images/Wedding/IMG_9065.webp",
+      "/images/Wedding/IMG_9068.webp",
+      "/images/Wedding/IMG_9069.webp",
+    ],
   },
   {
     id: "gal-8",
@@ -71,6 +111,11 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     category: "Adat & Budaya",
     aspect: "tall",
     imageUrl: "/images/Wedding/IMG_9068.webp",
+    images: [
+      "/images/Wedding/IMG_9068.webp",
+      "/images/Wedding/IMG_9064.webp",
+      "/images/Wedding/IMG_9060.webp",
+    ],
   },
   {
     id: "gal-9",
@@ -79,6 +124,11 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     category: "Akad & Resepsi",
     aspect: "square",
     imageUrl: "/images/Wedding/IMG_9069.webp",
+    images: [
+      "/images/Wedding/IMG_9069.webp",
+      "/images/Wedding/IMG_9063.webp",
+      "/images/Wedding/IMG_9066.webp",
+    ],
   },
 ];
 
@@ -198,3 +248,95 @@ export const PAYMENT_METHODS = {
     mockQrUrl: "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=00020101021126570014ID.LINKAJA.WWW0118936009110021008453021500000000000000000303UMI51440014ID.CO.QRIS.WWW0215ID10200210084530303UMI5204581253033605802ID5916BYLUMENIA%20STUDIO6008SEMARANG61055013462070703A016304E5F6",
   },
 };
+
+export interface AddOnItem {
+  id: string;
+  name: string;
+  category: "Video" | "Photo" | "Streaming" | "Output";
+  price: number;
+  description: string;
+}
+
+export const ADDON_CATALOG: AddOnItem[] = [
+  {
+    id: "addon-drone",
+    name: "Drone Cinematic 4K Highlight",
+    category: "Video",
+    price: 1500000,
+    description: "Pilot drone berlisensi & sudut pandang udara spektakuler venue pernikahan.",
+  },
+  {
+    id: "addon-live",
+    name: "Live Streaming YouTube 2 Kamera Full HD",
+    category: "Streaming",
+    price: 3500000,
+    description: "Broadcaster pro, audio mixer digital, & overlay nama pengantin.",
+  },
+  {
+    id: "addon-sde",
+    name: "Same Day Edit (SDE Teaser Malam Resepsi)",
+    category: "Video",
+    price: 2000000,
+    description: "Video teaser 1 menit langsung tayang di proyektor resepsi & IG Reels.",
+  },
+  {
+    id: "addon-album",
+    name: "Album Linen Handmade Eksklusif Tambahan",
+    category: "Output",
+    price: 1200000,
+    description: "Ukuran 20x30 cm (30 halaman) dengan boks kayu ukir grafir nama.",
+  },
+];
+
+export interface RundownItem {
+  id: string;
+  time: string;
+  activity: string;
+  pic: string;
+  notes?: string;
+}
+
+export const DEFAULT_RUNDOWN_TEMPLATE: RundownItem[] = [
+  {
+    id: "rd-1",
+    time: "06:00 - 08:00",
+    activity: "Persiapan & Makeup Pengantin (Beauty & Detail Shot)",
+    pic: "Lead Photographer & Videographer",
+    notes: "Pengambilan detail cincin, gaun, sepatu, undangan, dan flatlay.",
+  },
+  {
+    id: "rd-2",
+    time: "08:00 - 08:30",
+    activity: "Kedatangan Calon Pengantin Pria & Rombongan Keluarga",
+    pic: "Tim Liputan & WO",
+    notes: "Sesi sambutan keluarga dan penyerahan seserahan.",
+  },
+  {
+    id: "rd-3",
+    time: "08:30 - 09:30",
+    activity: "Akad Nikah / Ijab Qabul & Doa Bersama",
+    pic: "Seluruh Tim (Kamera 1, 2, 3)",
+    notes: "Momen sakral khidmat: ijab kabul, buku nikah, tukar cincin, sungkeman orang tua.",
+  },
+  {
+    id: "rd-4",
+    time: "09:30 - 10:30",
+    activity: "Prosesi Adat (Panggih / Temu Manten / Balangan Suruh)",
+    pic: "Tim Foto & Video Adat",
+    notes: "Fokus pada detail tradisi adat Jawa dan ekspresi haru orang tua.",
+  },
+  {
+    id: "rd-5",
+    time: "10:30 - 11:30",
+    activity: "Sesi Foto Bersama Keluarga Inti & VIP",
+    pic: "Lead Photographer",
+    notes: "Urutan foto keluarga sesuai daftar susunan WO.",
+  },
+  {
+    id: "rd-6",
+    time: "12:00 - 14:00",
+    activity: "Resepsi Pernikahan, Lempar Hand Bouquet & Ramah Tamah",
+    pic: "Seluruh Tim Dokumentasi",
+    notes: "Liputan suasana resepsi, candid tamu undangan, dan momen ceria.",
+  },
+];

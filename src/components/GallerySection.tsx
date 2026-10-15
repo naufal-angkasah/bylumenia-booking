@@ -72,11 +72,155 @@ const PORTFOLIO_SLIDES: PortfolioSlide[] = [
   },
 ];
 
+interface GalleryFeedCardProps {
+  item: GalleryItem;
+  index: number;
+  onOpenLightbox: (item: GalleryItem, photoIndex: number) => void;
+}
+
+function GalleryFeedCard({ item, index, onOpenLightbox }: GalleryFeedCardProps) {
+  const images = item.images && item.images.length > 0 ? item.images : [item.imageUrl];
+  const [photoIdx, setPhotoIdx] = useState(0);
+  const touchStartX = useRef<number | null>(null);
+
+  const handlePrev = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setPhotoIdx((prev) => (prev > 0 ? prev - 1 : images.length - 1));
+  };
+
+  const handleNext = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setPhotoIdx((prev) => (prev < images.length - 1 ? prev + 1 : 0));
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 40) {
+      if (diff > 0) {
+        setPhotoIdx((prev) => (prev < images.length - 1 ? prev + 1 : 0));
+      } else {
+        setPhotoIdx((prev) => (prev > 0 ? prev - 1 : images.length - 1));
+      }
+    }
+    touchStartX.current = null;
+  };
+
+  return (
+    <div
+      onClick={() => onOpenLightbox(item, photoIdx)}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      className={`group relative overflow-hidden rounded-2xl glass-panel border border-white/10 cursor-pointer transition-all duration-500 hover:-translate-y-1.5 hover:border-gold-400/40 hover:shadow-glow select-none ${
+        index === 0 ? "sm:col-span-2 lg:col-span-1" : ""
+      }`}
+    >
+      <div className="aspect-[4/5] sm:aspect-[3/4] w-full overflow-hidden bg-obsidian-850 relative">
+        <img
+          key={images[photoIdx]}
+          src={images[photoIdx]}
+          alt={`${item.title} - Foto ${photoIdx + 1}`}
+          loading="lazy"
+          className="w-full h-full object-cover transition-all duration-500 ease-out filter brightness-90 group-hover:brightness-100"
+        />
+
+        {/* Counter Pill (1/4) ala Instagram Feed */}
+        {images.length > 1 && (
+          <div className="absolute top-3 right-3 z-20 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-[11px] font-mono text-white flex items-center gap-1.5 shadow-lg pointer-events-none">
+            <span className="w-1.5 h-1.5 rounded-full bg-gold-400 animate-pulse" />
+            <span>
+              {photoIdx + 1}/{images.length}
+            </span>
+          </div>
+        )}
+
+        {/* Navigation Arrows for Multiple Photos */}
+        {images.length > 1 && (
+          <>
+            <button
+              onClick={handlePrev}
+              type="button"
+              className="absolute left-2.5 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-black/65 hover:bg-black/90 text-white/90 hover:text-gold-300 border border-white/20 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 active:scale-90"
+              aria-label="Foto Sebelumnya"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <button
+              onClick={handleNext}
+              type="button"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-black/65 hover:bg-black/90 text-white/90 hover:text-gold-300 border border-white/20 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 active:scale-90"
+              aria-label="Foto Selanjutnya"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </>
+        )}
+      </div>
+
+      {/* Dark Vignette Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-obsidian-950 via-obsidian-950/25 to-transparent opacity-85 group-hover:opacity-95 transition-opacity duration-300 pointer-events-none" />
+
+      {/* Card Details & Instagram Pagination Dots */}
+      <div className="absolute inset-0 p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
+        <div className="transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="inline-block text-[10px] tracking-widest uppercase text-gold-400 font-medium px-2.5 py-0.5 rounded-full bg-black/50 backdrop-blur-sm border border-gold-400/20">
+              {item.category}
+            </span>
+
+            {/* Pagination Dots (Instagram style) */}
+            {images.length > 1 && (
+              <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-black/50 backdrop-blur-sm border border-white/10 pointer-events-auto">
+                {images.map((_, dotIdx) => (
+                  <button
+                    key={dotIdx}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setPhotoIdx(dotIdx);
+                    }}
+                    className={`rounded-full transition-all duration-300 ${
+                      dotIdx === photoIdx
+                        ? "w-4 h-1.5 bg-gold-400 shadow-[0_0_8px_rgba(212,175,55,0.8)]"
+                        : "w-1.5 h-1.5 bg-white/40 hover:bg-white/70"
+                    }`}
+                    aria-label={`Buka foto ke-${dotIdx + 1}`}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+
+          <h4 className="font-serif text-xl sm:text-2xl text-white font-normal mb-1">
+            {item.title}
+          </h4>
+          <p className="text-neutral-300/80 text-xs line-clamp-2 font-light">
+            {item.subtitle}
+          </p>
+        </div>
+
+        <div className="mt-3 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-300 pt-2 border-t border-white/10 text-xs text-gold-300">
+          <span className="flex items-center gap-1">
+            <Eye className="w-3.5 h-3.5" /> Pratinjau Layar Penuh
+          </span>
+          <Maximize2 className="w-3.5 h-3.5" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function GallerySection() {
   const [activeSlide, setActiveSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [activeImage, setActiveImage] = useState<GalleryItem | PortfolioSlide | null>(null);
+  const [lightboxData, setLightboxData] = useState<{
+    item: GalleryItem | PortfolioSlide;
+    photoIndex: number;
+  } | null>(null);
 
   const SLIDE_DURATION = 4000; // 4 seconds per slide as specified in v3
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -193,7 +337,7 @@ export default function GallerySection() {
 
             {/* Top-Right Lightbox Zoom Button */}
             <button
-              onClick={() => setActiveImage(currentSlide)}
+              onClick={() => setLightboxData({ item: currentSlide, photoIndex: 0 })}
               className="absolute top-4 right-4 z-30 p-3 rounded-full bg-black/60 hover:bg-black/85 text-white/80 hover:text-gold-300 transition-all border border-white/10 backdrop-blur-md shadow-lg"
               title="Perbesar Bingkai Penuh"
               aria-label="Lihat Layar Penuh"
@@ -297,52 +441,14 @@ export default function GallerySection() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {GALLERY_ITEMS.map((item, index) => (
-              <div
+              <GalleryFeedCard
                 key={item.id}
-                onClick={() => setActiveImage(item)}
-                className={`group relative overflow-hidden rounded-2xl glass-panel border border-white/10 cursor-pointer transition-all duration-500 hover:-translate-y-1.5 hover:border-gold-400/40 hover:shadow-glow ${
-                  index === 0 ? "sm:col-span-2 lg:col-span-1" : ""
-                }`}
-              >
-                <div className="aspect-[4/5] sm:aspect-[3/4] w-full overflow-hidden bg-obsidian-850">
-                  <img
-                    src={item.imageUrl}
-                    alt={item.title}
-                    loading="lazy"
-                    onError={(e) => {
-                      const target = e.currentTarget;
-                      if (!target.src.includes("photo-1519741497674")) {
-                        target.src =
-                          "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1000&q=80";
-                      }
-                    }}
-                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-108 filter brightness-90 group-hover:brightness-100"
-                  />
-                </div>
-
-                <div className="absolute inset-0 bg-gradient-to-t from-obsidian-950 via-obsidian-950/20 to-transparent opacity-80 group-hover:opacity-95 transition-opacity duration-300" />
-
-                <div className="absolute inset-0 p-6 flex flex-col justify-end">
-                  <div className="transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                    <span className="inline-block text-[10px] tracking-widest uppercase text-gold-400 font-medium mb-1.5 px-2.5 py-0.5 rounded-full bg-black/40 backdrop-blur-sm border border-gold-400/20">
-                      {item.category}
-                    </span>
-                    <h4 className="font-serif text-xl sm:text-2xl text-white font-normal mb-1">
-                      {item.title}
-                    </h4>
-                    <p className="text-neutral-300/80 text-xs line-clamp-2 font-light">
-                      {item.subtitle}
-                    </p>
-                  </div>
-
-                  <div className="mt-3 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-300 pt-2 border-t border-white/10 text-xs text-gold-300">
-                    <span className="flex items-center gap-1">
-                      <Eye className="w-3.5 h-3.5" /> Pratinjau Bingkai
-                    </span>
-                    <Maximize2 className="w-3.5 h-3.5" />
-                  </div>
-                </div>
-              </div>
+                item={item}
+                index={index}
+                onOpenLightbox={(selectedItem, photoIdx) => {
+                  setLightboxData({ item: selectedItem, photoIndex: photoIdx });
+                }}
+              />
             ))}
           </div>
         </div>
@@ -366,10 +472,10 @@ export default function GallerySection() {
         </div>
       </div>
 
-      {/* Lightbox Modal */}
-      {activeImage && (
+      {/* Lightbox Modal with Multi-Photo Session Navigation */}
+      {lightboxData && (
         <div
-          onClick={() => setActiveImage(null)}
+          onClick={() => setLightboxData(null)}
           className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in"
         >
           <div
@@ -377,34 +483,94 @@ export default function GallerySection() {
             className="relative max-w-4xl w-full glass-panel rounded-2xl overflow-hidden border border-gold-400/30 shadow-2xl"
           >
             <button
-              onClick={() => setActiveImage(null)}
-              className="absolute top-4 right-4 z-10 p-2.5 rounded-full bg-black/60 text-white hover:text-gold-300 transition-colors border border-white/15"
+              onClick={() => setLightboxData(null)}
+              className="absolute top-4 right-4 z-30 p-2.5 rounded-full bg-black/60 text-white hover:text-gold-300 transition-colors border border-white/15"
               aria-label="Tutup"
             >
               <X className="w-5 h-5" />
             </button>
 
-            <div className="max-h-[75vh] overflow-hidden flex items-center justify-center bg-black">
-              <img
-                src={activeImage.imageUrl}
-                alt={"title" in activeImage ? activeImage.title : activeImage.coupleTitle}
-                className="max-h-[75vh] w-auto object-contain"
-              />
+            {/* Lightbox Image Stage */}
+            <div className="relative max-h-[75vh] min-h-[300px] overflow-hidden flex items-center justify-center bg-black">
+              {(() => {
+                const currentItem = lightboxData.item;
+                const isGallery = "images" in currentItem;
+                const images = isGallery && currentItem.images?.length ? currentItem.images : [currentItem.imageUrl];
+                const activePhotoUrl = images[lightboxData.photoIndex] || currentItem.imageUrl;
+
+                return (
+                  <>
+                    <img
+                      key={activePhotoUrl}
+                      src={activePhotoUrl}
+                      alt={"title" in currentItem ? currentItem.title : currentItem.coupleTitle}
+                      className="max-h-[75vh] w-auto object-contain transition-all duration-300"
+                    />
+
+                    {/* Lightbox Next/Prev Arrows */}
+                    {images.length > 1 && (
+                      <>
+                        <button
+                          onClick={() =>
+                            setLightboxData({
+                              ...lightboxData,
+                              photoIndex:
+                                lightboxData.photoIndex > 0 ? lightboxData.photoIndex - 1 : images.length - 1,
+                            })
+                          }
+                          className="absolute left-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-black/60 hover:bg-black/90 text-white hover:text-gold-300 border border-white/20 transition-all active:scale-90"
+                          aria-label="Sebelumnya"
+                        >
+                          <ChevronLeft className="w-5 h-5" />
+                        </button>
+                        <button
+                          onClick={() =>
+                            setLightboxData({
+                              ...lightboxData,
+                              photoIndex:
+                                lightboxData.photoIndex < images.length - 1 ? lightboxData.photoIndex + 1 : 0,
+                            })
+                          }
+                          className="absolute right-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-black/60 hover:bg-black/90 text-white hover:text-gold-300 border border-white/20 transition-all active:scale-90"
+                          aria-label="Selanjutnya"
+                        >
+                          <ChevronRight className="w-5 h-5" />
+                        </button>
+                      </>
+                    )}
+                  </>
+                );
+              })()}
             </div>
 
+            {/* Lightbox Footer Details */}
             <div className="p-6 bg-obsidian-900 border-t border-white/10">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-gold-400 text-xs uppercase tracking-widest font-medium">
-                  {activeImage.category}
-                </span>
-                <span className="text-neutral-400 text-xs">Arsip Resmi Bylumenia</span>
-              </div>
-              <h4 className="font-serif text-2xl text-white mb-1">
-                {"title" in activeImage ? activeImage.title : activeImage.coupleTitle}
-              </h4>
-              <p className="text-neutral-300 text-sm font-light">
-                {"subtitle" in activeImage ? activeImage.subtitle : activeImage.storyQuote}
-              </p>
+              {(() => {
+                const currentItem = lightboxData.item;
+                const isGallery = "images" in currentItem;
+                const images = isGallery && currentItem.images?.length ? currentItem.images : [currentItem.imageUrl];
+
+                return (
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-gold-400 text-xs uppercase tracking-widest font-medium">
+                        {currentItem.category}
+                      </span>
+                      {images.length > 1 && (
+                        <span className="text-xs font-mono text-gold-300 px-2 py-0.5 rounded-full bg-gold-400/10 border border-gold-400/20">
+                          Foto {lightboxData.photoIndex + 1} dari {images.length}
+                        </span>
+                      )}
+                    </div>
+                    <h4 className="font-serif text-2xl text-white mb-1">
+                      {"title" in currentItem ? currentItem.title : currentItem.coupleTitle}
+                    </h4>
+                    <p className="text-neutral-300 text-sm font-light">
+                      {"subtitle" in currentItem ? currentItem.subtitle : currentItem.storyQuote}
+                    </p>
+                  </div>
+                );
+              })()}
             </div>
           </div>
         </div>

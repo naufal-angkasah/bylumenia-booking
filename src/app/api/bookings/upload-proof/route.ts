@@ -114,34 +114,30 @@ export async function POST(request: Request) {
 
     // Automated WhatsApp Notifications via Fonnte
     try {
-      const { sendWhatsAppMessage } = await import("@/lib/whatsapp");
-      const curatorNumber = process.env.NEXT_PUBLIC_ADMIN_WHATSAPP || "087777357373";
+      const { sendAdminProofAlert, sendWhatsAppMessage } = await import("@/lib/whatsapp");
 
-      // 1. Send WA to Curator
-      await sendWhatsAppMessage({
-        target: curatorNumber,
-        message:
-          `*NOTIFIKASI RESERVASI MASUK — BYLUMENIA*\n\n` +
-          `Ada tanda jadi baru dari pasangan *${booking.coupleName}*!\n\n` +
-          `• Kode: *${booking.bookingCode}*\n` +
-          `• Tanggal: *${booking.eventDate}*\n` +
-          `• Paket: ${booking.packageName}\n` +
-          `• DP Masuk: Rp ${booking.downPayment ? Number(booking.downPayment).toLocaleString("id-ID") : "30%"}\n` +
-          `• WhatsApp Klien: https://wa.me/${String(booking.whatsapp).replace(/[^0-9]/g, "")}\n\n` +
-          `Silakan verifikasi tanda jadi di dasbor admin.`,
-      });
-
-      // 2. Send WA to Client
-      await sendWhatsAppMessage({
-        target: booking.whatsapp,
-        message:
-          `*TERIMA KASIH — BYLUMENIA STUDIO*\n\n` +
-          `Halo Kak *${booking.coupleName}*,\n\n` +
-          `Tanda bukti transfer kalian telah kami terima dengan hangat di sistem kami.\n` +
-          `• Kode Reservasi: *${booking.bookingCode}*\n` +
-          `• Tanggal Acara: *${booking.eventDate}*\n\n` +
-          `Tim kami sedang memeriksa tanda jadi ini. Status jadwal kalian akan segera diperbarui.`,
-      });
+      await Promise.allSettled([
+        // 1. Alert to Admin with proof link
+        sendAdminProofAlert({
+          coupleName: booking.coupleName,
+          whatsapp: booking.whatsapp,
+          eventDate: booking.eventDate,
+          packageName: booking.packageName,
+          bookingCode: booking.bookingCode,
+          downPayment: booking.downPayment ? Number(booking.downPayment) : undefined,
+          proofFileUrl: proofFileUrl || undefined,
+        }),
+        // 2. Acknowledgment to Client
+        sendWhatsAppMessage({
+          target: booking.whatsapp,
+          message:
+            `*BUKTI TRANSFER DITERIMA — STUDIO LUMENIA*\n\n` +
+            `Halo Kak *${booking.coupleName}*,\n` +
+            `Bukti transfer tanda jadi untuk tanggal *${booking.eventDate}* (Kode: *${booking.bookingCode}*) telah kami terima.\n\n` +
+            `Tim admin kami sedang memverifikasi pembayaran Anda. Setelah diverifikasi, Anda akan menerima konfirmasi resmi dan tanggal akan 100% terkunci.\n\n` +
+            `Terima kasih! ✨`,
+        }),
+      ]);
     } catch (waErr) {
       console.warn("WhatsApp notification error (non-fatal):", waErr);
     }

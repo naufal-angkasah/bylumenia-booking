@@ -87,18 +87,14 @@ export async function PATCH(
     // Auto notify client if confirmed
     if (action === "CONFIRM" && booking?.whatsapp) {
       try {
-        const { sendWhatsAppMessage } = await import("@/lib/whatsapp");
-        await sendWhatsAppMessage({
-          target: booking.whatsapp,
-          message:
-            `*KONFIRMASI RESERVASI - STUDIO LUMENIA*\n\n` +
-            `Halo Kak *${booking.coupleName}*,\n` +
-            `Tanda jadi kalian sudah diverifikasi oleh tim kami. ` +
-            `Jadwal hari pernikahan kalian pada tanggal *${booking.eventDate}* (${booking.packageName}) ` +
-            `sudah terkonfirmasi dan kami kunci di kalender kami.\n\n` +
-            `Kode SPK: *${booking.bookingCode}*\n` +
-            `Lokasi: ${booking.eventLocation}\n\n` +
-            `Tim kami akan segera menghubungi kalian untuk membahas konsep. Terima kasih sudah mempercayakan hari penting kalian kepada kami.`,
+        const { sendClientBookingConfirmed } = await import("@/lib/whatsapp");
+        await sendClientBookingConfirmed({
+          coupleName: booking.coupleName,
+          whatsapp: booking.whatsapp,
+          eventDate: booking.eventDate,
+          packageName: booking.packageName,
+          bookingCode: booking.bookingCode,
+          eventLocation: booking.eventLocation,
         });
       } catch (waErr) {
         console.warn("WhatsApp notify error (non-fatal):", waErr);
