@@ -36,12 +36,8 @@ export default function Home() {
       {/* Cinematic Welcome Screen Gate (Opsi A) — Membuka Audio Penuh Seketika */}
       {!hasEntered && <WelcomeScreen onEnter={handleEnter} />}
 
-      {/* Floating Capsule Navbar with Integrated Audio Controller */}
-      <Navbar
-        onOpenBooking={handleOpenBooking}
-        isMuted={isMuted}
-        onToggleAudio={handleToggleAudio}
-      />
+      {/* Floating Capsule Navbar */}
+      <Navbar onOpenBooking={handleOpenBooking} />
 
       {/* Hero Section with Looped Teaser Video */}
       <HeroSection

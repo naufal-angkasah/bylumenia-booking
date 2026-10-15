@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Calendar, Menu, X, Volume2, VolumeX } from "lucide-react";
+import { Calendar, Menu, X } from "lucide-react";
 import { smoothScrollTo } from "@/lib/scroll";
 
 interface NavbarProps {
@@ -11,7 +11,7 @@ interface NavbarProps {
   onToggleAudio?: () => void;
 }
 
-export default function Navbar({ onOpenBooking, isMuted = true, onToggleAudio }: NavbarProps) {
+export default function Navbar({ onOpenBooking }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -58,31 +58,8 @@ export default function Navbar({ onOpenBooking, isMuted = true, onToggleAudio }:
           </button>
         </div>
 
-        {/* Action Button & Audio Toggle */}
+        {/* Action Button */}
         <div className="flex items-center gap-2 sm:gap-3">
-          {/* Integrated Audio Control Pill */}
-          {onToggleAudio && (
-            <button
-              onClick={onToggleAudio}
-              type="button"
-              className={`p-2 sm:px-3 sm:py-1.5 rounded-full border transition-all duration-300 flex items-center gap-1.5 text-xs ${
-                isMuted
-                  ? "bg-white/5 border-white/15 text-neutral-400 hover:text-white hover:border-white/30"
-                  : "bg-gold-400/20 border-gold-400/50 text-gold-400 shadow-[0_0_12px_rgba(212,175,55,0.4)]"
-              }`}
-              title={isMuted ? "Putar Musik Latar" : "Senyapkan Musik"}
-              aria-label="Audio Toggle"
-            >
-              {isMuted ? (
-                <VolumeX className="w-3.5 h-3.5" />
-              ) : (
-                <Volume2 className="w-3.5 h-3.5 animate-pulse" />
-              )}
-              <span className="hidden lg:inline text-[10px] tracking-wider uppercase font-medium">
-                {isMuted ? "Musik" : "Musik ♪"}
-              </span>
-            </button>
-          )}
 
           <button
             onClick={onOpenBooking}
