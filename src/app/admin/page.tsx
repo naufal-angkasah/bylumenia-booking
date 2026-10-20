@@ -36,9 +36,14 @@ import {
   BookOpen,
   PhoneCall,
   ExternalLink,
+  Film,
+  Camera,
+  Sparkles,
+  PieChart,
+  Sliders,
+  Truck,
 } from "lucide-react";
 import {
-  ADDON_CATALOG,
   DEFAULT_RUNDOWN_TEMPLATE,
   RundownItem,
   PAYMENT_METHODS,
@@ -106,11 +111,34 @@ interface SystemLogItem {
   } | null;
 }
 
+interface DynamicAddOn {
+  id: string;
+  name: string;
+  category: "Video" | "Photo" | "Streaming" | "Output" | "Lainnya";
+  price: number;
+  hpp: number;
+  description: string;
+  components?: Array<{ name: string; cost: number }>;
+}
+
+interface ProductionProgress {
+  backupStatus: "Selesai" | "Sedang Berjalan" | "Belum";
+  driveLink: string;
+  photoSelectionStatus: "40 Foto Siap Retouch" | "Menunggu Pilihan Klien" | "Belum Mulai";
+  photoEditStatus: "Selesai 100%" | "Proses Retouch (50%)" | "Dalam Antrean";
+  videoEditStatus: "Selesai 100%" | "Color Grading & Audio" | "Rough Cut" | "Dalam Antrean";
+  videoPreviewLink: string;
+  albumStatus: "Siap Kirim" | "Sedang Dicetak" | "Masuk Antrean Cetak" | "Belum Mulai";
+  shippingResi: string;
+  notes: string;
+}
+
 type AdminTab =
   | "overview"
   | "client"
   | "invoice"
   | "rundown"
+  | "postprod"
   | "addons"
   | "analytic"
   | "log"
@@ -166,6 +194,90 @@ export default function AdminPage() {
   const [sendingRundownWa, setSendingRundownWa] = useState(false);
   const [rundownWaStatus, setRundownWaStatus] = useState<string | null>(null);
 
+  // Status Editing Foto & Video (Post-Production Tracker) State
+  const [selectedPostProdBookingId, setSelectedPostProdBookingId] = useState<string>("");
+  const [productionProgressMap, setProductionProgressMap] = useState<Record<string, ProductionProgress>>({
+    default: {
+      backupStatus: "Selesai",
+      driveLink: "https://drive.google.com/drive/folders/sample-bylumenia-raw",
+      photoSelectionStatus: "40 Foto Siap Retouch",
+      photoEditStatus: "Proses Retouch (50%)",
+      videoEditStatus: "Color Grading & Audio",
+      videoPreviewLink: "https://youtu.be/sample-teaser-preview",
+      albumStatus: "Sedang Dicetak",
+      shippingResi: "JNE-REG-882910283",
+      notes: "Sesi retouch gaun pengantin dan grading warna film khidmat berjalan lancar.",
+    },
+  });
+  const [sendingPostProdWa, setSendingPostProdWa] = useState(false);
+  const [postProdWaStatus, setPostProdWaStatus] = useState<string | null>(null);
+
+  // Add-on Catalog & Simulator Interactive State
+  const [addonsList, setAddonsList] = useState<DynamicAddOn[]>([
+    {
+      id: "addon-drone",
+      name: "Drone Cinematic 4K Highlight",
+      category: "Video",
+      price: 1500000,
+      hpp: 700000,
+      description: "Pilot drone berlisensi & sudut pandang udara spektakuler venue pernikahan.",
+      components: [
+        { name: "Honor Pilot Drone Berlisensi", cost: 500000 },
+        { name: "Sewa Baterai & Unit Drone 4K", cost: 200000 },
+      ],
+    },
+    {
+      id: "addon-live",
+      name: "Live Streaming YouTube 2 Kamera Full HD",
+      category: "Streaming",
+      price: 3500000,
+      hpp: 1700000,
+      description: "Broadcaster pro, audio mixer digital, & overlay nama pengantin.",
+      components: [
+        { name: "Fee Operator Video Switcher", cost: 600000 },
+        { name: "Fee 2 Kameramen Broadcast", cost: 800000 },
+        { name: "Kuota Modem Bonding 5G", cost: 300000 },
+      ],
+    },
+    {
+      id: "addon-sde",
+      name: "Same Day Edit (SDE Teaser Malam Resepsi)",
+      category: "Video",
+      price: 2000000,
+      hpp: 1000000,
+      description: "Video teaser 1 menit langsung tayang di proyektor resepsi & IG Reels.",
+      components: [
+        { name: "Fee Video Editor On-site Hari-H", cost: 800000 },
+        { name: "Sewa Transmitter HDMI Wireless", cost: 200000 },
+      ],
+    },
+    {
+      id: "addon-album",
+      name: "Album Linen Handmade Eksklusif Tambahan",
+      category: "Output",
+      price: 1200000,
+      hpp: 600000,
+      description: "Ukuran 20x30 cm (30 halaman) dengan boks kayu ukir grafir nama.",
+      components: [
+        { name: "Biaya Cetak Lab Foto Premium", cost: 450000 },
+        { name: "Boks Kayu Ukir Grafir Laser", cost: 150000 },
+      ],
+    },
+  ]);
+
+  // Simulator Modal State
+  const [selectedSimulatorAddon, setSelectedSimulatorAddon] = useState<DynamicAddOn | null>(null);
+  const [simPrice, setSimPrice] = useState<number>(0);
+  const [simHpp, setSimHpp] = useState<number>(0);
+  const [isAddAddonModalOpen, setIsAddAddonModalOpen] = useState(false);
+  const [newAddonForm, setNewAddonForm] = useState({
+    name: "",
+    category: "Video" as DynamicAddOn["category"],
+    price: 1000000,
+    hpp: 450000,
+    description: "",
+  });
+
   // Quick WhatsApp Modal State & Fonnte Gateway
   const [waModalBooking, setWaModalBooking] = useState<BookingItem | null>(null);
   const [waTemplateKey, setWaTemplateKey] = useState<"hold" | "confirmed" | "proof_issue" | "consult">("hold");
@@ -205,12 +317,26 @@ export default function AdminPage() {
     return bookings[0] || null;
   }, [selectedRundownBookingId, bookings]);
 
+  // Selected Booking for Post-Production View
+  const activePostProdBooking = useMemo(() => {
+    if (selectedPostProdBookingId) {
+      return bookings.find((b) => b.id === selectedPostProdBookingId) || bookings[0] || null;
+    }
+    return bookings[0] || null;
+  }, [selectedPostProdBookingId, bookings]);
+
+  // Active Post-Production Progress Object
+  const currentPostProdProgress = useMemo(() => {
+    if (!activePostProdBooking) return productionProgressMap.default;
+    return productionProgressMap[activePostProdBooking.id] || productionProgressMap.default;
+  }, [activePostProdBooking, productionProgressMap]);
+
   // Calculate Invoice Breakdown
   const invoiceCalculation = useMemo(() => {
     if (!activeInvoiceBooking) return null;
     const basePrice = Number(activeInvoiceBooking.totalPrice) || 0;
     const addonsTotal = selectedAddonIds.reduce((sum, addonId) => {
-      const found = ADDON_CATALOG.find((a) => a.id === addonId);
+      const found = addonsList.find((a) => a.id === addonId);
       return sum + (found ? found.price : 0);
     }, 0);
     const discount = Math.max(0, invoiceDiscount || 0);
@@ -226,9 +352,9 @@ export default function AdminPage() {
       dpPaid,
       remainingBalance,
     };
-  }, [activeInvoiceBooking, selectedAddonIds, invoiceDiscount]);
+  }, [activeInvoiceBooking, selectedAddonIds, invoiceDiscount, addonsList]);
 
-  // Load PIN from storage if previously stored
+  // Load PIN & storage
   useEffect(() => {
     const savedPin = safeStorage.getItem("bylumenia_admin_pin");
     if (savedPin) {
@@ -280,6 +406,7 @@ export default function AdminPage() {
         if (data.bookings && data.bookings.length > 0) {
           if (!selectedInvoiceBookingId) setSelectedInvoiceBookingId(data.bookings[0].id);
           if (!selectedRundownBookingId) setSelectedRundownBookingId(data.bookings[0].id);
+          if (!selectedPostProdBookingId) setSelectedPostProdBookingId(data.bookings[0].id);
         }
       } else {
         setPinError(true);
@@ -307,7 +434,6 @@ export default function AdminPage() {
       if (res.ok) {
         fetchDashboardData(pin);
         if (selectedCalendarDay) {
-          // Refresh open drawer bookings
           const updatedBookings = bookings.map((b) => {
             if (b.id === id) {
               return { ...b, status: action === "CONFIRM" ? ("CONFIRMED" as const) : ("REJECTED" as const) };
@@ -520,7 +646,7 @@ export default function AdminPage() {
     }
   };
 
-  // Kirim Rundown via WhatsApp Fonnte
+  // Kirim Rundown via WhatsApp Fonnte (FIXED: Resilient Array Payload)
   const handleSendRundownViaFonnte = async () => {
     if (!activeRundownBooking) return;
     setSendingRundownWa(true);
@@ -539,6 +665,7 @@ export default function AdminPage() {
             packageName: activeRundownBooking.packageName,
           },
           rundown: {
+            items: rundownList,
             timeline: rundownList.map((r) => `${r.time} • ${r.activity} (PIC: ${r.pic})`).join("\n"),
             notes: "Mohon tim dokumentasi hadir 30 menit sebelum jadwal makeup dimulai.",
           },
@@ -556,6 +683,51 @@ export default function AdminPage() {
     } finally {
       setSendingRundownWa(false);
     }
+  };
+
+  // Kirim Update Status Editing Foto & Video via Fonnte
+  const handleSendPostProdViaFonnte = async () => {
+    if (!activePostProdBooking) return;
+    setSendingPostProdWa(true);
+    setPostProdWaStatus(null);
+    try {
+      const res = await fetch("/api/admin/whatsapp/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          pin,
+          action: "PRODUCTION_UPDATE",
+          booking: {
+            coupleName: activePostProdBooking.coupleName,
+            whatsapp: activePostProdBooking.whatsapp,
+            eventDate: activePostProdBooking.eventDate,
+            packageName: activePostProdBooking.packageName,
+          },
+          progress: currentPostProdProgress,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setPostProdWaStatus("Laporan status editing foto & video berhasil dikirim ke WhatsApp klien via Fonnte!");
+      } else {
+        setPostProdWaStatus("Gagal mengirim laporan: " + (data.message || "Error server"));
+      }
+    } catch (err: unknown) {
+      const error = err as Error;
+      setPostProdWaStatus("Terjadi kendala saat mengirim: " + error.message);
+    } finally {
+      setSendingPostProdWa(false);
+    }
+  };
+
+  const handleUpdateCurrentPostProd = (field: keyof ProductionProgress, value: string) => {
+    if (!activePostProdBooking) return;
+    const existing = productionProgressMap[activePostProdBooking.id] || productionProgressMap.default;
+    const updated = { ...existing, [field]: value };
+    setProductionProgressMap({
+      ...productionProgressMap,
+      [activePostProdBooking.id]: updated,
+    });
   };
 
   // Add Rundown Item Handler
@@ -583,6 +755,47 @@ export default function AdminPage() {
     setRundownList(rundownList.filter((item) => item.id !== id));
   };
 
+  // Simulator Modal Handler
+  const handleOpenSimulator = (addon: DynamicAddOn) => {
+    setSelectedSimulatorAddon(addon);
+    setSimPrice(addon.price);
+    setSimHpp(addon.hpp);
+  };
+
+  const handleSaveSimulatorChanges = () => {
+    if (!selectedSimulatorAddon) return;
+    const updated = addonsList.map((a) =>
+      a.id === selectedSimulatorAddon.id ? { ...a, price: simPrice, hpp: simHpp } : a
+    );
+    setAddonsList(updated);
+    setSelectedSimulatorAddon(null);
+  };
+
+  const handleCreateNewAddon = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newAddonForm.name) {
+      alert("Harap isi nama add-on.");
+      return;
+    }
+    const newAddon: DynamicAddOn = {
+      id: `addon-custom-${Date.now()}`,
+      name: newAddonForm.name,
+      category: newAddonForm.category,
+      price: Number(newAddonForm.price) || 0,
+      hpp: Number(newAddonForm.hpp) || 0,
+      description: newAddonForm.description || "Layanan tambahan kustom Studio Lumenia.",
+    };
+    setAddonsList([...addonsList, newAddon]);
+    setIsAddAddonModalOpen(false);
+    setNewAddonForm({
+      name: "",
+      category: "Video",
+      price: 1000000,
+      hpp: 450000,
+      description: "",
+    });
+  };
+
   // Filter Bookings for CRM Table
   const filteredBookings = bookings.filter((b) => {
     const matchesFilter = filterStatus === "ALL" || b.status === filterStatus;
@@ -601,7 +814,6 @@ export default function AdminPage() {
     const lastDay = new Date(year, month + 1, 0);
 
     const daysInMonth = lastDay.getDate();
-    // Monday as start of week (0 = Monday, 6 = Sunday)
     const startingDay = (firstDay.getDay() + 6) % 7;
 
     const days = [];
@@ -617,6 +829,38 @@ export default function AdminPage() {
     }
     return days;
   };
+
+  // Helper Chart Data Calculations
+  const chartData = useMemo(() => {
+    const confirmed = bookings.filter((b) => b.status === "CONFIRMED").length;
+    const pending = bookings.filter((b) => b.status === "PENDING_VERIFY").length;
+    const hold = bookings.filter((b) => b.status === "HOLD").length;
+    const expired = bookings.filter((b) => b.status === "EXPIRED" || b.status === "REJECTED").length;
+    const total = Math.max(1, confirmed + pending + hold + expired);
+
+    // Donut Segments (circumference = 314.159 for r=50)
+    const c = 2 * Math.PI * 50;
+    const pConfirmed = (confirmed / total) * c;
+    const pPending = (pending / total) * c;
+    const pHold = (hold / total) * c;
+    const pExpired = (expired / total) * c;
+
+    // Package Distribution
+    const pkgPrewed = bookings.filter((b) => b.packageName.toLowerCase().includes("prewedding")).length;
+    const pkgVows = bookings.filter((b) => b.packageName.toLowerCase().includes("vow")).length;
+    const pkgRoyal = bookings.filter((b) => b.packageName.toLowerCase().includes("royal") || b.packageName.toLowerCase().includes("complete")).length;
+    const maxPkgCount = Math.max(1, pkgPrewed, pkgVows, pkgRoyal);
+
+    return {
+      status: { confirmed, pending, hold, expired, total },
+      donut: { c, pConfirmed, pPending, pHold, pExpired },
+      packages: {
+        prewed: { count: pkgPrewed, pct: Math.round((pkgPrewed / maxPkgCount) * 100) },
+        vows: { count: pkgVows, pct: Math.round((pkgVows / maxPkgCount) * 100) },
+        royal: { count: pkgRoyal, pct: Math.round((pkgRoyal / maxPkgCount) * 100) },
+      },
+    };
+  }, [bookings]);
 
   // Login Gate - Light Mode Styled
   if (!isAuthenticated) {
@@ -783,7 +1027,7 @@ export default function AdminPage() {
               }`}
             >
               <LayoutDashboard className="w-4 h-4 text-amber-600" />
-              <span>1. Overview & Kalender</span>
+              <span>1. Overview & Diagram</span>
             </button>
 
             <button
@@ -828,6 +1072,18 @@ export default function AdminPage() {
             </button>
 
             <button
+              onClick={() => setActiveTab("postprod")}
+              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all ${
+                activeTab === "postprod"
+                  ? "bg-amber-500/15 text-amber-900 border border-amber-500/40 font-bold shadow-xs"
+                  : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+              }`}
+            >
+              <Film className="w-4 h-4 text-amber-600" />
+              <span>5. Status Editing Foto & Video</span>
+            </button>
+
+            <button
               onClick={() => setActiveTab("addons")}
               className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all ${
                 activeTab === "addons"
@@ -836,7 +1092,7 @@ export default function AdminPage() {
               }`}
             >
               <Layers className="w-4 h-4 text-amber-600" />
-              <span>5. Katalog Add-on & HPP</span>
+              <span>6. Katalog Add-on & HPP</span>
             </button>
 
             <button
@@ -848,7 +1104,7 @@ export default function AdminPage() {
               }`}
             >
               <BarChart3 className="w-4 h-4 text-amber-600" />
-              <span>6. Analytic Konversi</span>
+              <span>7. Analytic Konversi</span>
             </button>
 
             <button
@@ -860,7 +1116,7 @@ export default function AdminPage() {
               }`}
             >
               <History className="w-4 h-4 text-amber-600" />
-              <span>7. Log Audit Trail</span>
+              <span>8. Log Audit Trail</span>
             </button>
 
             <button
@@ -872,7 +1128,7 @@ export default function AdminPage() {
               }`}
             >
               <FileEdit className="w-4 h-4 text-amber-600" />
-              <span>8. CMS Pengaturan Form</span>
+              <span>9. CMS Pengaturan Form</span>
             </button>
 
             <button
@@ -884,7 +1140,7 @@ export default function AdminPage() {
               }`}
             >
               <FileText className="w-4 h-4 text-amber-600" />
-              <span>9. Laporan Pembukuan</span>
+              <span>10. Laporan Pembukuan</span>
             </button>
           </div>
         </aside>
@@ -892,7 +1148,7 @@ export default function AdminPage() {
         {/* CONTENT AREA */}
         <div className="flex-1 min-w-0">
 
-          {/* TAB 1: OVERVIEW & KALENDER BULANAN */}
+          {/* TAB 1: OVERVIEW & DIAGRAM */}
           {activeTab === "overview" && (
             <div className="space-y-6">
               {/* KPI Cards */}
@@ -930,6 +1186,166 @@ export default function AdminPage() {
                     Rp {(metrics.totalRevenueConfirmed || 0).toLocaleString("id-ID")}
                   </div>
                 </div>
+              </div>
+
+              {/* OVERVIEW CHARTS ROW: DIAGRAM DONAT & DIAGRAM BATANG */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                {/* 1. DIAGRAM DONAT: Status Reservasi */}
+                <div className="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-xs">
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-amber-700 block">
+                        Visualisasi Pipeline
+                      </span>
+                      <h4 className="font-serif text-lg text-slate-900 font-bold">
+                        Diagram Donat: Status Reservasi
+                      </h4>
+                    </div>
+                    <PieChart className="w-5 h-5 text-amber-600" />
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-2">
+                    {/* SVG Donut */}
+                    <div className="relative w-36 h-36 shrink-0">
+                      <svg className="w-full h-full -rotate-90" viewBox="0 0 120 120">
+                        {/* Background Ring */}
+                        <circle cx="60" cy="60" r="50" fill="transparent" stroke="#f1f5f9" strokeWidth="18" />
+                        
+                        {/* Confirmed Segment (Emerald) */}
+                        <circle
+                          cx="60"
+                          cy="60"
+                          r="50"
+                          fill="transparent"
+                          stroke="#10b981"
+                          strokeWidth="18"
+                          strokeDasharray={`${chartData.donut.pConfirmed} ${chartData.donut.c}`}
+                          strokeDashoffset="0"
+                          className="transition-all duration-700"
+                        />
+                        {/* Pending Segment (Amber) */}
+                        <circle
+                          cx="60"
+                          cy="60"
+                          r="50"
+                          fill="transparent"
+                          stroke="#f59e0b"
+                          strokeWidth="18"
+                          strokeDasharray={`${chartData.donut.pPending} ${chartData.donut.c}`}
+                          strokeDashoffset={`-${chartData.donut.pConfirmed}`}
+                          className="transition-all duration-700"
+                        />
+                        {/* Hold Segment (Indigo) */}
+                        <circle
+                          cx="60"
+                          cy="60"
+                          r="50"
+                          fill="transparent"
+                          stroke="#8b5cf6"
+                          strokeWidth="18"
+                          strokeDasharray={`${chartData.donut.pHold} ${chartData.donut.c}`}
+                          strokeDashoffset={`-${chartData.donut.pConfirmed + chartData.donut.pPending}`}
+                          className="transition-all duration-700"
+                        />
+                      </svg>
+                      {/* Center Content */}
+                      <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                        <span className="text-xl font-bold font-serif text-slate-900">{chartData.status.total}</span>
+                        <span className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Total</span>
+                      </div>
+                    </div>
+
+                    {/* Donut Legend */}
+                    <div className="space-y-2 text-xs flex-1 w-full">
+                      <div className="flex items-center justify-between p-2 rounded-xl bg-emerald-50 border border-emerald-200">
+                        <div className="flex items-center gap-2">
+                          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+                          <span className="font-semibold text-emerald-950">Terkonfirmasi DP</span>
+                        </div>
+                        <span className="font-bold text-emerald-800">{chartData.status.confirmed}</span>
+                      </div>
+
+                      <div className="flex items-center justify-between p-2 rounded-xl bg-amber-50 border border-amber-200">
+                        <div className="flex items-center gap-2">
+                          <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
+                          <span className="font-semibold text-amber-950">Pending Slip</span>
+                        </div>
+                        <span className="font-bold text-amber-800">{chartData.status.pending}</span>
+                      </div>
+
+                      <div className="flex items-center justify-between p-2 rounded-xl bg-purple-50 border border-purple-200">
+                        <div className="flex items-center gap-2">
+                          <span className="w-2.5 h-2.5 rounded-full bg-purple-500" />
+                          <span className="font-semibold text-purple-950">Hold 30 Menit</span>
+                        </div>
+                        <span className="font-bold text-purple-800">{chartData.status.hold}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 2. DIAGRAM BATANG: Peminatan Kategori Paket */}
+                <div className="bg-white p-6 rounded-2xl border border-slate-200/90 shadow-xs">
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-amber-700 block">
+                        Popularitas Paket
+                      </span>
+                      <h4 className="font-serif text-lg text-slate-900 font-bold">
+                        Diagram Batang: Paket Pilihan
+                      </h4>
+                    </div>
+                    <BarChart3 className="w-5 h-5 text-amber-600" />
+                  </div>
+
+                  <div className="space-y-3 pt-2">
+                    <div>
+                      <div className="flex items-center justify-between text-xs font-semibold mb-1">
+                        <span className="text-slate-800">Prewedding (Photo &amp; Video)</span>
+                        <span className="text-amber-800">{chartData.packages.prewed.count} Pasangan</span>
+                      </div>
+                      <div className="w-full h-3 rounded-full bg-slate-100 overflow-hidden">
+                        <div
+                          className="h-full rounded-full bg-gradient-to-r from-amber-400 to-amber-600 transition-all duration-700"
+                          style={{ width: `${Math.max(12, chartData.packages.prewed.pct)}%` }}
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="flex items-center justify-between text-xs font-semibold mb-1">
+                        <span className="text-slate-800">Wedding Day (The Vows)</span>
+                        <span className="text-amber-800">{chartData.packages.vows.count} Pasangan</span>
+                      </div>
+                      <div className="w-full h-3 rounded-full bg-slate-100 overflow-hidden">
+                        <div
+                          className="h-full rounded-full bg-gradient-to-r from-amber-500 to-amber-700 transition-all duration-700"
+                          style={{ width: `${Math.max(12, chartData.packages.vows.pct)}%` }}
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className="flex items-center justify-between text-xs font-semibold mb-1">
+                        <span className="text-slate-800">Complete Package (Royal Legacy)</span>
+                        <span className="text-amber-800">{chartData.packages.royal.count} Pasangan</span>
+                      </div>
+                      <div className="w-full h-3 rounded-full bg-slate-100 overflow-hidden">
+                        <div
+                          className="h-full rounded-full bg-gradient-to-r from-amber-600 to-amber-800 transition-all duration-700"
+                          style={{ width: `${Math.max(12, chartData.packages.royal.pct)}%` }}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="pt-2 text-[11px] text-slate-500 flex items-center justify-between border-t border-slate-100 mt-3">
+                      <span>Paket terfavorit saat ini:</span>
+                      <span className="font-bold text-amber-700">The Royal Legacy (Complete)</span>
+                    </div>
+                  </div>
+                </div>
+
               </div>
 
               {/* Kalender Bulanan Interaktif */}
@@ -1082,9 +1498,9 @@ export default function AdminPage() {
                   <table className="w-full text-left border-collapse text-xs">
                     <thead>
                       <tr className="border-b border-slate-200 bg-slate-50 text-slate-600 uppercase tracking-wider">
-                        <th className="p-4 font-bold">Kode & Pasangan</th>
-                        <th className="p-4 font-bold">Tanggal & Lokasi</th>
-                        <th className="p-4 font-bold">Paket & Mood</th>
+                        <th className="p-4 font-bold">Kode &amp; Pasangan</th>
+                        <th className="p-4 font-bold">Tanggal &amp; Lokasi</th>
+                        <th className="p-4 font-bold">Paket &amp; Mood</th>
                         <th className="p-4 font-bold">DP / Total</th>
                         <th className="p-4 font-bold">Bukti Transfer</th>
                         <th className="p-4 font-bold">Status</th>
@@ -1181,6 +1597,17 @@ export default function AdminPage() {
                                 </button>
                                 <button
                                   type="button"
+                                  onClick={() => {
+                                    setSelectedPostProdBookingId(b.id);
+                                    setActiveTab("postprod");
+                                  }}
+                                  className="p-1.5 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-300 transition-colors"
+                                  title="Status Editing Foto & Video"
+                                >
+                                  <Film className="w-4 h-4 text-slate-700" />
+                                </button>
+                                <button
+                                  type="button"
                                   onClick={() => handleOpenWaModal(b)}
                                   className="p-1.5 rounded-lg bg-emerald-100 text-emerald-800 hover:bg-emerald-200 border border-emerald-300 transition-colors"
                                   title="Template Pesan WhatsApp Cepat"
@@ -1269,7 +1696,7 @@ export default function AdminPage() {
                       </p>
 
                       <div className="space-y-2">
-                        {ADDON_CATALOG.map((addon) => {
+                        {addonsList.map((addon) => {
                           const isSelected = selectedAddonIds.includes(addon.id);
                           return (
                             <label
@@ -1433,7 +1860,7 @@ export default function AdminPage() {
                             </tr>
 
                             {selectedAddonIds.map((addonId) => {
-                              const addon = ADDON_CATALOG.find((a) => a.id === addonId);
+                              const addon = addonsList.find((a) => a.id === addonId);
                               if (!addon) return null;
                               return (
                                 <tr key={addon.id}>
@@ -1600,7 +2027,9 @@ export default function AdminPage() {
                   </div>
 
                   {rundownWaStatus && (
-                    <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-300 text-xs text-emerald-900 font-medium">
+                    <div className={`p-3 rounded-xl text-xs font-semibold ${
+                      rundownWaStatus.includes("berhasil") ? "bg-emerald-50 text-emerald-900 border border-emerald-300" : "bg-rose-50 text-rose-900 border border-rose-300"
+                    }`}>
                       {rundownWaStatus}
                     </div>
                   )}
@@ -1687,7 +2116,7 @@ export default function AdminPage() {
                           type="text"
                           value={newRundownPic}
                           onChange={(e) => setNewRundownPic(e.target.value)}
-                          placeholder="Tim Video & Lead Photo"
+                          placeholder="Tim Video &amp; Lead Photo"
                           className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-xs text-slate-900 focus:outline-none focus:border-amber-600"
                         />
                       </div>
@@ -1697,7 +2126,7 @@ export default function AdminPage() {
                           type="text"
                           value={newRundownNotes}
                           onChange={(e) => setNewRundownNotes(e.target.value)}
-                          placeholder="Close-up cincin & mata haru"
+                          placeholder="Close-up cincin &amp; mata haru"
                           className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-xs text-slate-900 focus:outline-none focus:border-amber-600"
                         />
                       </div>
@@ -1722,40 +2151,320 @@ export default function AdminPage() {
             </div>
           )}
 
-          {/* TAB 5: KATALOG ADD-ON & ESTIMASI HPP */}
-          {activeTab === "addons" && (
-            <div className="space-y-6">
-              <div className="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-xs">
-                <span className="text-xs uppercase tracking-widest text-amber-700 font-bold block mb-1">
-                  Handler Class Model &bull; Service Catalog
-                </span>
-                <h3 className="font-serif text-2xl text-slate-900 font-bold mb-2">
-                  Katalog Layanan Tambahan (Add-on) &amp; Estimasi HPP
-                </h3>
-                <p className="text-xs text-slate-600 max-w-2xl leading-relaxed">
-                  Daftar layanan add-on yang dapat ditawarkan saat konsultasi atau revisi paket. Dilengkapi dengan estimasi biaya operasional tim (HPP) untuk acuan profitabilitas studio.
-                </p>
+          {/* TAB 5: STATUS EDITING FOTO & VIDEO (POST-PRODUCTION TRACKER) */}
+          {activeTab === "postprod" && (
+            <div className="space-y-6 animate-fade-in">
+              {/* Header & Couple Picker */}
+              <div className="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div>
+                  <span className="text-xs uppercase tracking-widest text-amber-700 font-bold block mb-1">
+                    Post-Production Tracker &bull; Alur Karya
+                  </span>
+                  <h3 className="font-serif text-xl text-slate-900 font-bold">
+                    Status Editing Foto &amp; Video Klien
+                  </h3>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Perbarui tahapan editing karya dan kirimkan laporan progres langsung ke WhatsApp pengantin.
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2 w-full md:w-auto">
+                  <select
+                    value={activePostProdBooking?.id || ""}
+                    onChange={(e) => setSelectedPostProdBookingId(e.target.value)}
+                    className="w-full md:w-80 px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-xs font-semibold text-slate-900 focus:outline-none focus:border-amber-600"
+                  >
+                    {bookings.map((b) => (
+                      <option key={b.id} value={b.id}>
+                        {b.coupleName} ({b.eventDate} - {b.packageName})
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
+              {activePostProdBooking ? (
+                <div className="space-y-6">
+                  {/* Status Banner */}
+                  <div className="bg-amber-50/80 p-5 rounded-2xl border border-amber-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div>
+                      <span className="text-xs font-bold text-amber-900 block text-base">
+                        Karya Dokumentasi: {activePostProdBooking.coupleName}
+                      </span>
+                      <span className="text-xs text-amber-800">
+                        Tanggal Acara: {activePostProdBooking.eventDate} &bull; Paket: {activePostProdBooking.packageName} &bull; WA: {activePostProdBooking.whatsapp}
+                      </span>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={handleSendPostProdViaFonnte}
+                      disabled={sendingPostProdWa}
+                      className="px-4 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs flex items-center gap-2 shadow-xs transition-colors shrink-0"
+                    >
+                      {sendingPostProdWa ? (
+                        <RefreshCw className="w-4 h-4 animate-spin text-white" />
+                      ) : (
+                        <>
+                          <Send className="w-4 h-4" />
+                          <span>Kirim Laporan Progres ke WA Klien</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  {postProdWaStatus && (
+                    <div className={`p-3 rounded-xl text-xs font-semibold ${
+                      postProdWaStatus.includes("berhasil") ? "bg-emerald-50 text-emerald-900 border border-emerald-300" : "bg-rose-50 text-rose-900 border border-rose-300"
+                    }`}>
+                      {postProdWaStatus}
+                    </div>
+                  )}
+
+                  {/* 8-Stage Editing Workflow Cards */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    
+                    {/* Stage 1: Backup RAW */}
+                    <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Camera className="w-4 h-4 text-amber-600" />
+                          <h4 className="font-bold text-slate-900 text-xs uppercase tracking-wider">1. Backup File Mentah (RAW)</h4>
+                        </div>
+                        <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                          currentPostProdProgress.backupStatus === "Selesai" ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"
+                        }`}>
+                          {currentPostProdProgress.backupStatus}
+                        </span>
+                      </div>
+                      <select
+                        value={currentPostProdProgress.backupStatus}
+                        onChange={(e) => handleUpdateCurrentPostProd("backupStatus", e.target.value)}
+                        className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-xs text-slate-800 font-semibold focus:outline-none focus:border-amber-600"
+                      >
+                        <option value="Selesai">Selesai (Dual Backup SSD &amp; Cloud)</option>
+                        <option value="Sedang Berjalan">Sedang Proses Transfer</option>
+                        <option value="Belum">Belum Mulai</option>
+                      </select>
+                      <div>
+                        <label className="text-[11px] font-semibold text-slate-600 block mb-1">Tautan Google Drive RAW / Preview</label>
+                        <input
+                          type="text"
+                          value={currentPostProdProgress.driveLink}
+                          onChange={(e) => handleUpdateCurrentPostProd("driveLink", e.target.value)}
+                          placeholder="https://drive.google.com/..."
+                          className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-xs text-slate-800 focus:outline-none focus:border-amber-600"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Stage 2: Seleksi 40 Foto Klien */}
+                    <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <CheckCircle2 className="w-4 h-4 text-amber-600" />
+                          <h4 className="font-bold text-slate-900 text-xs uppercase tracking-wider">2. Seleksi Foto Klien</h4>
+                        </div>
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">
+                          {currentPostProdProgress.photoSelectionStatus}
+                        </span>
+                      </div>
+                      <select
+                        value={currentPostProdProgress.photoSelectionStatus}
+                        onChange={(e) => handleUpdateCurrentPostProd("photoSelectionStatus", e.target.value)}
+                        className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-xs text-slate-800 font-semibold focus:outline-none focus:border-amber-600"
+                      >
+                        <option value="40 Foto Siap Retouch">40 Foto Sudah Dipilih Klien</option>
+                        <option value="Menunggu Pilihan Klien">Menunggu Klien Memilih Foto</option>
+                        <option value="Belum Mulai">Tautan Seleksi Belum Dikirim</option>
+                      </select>
+                      <p className="text-[11px] text-slate-500">
+                        Klien memilih 40 foto favorit melalui drive/galeri untuk dipoles secara eksklusif.
+                      </p>
+                    </div>
+
+                    {/* Stage 3: Retouch & Color Grading Foto */}
+                    <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Sparkles className="w-4 h-4 text-amber-600" />
+                          <h4 className="font-bold text-slate-900 text-xs uppercase tracking-wider">3. Retouch &amp; Color Grading Foto</h4>
+                        </div>
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">
+                          {currentPostProdProgress.photoEditStatus}
+                        </span>
+                      </div>
+                      <select
+                        value={currentPostProdProgress.photoEditStatus}
+                        onChange={(e) => handleUpdateCurrentPostProd("photoEditStatus", e.target.value)}
+                        className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-xs text-slate-800 font-semibold focus:outline-none focus:border-amber-600"
+                      >
+                        <option value="Selesai 100%">Selesai 100% (High-Res Ready)</option>
+                        <option value="Proses Retouch (50%)">Sedang Proses Retouch (50%)</option>
+                        <option value="Dalam Antrean">Dalam Antrean Editor Foto</option>
+                      </select>
+                      <p className="text-[11px] text-slate-500">
+                        Polesan kulit natural, pencahayaan sinematik, dan tone warna khas Studio Lumenia.
+                      </p>
+                    </div>
+
+                    {/* Stage 4: Video Editing Teaser & Film */}
+                    <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Film className="w-4 h-4 text-amber-600" />
+                          <h4 className="font-bold text-slate-900 text-xs uppercase tracking-wider">4. Video Editing Teaser &amp; Film</h4>
+                        </div>
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">
+                          {currentPostProdProgress.videoEditStatus}
+                        </span>
+                      </div>
+                      <select
+                        value={currentPostProdProgress.videoEditStatus}
+                        onChange={(e) => handleUpdateCurrentPostProd("videoEditStatus", e.target.value)}
+                        className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-xs text-slate-800 font-semibold focus:outline-none focus:border-amber-600"
+                      >
+                        <option value="Selesai 100%">Selesai 100% (Teaser &amp; Full Movie)</option>
+                        <option value="Color Grading &amp; Audio">Color Grading &amp; Penataan Musik Audio</option>
+                        <option value="Rough Cut">Pemotongan Skenario Kasar (Rough Cut)</option>
+                        <option value="Dalam Antrean">Dalam Antrean Video Editor</option>
+                      </select>
+                      <div>
+                        <label className="text-[11px] font-semibold text-slate-600 block mb-1">Tautan Pratinjau Video (YouTube/Drive)</label>
+                        <input
+                          type="text"
+                          value={currentPostProdProgress.videoPreviewLink}
+                          onChange={(e) => handleUpdateCurrentPostProd("videoPreviewLink", e.target.value)}
+                          placeholder="https://youtu.be/..."
+                          className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-xs text-slate-800 focus:outline-none focus:border-amber-600"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Stage 5: Cetak Album Linen */}
+                    <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <BookOpen className="w-4 h-4 text-amber-600" />
+                          <h4 className="font-bold text-slate-900 text-xs uppercase tracking-wider">5. Cetak Album &amp; Boks Kayu</h4>
+                        </div>
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-800">
+                          {currentPostProdProgress.albumStatus}
+                        </span>
+                      </div>
+                      <select
+                        value={currentPostProdProgress.albumStatus}
+                        onChange={(e) => handleUpdateCurrentPostProd("albumStatus", e.target.value)}
+                        className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-xs text-slate-800 font-semibold focus:outline-none focus:border-amber-600"
+                      >
+                        <option value="Siap Kirim">Siap Kirim / Di Studio</option>
+                        <option value="Sedang Dicetak">Sedang Dicetak di Lab Cetak</option>
+                        <option value="Masuk Antrean Cetak">Layout Selesai, Masuk Antrean</option>
+                        <option value="Belum Mulai">Menunggu Final Retouch</option>
+                      </select>
+                      <p className="text-[11px] text-slate-500">
+                        Album linen handmade 20x30 cm dengan kertas foto lustre anti-sidik jari.
+                      </p>
+                    </div>
+
+                    {/* Stage 6: Pengiriman Paket & Resi */}
+                    <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Truck className="w-4 h-4 text-amber-600" />
+                          <h4 className="font-bold text-slate-900 text-xs uppercase tracking-wider">6. Pengiriman Paket &amp; Resi</h4>
+                        </div>
+                      </div>
+                      <div>
+                        <label className="text-[11px] font-semibold text-slate-600 block mb-1">Kurir &amp; Nomor Resi</label>
+                        <input
+                          type="text"
+                          value={currentPostProdProgress.shippingResi}
+                          onChange={(e) => handleUpdateCurrentPostProd("shippingResi", e.target.value)}
+                          placeholder="JNE / Lion Parcel / Paxel: 882910..."
+                          className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-xs text-slate-800 focus:outline-none focus:border-amber-600"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[11px] font-semibold text-slate-600 block mb-1">Catatan Tambahan untuk Pasangan</label>
+                        <input
+                          type="text"
+                          value={currentPostProdProgress.notes}
+                          onChange={(e) => handleUpdateCurrentPostProd("notes", e.target.value)}
+                          placeholder="Flashdisk kayu dikemas dengan segel lilin..."
+                          className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-xs text-slate-800 focus:outline-none focus:border-amber-600"
+                        />
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              ) : (
+                <div className="bg-white p-12 text-center rounded-2xl border border-slate-200 text-slate-400">
+                  Belum ada data reservasi untuk melacak status editing foto dan video.
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* TAB 6: KATALOG ADD-ON & ESTIMASI HPP (INTERAKTIF & BISA DIKLIK) */}
+          {activeTab === "addons" && (
+            <div className="space-y-6">
+              <div className="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                  <span className="text-xs uppercase tracking-widest text-amber-700 font-bold block mb-1">
+                    Handler Class Model &bull; Service Catalog &amp; Margin Simulator
+                  </span>
+                  <h3 className="font-serif text-2xl text-slate-900 font-bold mb-1">
+                    Katalog Layanan Tambahan (Add-on) &amp; Estimasi HPP
+                  </h3>
+                  <p className="text-xs text-slate-600 max-w-2xl leading-relaxed">
+                    Setiap kartu dapat <strong>diklik</strong> untuk membuka simulator margin laba, mengedit harga jual, dan melihat rincian biaya kru operasional.
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setIsAddAddonModalOpen(true)}
+                  className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center gap-2 shadow-xs transition-colors shrink-0"
+                >
+                  <Plus className="w-4 h-4 text-amber-400" />
+                  <span>Tambah Layanan Add-on</span>
+                </button>
+              </div>
+
+              {/* Add-on Interactive Clickable Cards Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {ADDON_CATALOG.map((addon) => {
-                  // Estimasi HPP ~40-50% dari harga jual
-                  const estimatedHpp = Math.round(addon.price * 0.45);
-                  const grossProfit = addon.price - estimatedHpp;
-                  const marginPercent = Math.round((grossProfit / addon.price) * 100);
+                {addonsList.map((addon) => {
+                  const grossProfit = addon.price - addon.hpp;
+                  const marginPercent = addon.price > 0 ? Math.round((grossProfit / addon.price) * 100) : 0;
 
                   return (
-                    <div key={addon.id} className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-3">
+                    <div
+                      key={addon.id}
+                      onClick={() => handleOpenSimulator(addon)}
+                      className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-3 cursor-pointer group hover:border-amber-500 hover:shadow-md transition-all relative overflow-hidden"
+                    >
+                      {/* Top Action Prompt */}
                       <div className="flex items-start justify-between gap-3">
                         <div>
-                          <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
-                            {addon.category}
-                          </span>
-                          <h4 className="font-bold text-slate-900 text-base mt-2">{addon.name}</h4>
+                          <div className="flex items-center gap-2">
+                            <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
+                              {addon.category}
+                            </span>
+                            <span className="text-[10px] font-semibold text-amber-700 flex items-center gap-1 group-hover:underline">
+                              <Sliders className="w-3 h-3" />
+                              <span>Klik untuk Simulasi &amp; Edit</span>
+                            </span>
+                          </div>
+                          <h4 className="font-bold text-slate-900 text-base mt-2 group-hover:text-amber-800 transition-colors">
+                            {addon.name}
+                          </h4>
                           <p className="text-xs text-slate-500 mt-1">{addon.description}</p>
                         </div>
                       </div>
 
+                      {/* Financial Metrics Strip */}
                       <div className="grid grid-cols-3 gap-2 p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs">
                         <div>
                           <span className="text-[10px] uppercase text-slate-400 font-bold block">Harga Jual Klien</span>
@@ -1766,7 +2475,7 @@ export default function AdminPage() {
                         <div>
                           <span className="text-[10px] uppercase text-slate-400 font-bold block">Estimasi HPP Tim</span>
                           <span className="font-medium text-slate-600 block mt-0.5">
-                            Rp {estimatedHpp.toLocaleString("id-ID")}
+                            Rp {addon.hpp.toLocaleString("id-ID")}
                           </span>
                         </div>
                         <div>
@@ -1783,61 +2492,162 @@ export default function AdminPage() {
             </div>
           )}
 
-          {/* TAB 6: ANALYTIC KONVERSI */}
+          {/* TAB 7: ANALYTIC KONVERSI (DIAGRAM BATANG & DIAGRAM DONAT) */}
           {activeTab === "analytic" && (
             <div className="space-y-6">
+              
+              {/* 1. DIAGRAM BATANG VERTIKAL: Funnel Konversi 5 Langkah Reservasi */}
               <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs">
-                <span className="text-xs uppercase tracking-widest text-amber-700 font-bold">Funnel Konversi</span>
-                <h3 className="font-serif text-2xl text-slate-900 font-bold mt-1 mb-6">
-                  Tingkat Penyelesaian Formulir (5 Langkah)
-                </h3>
+                <div className="flex items-center justify-between mb-2">
+                  <div>
+                    <span className="text-xs uppercase tracking-widest text-amber-700 font-bold">
+                      Funnel Analytics
+                    </span>
+                    <h3 className="font-serif text-2xl text-slate-900 font-bold mt-0.5">
+                      Diagram Batang: Tingkat Penyelesaian Formulir (5 Langkah)
+                    </h3>
+                  </div>
+                  <BarChart3 className="w-6 h-6 text-amber-600" />
+                </div>
+                <p className="text-xs text-slate-500 mb-6">
+                  Grafik konversi perjalanan calon pengantin mulai dari memilih tanggal hingga mengunggah bukti transfer tanda jadi.
+                </p>
 
-                <div className="space-y-4">
+                {/* Vertical Visual Bar Funnel */}
+                <div className="grid grid-cols-5 gap-2 sm:gap-4 items-end h-64 pt-8 pb-4 border-b border-slate-200 px-2 sm:px-6">
                   {[
-                    { babak: "Langkah 1 • Data & Tanggal", rate: 100, drop: "Titik Masuk" },
-                    { babak: "Langkah 2 • Suasana", rate: 94, drop: "Drop -6%" },
-                    { babak: "Langkah 3 • Paket & Lokasi", rate: 86, drop: "Drop -8%" },
-                    { babak: "Langkah 4 • Tanda Jadi (Hold 30m)", rate: 78, drop: "Drop -8%" },
-                    { babak: "Langkah 5 • Unggah Bukti & Selesai", rate: 70, drop: "Konversi Akhir 70%" },
-                  ].map((f, idx) => (
-                    <div key={idx} className="space-y-1.5">
-                      <div className="flex items-center justify-between text-xs font-medium">
-                        <span className="text-slate-800">{f.babak}</span>
-                        <span className="text-slate-500">{f.drop}</span>
-                      </div>
-                      <div className="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
+                    { label: "1. Data & Tanggal", rate: 100, drop: "Masuk 100%" },
+                    { label: "2. Suasana", rate: 94, drop: "Drop -6%" },
+                    { label: "3. Paket & Lokasi", rate: 86, drop: "Drop -8%" },
+                    { label: "4. Hold 30m", rate: 78, drop: "Drop -8%" },
+                    { label: "5. Slip DP", rate: 70, drop: "Closing 70%" },
+                  ].map((step, idx) => (
+                    <div key={idx} className="flex flex-col items-center h-full justify-end group">
+                      {/* Top Percentage Badge */}
+                      <span className="text-xs font-bold text-slate-800 mb-2 group-hover:scale-110 transition-transform">
+                        {step.rate}%
+                      </span>
+                      {/* The Bar */}
+                      <div className="w-full max-w-[54px] rounded-t-xl bg-slate-100 flex items-end overflow-hidden h-full">
                         <div
-                          className="h-full rounded-full bg-amber-500 transition-all duration-500"
-                          style={{ width: `${f.rate}%` }}
+                          className="w-full rounded-t-xl bg-gradient-to-t from-amber-600 to-amber-400 group-hover:from-amber-700 group-hover:to-amber-500 transition-all duration-700 shadow-sm"
+                          style={{ height: `${step.rate}%` }}
                         />
                       </div>
+                      {/* Step Name */}
+                      <span className="text-[10px] sm:text-[11px] font-semibold text-slate-700 mt-2 text-center truncate max-w-full">
+                        {step.label}
+                      </span>
+                      <span className="text-[9px] text-slate-400 font-medium">{step.drop}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* Mood Distribution */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs text-center">
-                  <span className="text-xs uppercase tracking-wider text-slate-500 font-semibold block mb-1">Khidmat</span>
-                  <div className="text-3xl font-serif text-slate-900 font-bold">45%</div>
-                  <p className="text-xs text-slate-500 mt-2">Restu keluarga &amp; suasana hening</p>
+              {/* 2. DIAGRAM DONAT: Distribusi Preferensi Suasana Visual (Mood) */}
+              <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <span className="text-xs uppercase tracking-widest text-amber-700 font-bold">
+                      Aesthetic Mood Analytics
+                    </span>
+                    <h3 className="font-serif text-2xl text-slate-900 font-bold mt-0.5">
+                      Diagram Donat: Preferensi Konsep Visual Pasangan
+                    </h3>
+                  </div>
+                  <PieChart className="w-6 h-6 text-amber-600" />
                 </div>
-                <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs text-center">
-                  <span className="text-xs uppercase tracking-wider text-slate-500 font-semibold block mb-1">Elegan &amp; Adat</span>
-                  <div className="text-3xl font-serif text-slate-900 font-bold">35%</div>
-                  <p className="text-xs text-slate-500 mt-2">Tradisi Jawa &amp; sentuhan editorial</p>
-                </div>
-                <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs text-center">
-                  <span className="text-xs uppercase tracking-wider text-slate-500 font-semibold block mb-1">Candid &amp; Santai</span>
-                  <div className="text-3xl font-serif text-slate-900 font-bold">20%</div>
-                  <p className="text-xs text-slate-500 mt-2">Spontan bersama sahabat terdekat</p>
+
+                <div className="flex flex-col md:flex-row items-center justify-center gap-8 pt-4">
+                  {/* SVG Donut Ring */}
+                  <div className="relative w-44 h-44 shrink-0">
+                    <svg className="w-full h-full -rotate-90" viewBox="0 0 120 120">
+                      {/* Background Track */}
+                      <circle cx="60" cy="60" r="48" fill="transparent" stroke="#f1f5f9" strokeWidth="20" />
+                      
+                      {/* Khidmat: 45% (45% of 301.59 = 135.7) */}
+                      <circle
+                        cx="60"
+                        cy="60"
+                        r="48"
+                        fill="transparent"
+                        stroke="#b45309"
+                        strokeWidth="20"
+                        strokeDasharray="135.7 301.59"
+                        strokeDashoffset="0"
+                        className="transition-all duration-700"
+                      />
+                      {/* Elegan & Adat: 35% (35% of 301.59 = 105.5) */}
+                      <circle
+                        cx="60"
+                        cy="60"
+                        r="48"
+                        fill="transparent"
+                        stroke="#f59e0b"
+                        strokeWidth="20"
+                        strokeDasharray="105.5 301.59"
+                        strokeDashoffset="-135.7"
+                        className="transition-all duration-700"
+                      />
+                      {/* Candid & Santai: 20% (20% of 301.59 = 60.3) */}
+                      <circle
+                        cx="60"
+                        cy="60"
+                        r="48"
+                        fill="transparent"
+                        stroke="#10b981"
+                        strokeWidth="20"
+                        strokeDasharray="60.3 301.59"
+                        strokeDashoffset="-241.2"
+                        className="transition-all duration-700"
+                      />
+                    </svg>
+
+                    <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center">
+                      <span className="text-2xl font-serif font-bold text-slate-900">45%</span>
+                      <span className="text-[10px] text-amber-700 font-bold uppercase tracking-wider">Khidmat</span>
+                    </div>
+                  </div>
+
+                  {/* Donut Legend Cards */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 flex-1 w-full text-xs">
+                    <div className="p-4 rounded-xl bg-amber-50 border border-amber-300">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="w-3 h-3 rounded-full bg-amber-700" />
+                        <span className="font-bold text-amber-950">Khidmat &bull; 45%</span>
+                      </div>
+                      <p className="text-[11px] text-amber-800">
+                        Fokus pada restu orang tua, doa keluarga, dan heningnya prosesi ijab kabul.
+                      </p>
+                    </div>
+
+                    <div className="p-4 rounded-xl bg-amber-50/60 border border-amber-200">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="w-3 h-3 rounded-full bg-amber-500" />
+                        <span className="font-bold text-amber-900">Elegan &amp; Adat &bull; 35%</span>
+                      </div>
+                      <p className="text-[11px] text-amber-700">
+                        Busana adat Jawa, kain tradisional, serta pose editorial yang megah.
+                      </p>
+                    </div>
+
+                    <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-300">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="w-3 h-3 rounded-full bg-emerald-500" />
+                        <span className="font-bold text-emerald-950">Candid &amp; Santai &bull; 20%</span>
+                      </div>
+                      <p className="text-[11px] text-emerald-800">
+                        Tawa lepas, interaksi natural, dan momen spontan bersama sahabat.
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
+
             </div>
           )}
 
-          {/* TAB 7: AUDIT TRAIL LOG */}
+          {/* TAB 8: AUDIT TRAIL LOG */}
           {activeTab === "log" && (
             <div className="space-y-6">
               <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
@@ -1877,7 +2687,7 @@ export default function AdminPage() {
             </div>
           )}
 
-          {/* TAB 8: CMS PENGATURAN FORM */}
+          {/* TAB 9: CMS PENGATURAN FORM */}
           {activeTab === "form-edit" && (
             <div className="space-y-6">
               <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
@@ -1943,7 +2753,7 @@ export default function AdminPage() {
             </div>
           )}
 
-          {/* TAB 9: LAPORAN PEMBUKUAN */}
+          {/* TAB 10: LAPORAN PEMBUKUAN */}
           {activeTab === "report" && (
             <div className="space-y-6">
               <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between flex-wrap gap-4">
@@ -2012,17 +2822,14 @@ export default function AdminPage() {
       {/* HALF-PAGE SLIDE-OVER DRAWER (CLICKED CALENDAR DAY) */}
       {selectedCalendarDay && (
         <div className="fixed inset-0 z-50 overflow-hidden no-print animate-fade-in">
-          {/* Backdrop */}
           <div
             onClick={() => setSelectedCalendarDay(null)}
             className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs transition-opacity"
           />
 
-          {/* Slide-over Card (Half Page) */}
           <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
             <div className="w-screen max-w-lg bg-white shadow-2xl border-l border-slate-200 flex flex-col justify-between overflow-y-auto animate-slide-left">
               
-              {/* Drawer Header */}
               <div className="p-6 border-b border-slate-200 bg-slate-50/70">
                 <div className="flex items-center justify-between">
                   <div>
@@ -2048,7 +2855,6 @@ export default function AdminPage() {
                 </div>
               </div>
 
-              {/* Drawer Content Body */}
               <div className="p-6 space-y-6 flex-1">
                 {selectedCalendarDay.items.length === 0 ? (
                   <div className="text-center py-12 space-y-3">
@@ -2069,7 +2875,6 @@ export default function AdminPage() {
                         key={b.id}
                         className="p-5 rounded-2xl border border-slate-200 bg-slate-50/50 space-y-4"
                       >
-                        {/* Status Badge & Code */}
                         <div className="flex items-center justify-between">
                           <span className="font-mono text-xs font-bold text-amber-700">
                             {b.bookingCode}
@@ -2087,7 +2892,6 @@ export default function AdminPage() {
                           </span>
                         </div>
 
-                        {/* Couple Info */}
                         <div>
                           <h4 className="font-serif text-lg font-bold text-slate-900">{b.coupleName}</h4>
                           <div className="text-xs text-slate-600 mt-0.5 flex items-center gap-1.5">
@@ -2096,7 +2900,6 @@ export default function AdminPage() {
                           </div>
                         </div>
 
-                        {/* Event Details */}
                         <div className="grid grid-cols-2 gap-3 p-3.5 rounded-xl bg-white border border-slate-200 text-xs">
                           <div>
                             <span className="text-[10px] uppercase text-slate-400 font-bold block">Paket Pilihan</span>
@@ -2109,7 +2912,6 @@ export default function AdminPage() {
                           </div>
                         </div>
 
-                        {/* Financial Snapshot */}
                         <div className="p-3.5 rounded-xl bg-white border border-slate-200 text-xs space-y-1.5">
                           <div className="flex justify-between text-slate-600">
                             <span>Total Paket:</span>
@@ -2125,7 +2927,6 @@ export default function AdminPage() {
                           </div>
                         </div>
 
-                        {/* Proof of Transfer Preview */}
                         {b.proofFileUrl && (
                           <div className="space-y-1.5">
                             <span className="text-[10px] uppercase text-slate-400 font-bold block">Slip Bukti Transfer:</span>
@@ -2145,7 +2946,6 @@ export default function AdminPage() {
                           </div>
                         )}
 
-                        {/* Quick Actions in Drawer */}
                         <div className="space-y-2 pt-2">
                           <button
                             type="button"
@@ -2159,7 +2959,7 @@ export default function AdminPage() {
                             <span>Kirim Pesan WhatsApp (Fonnte)</span>
                           </button>
 
-                          <div className="grid grid-cols-2 gap-2">
+                          <div className="grid grid-cols-3 gap-2">
                             <button
                               type="button"
                               onClick={() => {
@@ -2167,10 +2967,10 @@ export default function AdminPage() {
                                 setActiveTab("invoice");
                                 setSelectedCalendarDay(null);
                               }}
-                              className="py-2 px-3 rounded-xl bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
+                              className="py-2 px-2 rounded-xl bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 text-xs font-semibold flex items-center justify-center gap-1 transition-colors"
                             >
                               <Receipt className="w-3.5 h-3.5 text-slate-600" />
-                              <span>Buka Invoice</span>
+                              <span>Invoice</span>
                             </button>
 
                             <button
@@ -2180,10 +2980,23 @@ export default function AdminPage() {
                                 setActiveTab("rundown");
                                 setSelectedCalendarDay(null);
                               }}
-                              className="py-2 px-3 rounded-xl bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
+                              className="py-2 px-2 rounded-xl bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 text-xs font-semibold flex items-center justify-center gap-1 transition-colors"
                             >
                               <BookOpen className="w-3.5 h-3.5 text-slate-600" />
-                              <span>Buka Rundown</span>
+                              <span>Rundown</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSelectedPostProdBookingId(b.id);
+                                setActiveTab("postprod");
+                                setSelectedCalendarDay(null);
+                              }}
+                              className="py-2 px-2 rounded-xl bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 text-xs font-semibold flex items-center justify-center gap-1 transition-colors"
+                            >
+                              <Film className="w-3.5 h-3.5 text-slate-600" />
+                              <span>Editing</span>
                             </button>
                           </div>
 
@@ -2214,7 +3027,6 @@ export default function AdminPage() {
                 )}
               </div>
 
-              {/* Drawer Footer */}
               <div className="p-4 border-t border-slate-200 bg-slate-50 flex items-center justify-between text-xs text-slate-500">
                 <span>Studio Lumenia Booking Management</span>
                 <button
@@ -2229,12 +3041,248 @@ export default function AdminPage() {
         </div>
       )}
 
+      {/* MODAL SIMULATOR HPP & MARGIN LABA (INTERAKTIF SAAT KLIK ADD-ON) */}
+      {selectedSimulatorAddon && (
+        <div
+          onClick={() => setSelectedSimulatorAddon(null)}
+          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in no-print"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative max-w-lg w-full bg-white p-6 rounded-3xl border border-slate-200 shadow-2xl space-y-5"
+          >
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+              <div className="flex items-center gap-2">
+                <Sliders className="w-5 h-5 text-amber-600" />
+                <h3 className="text-base font-bold text-slate-900">
+                  Simulator Margin &amp; Biaya: {selectedSimulatorAddon.name}
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedSimulatorAddon(null)}
+                className="text-slate-400 hover:text-slate-800 p-1 rounded-lg"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Live Profit Preview Box */}
+            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+              <div className="grid grid-cols-3 gap-2 text-center text-xs">
+                <div className="p-2 rounded-xl bg-white border border-slate-200">
+                  <span className="text-[10px] uppercase font-bold text-slate-400 block">Harga Jual</span>
+                  <span className="font-bold text-slate-900 text-sm mt-0.5 block">
+                    Rp {simPrice.toLocaleString("id-ID")}
+                  </span>
+                </div>
+                <div className="p-2 rounded-xl bg-white border border-slate-200">
+                  <span className="text-[10px] uppercase font-bold text-slate-400 block">Estimasi HPP</span>
+                  <span className="font-semibold text-slate-600 text-sm mt-0.5 block">
+                    Rp {simHpp.toLocaleString("id-ID")}
+                  </span>
+                </div>
+                <div className="p-2 rounded-xl bg-emerald-50 border border-emerald-300">
+                  <span className="text-[10px] uppercase font-bold text-emerald-800 block">Laba Bersih</span>
+                  <span className="font-bold text-emerald-700 text-sm mt-0.5 block">
+                    Rp {(simPrice - simHpp).toLocaleString("id-ID")}
+                  </span>
+                </div>
+              </div>
+
+              {/* Margin Bar */}
+              <div>
+                <div className="flex items-center justify-between text-xs font-bold text-slate-700 mb-1">
+                  <span>Margin Keuntungan Studio:</span>
+                  <span className="text-emerald-700">
+                    {simPrice > 0 ? Math.round(((simPrice - simHpp) / simPrice) * 100) : 0}%
+                  </span>
+                </div>
+                <div className="w-full h-2.5 rounded-full bg-slate-200 overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-emerald-600 transition-all duration-300"
+                    style={{ width: `${Math.min(100, Math.max(0, simPrice > 0 ? ((simPrice - simHpp) / simPrice) * 100 : 0))}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Sliders / Inputs to Modify */}
+            <div className="space-y-4 text-xs">
+              <div>
+                <div className="flex justify-between font-semibold text-slate-700 mb-1">
+                  <span>Harga Jual ke Klien (IDR)</span>
+                  <span className="font-bold text-amber-800">Rp {simPrice.toLocaleString("id-ID")}</span>
+                </div>
+                <input
+                  type="range"
+                  min="500000"
+                  max="10000000"
+                  step="100000"
+                  value={simPrice}
+                  onChange={(e) => setSimPrice(Number(e.target.value))}
+                  className="w-full accent-amber-600 cursor-pointer"
+                />
+              </div>
+
+              <div>
+                <div className="flex justify-between font-semibold text-slate-700 mb-1">
+                  <span>Estimasi Biaya HPP Tim/Alat (IDR)</span>
+                  <span className="font-bold text-slate-800">Rp {simHpp.toLocaleString("id-ID")}</span>
+                </div>
+                <input
+                  type="range"
+                  min="200000"
+                  max="8000000"
+                  step="50000"
+                  value={simHpp}
+                  onChange={(e) => setSimHpp(Number(e.target.value))}
+                  className="w-full accent-slate-800 cursor-pointer"
+                />
+              </div>
+
+              {/* Breakdown Components */}
+              {selectedSimulatorAddon.components && selectedSimulatorAddon.components.length > 0 && (
+                <div className="pt-2 border-t border-slate-200 space-y-1.5">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">
+                    Rincian Komponen Biaya HPP:
+                  </span>
+                  {selectedSimulatorAddon.components.map((c, idx) => (
+                    <div key={idx} className="flex justify-between text-[11px] text-slate-600">
+                      <span>• {c.name}</span>
+                      <span className="font-mono font-medium">Rp {c.cost.toLocaleString("id-ID")}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Modal Actions */}
+            <div className="flex justify-end gap-2 pt-2 border-t border-slate-200">
+              <button
+                type="button"
+                onClick={() => setSelectedSimulatorAddon(null)}
+                className="px-4 py-2 rounded-xl text-xs text-slate-500 hover:text-slate-800"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveSimulatorChanges}
+                className="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs"
+              >
+                Simpan Penyesuaian Harga
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL TAMBAH ADD-ON BARU */}
+      {isAddAddonModalOpen && (
+        <div
+          onClick={() => setIsAddAddonModalOpen(false)}
+          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in no-print"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative max-w-md w-full bg-white p-6 rounded-3xl border border-slate-200 shadow-2xl space-y-4"
+          >
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+              <h3 className="text-base font-bold text-slate-900">Tambah Layanan Add-on Baru</h3>
+              <button onClick={() => setIsAddAddonModalOpen(false)} className="text-slate-400 hover:text-slate-800">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateNewAddon} className="space-y-3 text-xs">
+              <div>
+                <label className="font-semibold text-slate-700 block mb-1">Nama Layanan</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Photobooth Unlimited 3 Jam"
+                  value={newAddonForm.name}
+                  onChange={(e) => setNewAddonForm({ ...newAddonForm, name: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 focus:outline-none focus:border-amber-600"
+                />
+              </div>
+
+              <div>
+                <label className="font-semibold text-slate-700 block mb-1">Kategori</label>
+                <select
+                  value={newAddonForm.category}
+                  onChange={(e) => setNewAddonForm({ ...newAddonForm, category: e.target.value as DynamicAddOn["category"] })}
+                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 focus:outline-none focus:border-amber-600"
+                >
+                  <option value="Video">Video</option>
+                  <option value="Photo">Photo</option>
+                  <option value="Streaming">Streaming</option>
+                  <option value="Output">Output / Cetak</option>
+                  <option value="Lainnya">Lainnya</option>
+                </select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="font-semibold text-slate-700 block mb-1">Harga Jual Klien (IDR)</label>
+                  <input
+                    type="number"
+                    step="50000"
+                    value={newAddonForm.price}
+                    onChange={(e) => setNewAddonForm({ ...newAddonForm, price: Number(e.target.value) })}
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 focus:outline-none focus:border-amber-600"
+                  />
+                </div>
+                <div>
+                  <label className="font-semibold text-slate-700 block mb-1">Estimasi HPP (IDR)</label>
+                  <input
+                    type="number"
+                    step="50000"
+                    value={newAddonForm.hpp}
+                    onChange={(e) => setNewAddonForm({ ...newAddonForm, hpp: Number(e.target.value) })}
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 focus:outline-none focus:border-amber-600"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="font-semibold text-slate-700 block mb-1">Deskripsi Singkat</label>
+                <textarea
+                  rows={2}
+                  placeholder="Keterangan singkat fitur yang didapat..."
+                  value={newAddonForm.description}
+                  onChange={(e) => setNewAddonForm({ ...newAddonForm, description: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 focus:outline-none focus:border-amber-600 resize-none"
+                />
+              </div>
+
+              <div className="flex justify-end gap-2 pt-3 border-t border-slate-200">
+                <button
+                  type="button"
+                  onClick={() => setIsAddAddonModalOpen(false)}
+                  className="px-4 py-2 rounded-xl text-slate-500 hover:text-slate-800"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold"
+                >
+                  Tambah Add-on
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {/* MOBILE / TABLET BOTTOM NAVIGATION */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-white/95 backdrop-blur-md border-t border-slate-200 py-1.5 px-2 no-print shadow-lg">
         <div className="flex items-center justify-around overflow-x-auto gap-1">
           <button
             onClick={() => setActiveTab("overview")}
-            className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all ${
+            className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all ${
               activeTab === "overview" ? "text-amber-700 font-bold bg-amber-50" : "text-slate-500 hover:text-slate-800"
             }`}
           >
@@ -2244,7 +3292,7 @@ export default function AdminPage() {
 
           <button
             onClick={() => setActiveTab("client")}
-            className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all relative ${
+            className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all relative ${
               activeTab === "client" ? "text-amber-700 font-bold bg-amber-50" : "text-slate-500 hover:text-slate-800"
             }`}
           >
@@ -2257,7 +3305,7 @@ export default function AdminPage() {
 
           <button
             onClick={() => setActiveTab("invoice")}
-            className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all ${
+            className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all ${
               activeTab === "invoice" ? "text-amber-700 font-bold bg-amber-50" : "text-slate-500 hover:text-slate-800"
             }`}
           >
@@ -2267,7 +3315,7 @@ export default function AdminPage() {
 
           <button
             onClick={() => setActiveTab("rundown")}
-            className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all ${
+            className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all ${
               activeTab === "rundown" ? "text-amber-700 font-bold bg-amber-50" : "text-slate-500 hover:text-slate-800"
             }`}
           >
@@ -2276,8 +3324,18 @@ export default function AdminPage() {
           </button>
 
           <button
+            onClick={() => setActiveTab("postprod")}
+            className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all ${
+              activeTab === "postprod" ? "text-amber-700 font-bold bg-amber-50" : "text-slate-500 hover:text-slate-800"
+            }`}
+          >
+            <Film className="w-4 h-4 mb-0.5" />
+            <span className="text-[10px]">Editing</span>
+          </button>
+
+          <button
             onClick={() => setActiveTab("addons")}
-            className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all ${
+            className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all ${
               activeTab === "addons" ? "text-amber-700 font-bold bg-amber-50" : "text-slate-500 hover:text-slate-800"
             }`}
           >
@@ -2286,13 +3344,13 @@ export default function AdminPage() {
           </button>
 
           <button
-            onClick={() => setActiveTab("report")}
-            className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all ${
-              activeTab === "report" ? "text-amber-700 font-bold bg-amber-50" : "text-slate-500 hover:text-slate-800"
+            onClick={() => setActiveTab("analytic")}
+            className={`flex flex-col items-center justify-center py-1 px-2 rounded-xl transition-all ${
+              activeTab === "analytic" ? "text-amber-700 font-bold bg-amber-50" : "text-slate-500 hover:text-slate-800"
             }`}
           >
-            <FileText className="w-4 h-4 mb-0.5" />
-            <span className="text-[10px]">Report</span>
+            <BarChart3 className="w-4 h-4 mb-0.5" />
+            <span className="text-[10px]">Analytic</span>
           </button>
         </div>
       </nav>
@@ -2339,7 +3397,6 @@ export default function AdminPage() {
             onClick={(e) => e.stopPropagation()}
             className="relative max-w-xl w-full bg-white p-6 rounded-3xl border border-slate-200 shadow-2xl"
           >
-            {/* Modal Header */}
             <div className="flex items-center justify-between pb-3 border-b border-slate-200 mb-4">
               <div className="flex items-center gap-2.5">
                 <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center">
@@ -2361,7 +3418,6 @@ export default function AdminPage() {
               </button>
             </div>
 
-            {/* Template Selector Chips */}
             <div className="mb-3">
               <span className="text-[10px] uppercase tracking-widest text-slate-500 font-bold block mb-2">
                 Pilih Skenario Pesan Cepat:
@@ -2414,7 +3470,6 @@ export default function AdminPage() {
               </div>
             </div>
 
-            {/* Editable Text Area */}
             <div className="mb-4">
               <div className="flex items-center justify-between mb-1.5">
                 <span className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">
@@ -2446,7 +3501,6 @@ export default function AdminPage() {
               </div>
             )}
 
-            {/* Modal Actions */}
             <div className="flex items-center justify-between gap-2 pt-2 flex-wrap">
               <button
                 type="button"

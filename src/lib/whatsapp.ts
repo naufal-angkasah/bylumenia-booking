@@ -207,34 +207,49 @@ export async function sendClientInvoice(
     bookingCode: string;
   },
   invoice: {
-    invoiceNo: string;
+    invoiceNo?: string;
+    invoiceNumber?: string;
     totalAmount: number;
-    paidAmount: number;
-    remainingAmount: number;
-    dueDate: string;
-    items: Array<{ name: string; price: number }>;
+    paidAmount?: number;
+    downPaymentPaid?: number;
+    remainingAmount?: number;
+    remainingBalance?: number;
+    dueDate?: string;
+    items?: Array<{ name: string; price: number }>;
   }
 ) {
+  const invNo = invoice.invoiceNo || invoice.invoiceNumber || `INV-${booking.bookingCode}`;
+  const paid = invoice.paidAmount ?? invoice.downPaymentPaid ?? 0;
+  const remaining =
+    invoice.remainingAmount ??
+    invoice.remainingBalance ??
+    Math.max(0, invoice.totalAmount - paid);
+  const due = invoice.dueDate || `${booking.eventDate} (H-7 Acara)`;
+
   let itemList = "";
-  invoice.items.forEach((item, idx) => {
-    itemList += `${idx + 1}. ${item.name} — Rp ${item.price.toLocaleString("id-ID")}\n`;
-  });
+  if (Array.isArray(invoice.items) && invoice.items.length > 0) {
+    invoice.items.forEach((item, idx) => {
+      itemList += `${idx + 1}. ${item.name} — Rp ${item.price.toLocaleString("id-ID")}\n`;
+    });
+  } else {
+    itemList = `1. Paket Dokumentasi: ${booking.packageName} — Rp ${invoice.totalAmount.toLocaleString("id-ID")}\n`;
+  }
 
   const message =
     `📄 *INVOICE TAGIHAN RESMI — STUDIO LUMENIA*\n` +
-    `No: *${invoice.invoiceNo}*\n\n` +
+    `No: *${invNo}*\n\n` +
     `Yth. Kak *${booking.coupleName}*,\n` +
     `Berikut adalah rincian tagihan dokumentasi pernikahan Anda:\n\n` +
     `*Rincian Layanan:*\n` +
     `${itemList}\n` +
     `• *Total Biaya*: Rp ${invoice.totalAmount.toLocaleString("id-ID")}\n` +
-    `• *Telah Dibayar (DP)*: Rp ${invoice.paidAmount.toLocaleString("id-ID")}\n` +
-    `• *Sisa Tagihan*: *Rp ${invoice.remainingAmount.toLocaleString("id-ID")}*\n` +
-    `• *Jatuh Tempo*: ${invoice.dueDate}\n\n` +
-    `*Rekening Pembayaran:*\n` +
+    `• *Telah Dibayar (DP)*: Rp ${paid.toLocaleString("id-ID")}\n` +
+    `• *Sisa Tagihan*: *Rp ${remaining.toLocaleString("id-ID")}*\n` +
+    `• *Jatuh Tempo*: ${due}\n\n` +
+    `*Rekening Pembayaran Resmi:*\n` +
     `• Bank BCA: *8030588219* a.n. Ivan / Bylumenia Studio\n` +
     `• Bank Mandiri: *1360018829102* a.n. Ivan / Bylumenia Studio\n\n` +
-    `Silakan konfirmasi ke admin jika pembayaran telah dilakukan. Terima kasih!`;
+    `Silakan konfirmasi ke admin jika pelunasan telah dilakukan. Terima kasih! ✨`;
 
   return sendWhatsAppMessage({ target: booking.whatsapp, message });
 }
@@ -249,12 +264,41 @@ export async function sendClientRundown(
     eventDate: string;
     packageName: string;
   },
-  rundown: Array<{ time: string; activity: string; notes?: string }>
+  rundown:
+    | Array<{ time: string; activity: string; pic?: string; notes?: string }>
+    | {
+        timeline?: string;
+        items?: Array<{ time: string; activity: string; pic?: string; notes?: string }>;
+        notes?: string;
+      }
 ) {
   let timeline = "";
-  rundown.forEach((item) => {
-    timeline += `⏰ *${item.time}* — ${item.activity}${item.notes ? ` (${item.notes})` : ""}\n`;
-  });
+
+  if (Array.isArray(rundown)) {
+    rundown.forEach((item) => {
+      const picStr = item.pic ? ` (PIC: ${item.pic})` : "";
+      const noteStr = item.notes ? `\n   ↳ Catatan: ${item.notes}` : "";
+      timeline += `⏰ *${item.time}* — ${item.activity}${picStr}${noteStr}\n`;
+    });
+  } else if (rundown && typeof rundown === "object") {
+    if (Array.isArray(rundown.items) && rundown.items.length > 0) {
+      rundown.items.forEach((item) => {
+        const picStr = item.pic ? ` (PIC: ${item.pic})` : "";
+        const noteStr = item.notes ? `\n   ↳ Catatan: ${item.notes}` : "";
+        timeline += `⏰ *${item.time}* — ${item.activity}${picStr}${noteStr}\n`;
+      });
+    } else if (typeof rundown.timeline === "string" && rundown.timeline.trim()) {
+      timeline = rundown.timeline;
+    }
+  }
+
+  if (!timeline) {
+    timeline = "Timeline acara sedang disiapkan oleh tim dokumentasi Studio Lumenia.";
+  }
+
+  const customNotes =
+    (!Array.isArray(rundown) && rundown?.notes) ||
+    "• Kru dokumentasi hadir 30 menit sebelum jadwal makeup.\n• Dresscode kru: Serba Hitam Rapi & Bersepatu.\n• Untuk koordinasi di venue dapat langsung menghubungi admin Studio Lumenia.";
 
   const message =
     `📋 *RUNDOWN TIM DOKUMENTASI — STUDIO LUMENIA*\n` +
@@ -262,11 +306,63 @@ export async function sendClientRundown(
     `Tanggal: *${booking.eventDate}*\n` +
     `Paket: *${booking.packageName}*\n\n` +
     `*Susunan Timeline Dokumentasi:*\n` +
-    `${timeline}\n` +
+    `${timeline}\n\n` +
     `*Catatan Khusus Tim:*\n` +
-    `• Kru dokumentasi tiba 30 menit sebelum jadwal makeup.\n` +
-    `• Dresscode kru: Serba Hitam Rapi & Bersepatu.\n` +
-    `• Untuk koordinasi on-the-spot dapat menghubungi admin Studio Lumenia. Terima kasih! ✨`;
+    `${customNotes}\n\n` +
+    `Semoga seluruh rangkaian acara berjalan khidmat, lancar, dan penuh kebahagiaan! Terima kasih! ✨`;
+
+  return sendWhatsAppMessage({ target: booking.whatsapp, message });
+}
+
+/**
+ * Template: Pengiriman Update Progres Produksi Foto & Video ke Klien
+ */
+export async function sendClientProductionUpdate(
+  booking: {
+    coupleName: string;
+    whatsapp: string;
+    eventDate: string;
+    packageName: string;
+  },
+  progress: {
+    backupStatus: string;
+    photoSelectionStatus: string;
+    photoEditStatus: string;
+    videoEditStatus: string;
+    albumStatus: string;
+    driveLink?: string;
+    videoPreviewLink?: string;
+    shippingResi?: string;
+    notes?: string;
+  }
+) {
+  let message =
+    `🎬 *UPDATE PROGRES KARYA DOKUMENTASI — STUDIO LUMENIA*\n\n` +
+    `Halo Kak *${booking.coupleName}*,\n` +
+    `Berikut adalah laporan progres pasca-produksi karya dokumentasi pernikahan kalian (*${booking.eventDate}*):\n\n` +
+    `📸 *Status Foto:*\n` +
+    `• Backup File Mentah (RAW): ${progress.backupStatus}\n` +
+    `• Seleksi 40 Foto Terbaik: ${progress.photoSelectionStatus}\n` +
+    `• Color Grading & Retouching: ${progress.photoEditStatus}\n\n` +
+    `🎥 *Status Video:*\n` +
+    `• Editing Video Teaser & Cinematic Film: ${progress.videoEditStatus}\n\n` +
+    `📦 *Status Cetak & Pengiriman:*\n` +
+    `• Album Linen & Kotak Kayu Eksklusif: ${progress.albumStatus}\n`;
+
+  if (progress.shippingResi && progress.shippingResi.trim()) {
+    message += `• Nomor Resi Pengiriman: *${progress.shippingResi.trim()}*\n`;
+  }
+  if (progress.driveLink && progress.driveLink.trim()) {
+    message += `\n🔗 *Tautan Galeri Foto (Google Drive):*\n${progress.driveLink.trim()}\n`;
+  }
+  if (progress.videoPreviewLink && progress.videoPreviewLink.trim()) {
+    message += `\n🎬 *Tautan Pratinjau Video (YouTube/Drive):*\n${progress.videoPreviewLink.trim()}\n`;
+  }
+  if (progress.notes && progress.notes.trim()) {
+    message += `\n📝 *Catatan Tim Kreatif:*\n${progress.notes.trim()}\n`;
+  }
+
+  message += `\nTerima kasih atas kesabarannya menanti karya abadi ini. Jika ada pertanyaan, Kakak bisa langsung membalas pesan ini ya! ✨`;
 
   return sendWhatsAppMessage({ target: booking.whatsapp, message });
 }

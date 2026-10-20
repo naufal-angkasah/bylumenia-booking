@@ -4,12 +4,13 @@ import {
   sendClientBookingConfirmed,
   sendClientInvoice,
   sendClientRundown,
+  sendClientProductionUpdate,
 } from "@/lib/whatsapp";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { pin, action, target, message, booking, invoice, rundown } = body;
+    const { pin, action, target, message, booking, invoice, rundown, progress } = body;
 
     const expectedPin = (process.env.ADMIN_PIN || "1928").trim();
     if (String(pin || "").trim() !== expectedPin) {
@@ -31,6 +32,11 @@ export async function POST(request: Request) {
 
     if (action === "RUNDOWN" && booking && rundown) {
       const result = await sendClientRundown(booking, rundown);
+      return NextResponse.json({ success: result.success, response: result.response, error: result.error });
+    }
+
+    if (action === "PRODUCTION_UPDATE" && booking && progress) {
+      const result = await sendClientProductionUpdate(booking, progress);
       return NextResponse.json({ success: result.success, response: result.response, error: result.error });
     }
 
