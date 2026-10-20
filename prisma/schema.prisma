@@ -1,13 +1,14 @@
 // Prisma schema for Bylumenia Booking System
-// Easily switch between SQLite (local development) and PostgreSQL (Supabase / Neon production)
+// Configured for PostgreSQL (Neon Serverless Database on Vercel)
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DATABASE_URL_UNPOOLED")
 }
 
 model Booking {
